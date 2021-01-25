@@ -6,7 +6,7 @@ set(CMAKE_BUILD_TYPE Debug)
 if (UNIX)
     set(CMAKE_CXX_STANDARD 17)
     add_definitions("-fPIC")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -W -Wall -Wextra -g") # FIXME remove flags for prod.
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -W -Wall -Wextra -g") # FIXME remove flags for delivery.
 endif()
 if(WIN32)
     set(CMAKE_CXX_FLAGS_DEBUG "/DWIN32 /D_WINDOWS /EHsc /WX /wd4355 /wd4251 /wd4250 /wd4996 -D_WIN32_WINNT=0x0601" CACHE STRING "Debug compiler flags" FORCE)
@@ -29,7 +29,11 @@ set(SOURCES
         server/network/tcp/TcpProtocol.cpp
         server/network/tcp/TcpSocket.cpp
 
-        server/client/Client.cpp)
+        server/client/Client.cpp
+
+        server/modules/IModule.cpp
+        server/modules/PHP_CGI.cpp
+        )
 
 set(INCLUDES
         server/Server.hpp
@@ -42,6 +46,13 @@ set(INCLUDES
 
         server/tools/Utils.hpp
         server/tools/Log.hpp
+
+        server/loader/ADLLoader.hpp
+        server/loader/DLLoader.hpp
+        server/loader/DynamicLibManager.hpp
+
+        server/modules/IModule.hpp
+        server/modules/PHP_CGI.hpp
         )
 
 add_executable(server ${SOURCES} ${INCLUDES})

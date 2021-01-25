@@ -29,7 +29,7 @@ all:
 run:	all execute
 
 execute:
-		call $(call FixPath,build/bin/)$(NAME)
+		$(call FixPath,build/bin/)$(NAME)
 
 windows:
 		.\install_windows.bat

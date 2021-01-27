@@ -31,6 +31,8 @@ set(SOURCES
 
         server/client/Client.cpp
 
+        server/ConfigurationHandler.cpp
+
         server/modules/IModule.cpp
         server/modules/PHP_CGI.cpp
         )
@@ -46,6 +48,10 @@ set(INCLUDES
 
         server/tools/Utils.hpp
         server/tools/Log.hpp
+
+        server/include/rapidjson/document.h
+        server/include/rapidjson/filereadstream.h
+        server/ConfigurationHandler.hpp
 
         server/loader/ADLLoader.hpp
         server/loader/DLLoader.hpp
@@ -65,6 +71,7 @@ target_include_directories(server PRIVATE
         server/network
         server/network/tcp
         server/client
+        server/include/rapidjson
         )
 
 message("===========================================")

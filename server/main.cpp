@@ -2,12 +2,18 @@
 // Created by Cyprien on 12/6/2020.
 //
 
-#include <iostream>
 #include "Server.hpp"
+#include "ConfigurationHandler.hpp"
 
-int main(void)
-{
-    std::cout << "hihi" << std::endl;
+using namespace rapidjson;
+
+int main(void) {
+//    ConfigurationHandler configurationHandler;
+//
+//    configurationHandler.loadConfiguration("config.json");
+//    Sleep(15000);
+//    configurationHandler.loadConfiguration("config.json");
+
     Server _server;
     _server.run();
     return (0);

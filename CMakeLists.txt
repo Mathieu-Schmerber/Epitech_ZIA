@@ -59,7 +59,7 @@ set(INCLUDES
 
         server/modules/IModule.hpp
         server/modules/PHP_CGI.hpp
-        server/core/RequestHandler/RequestHandler.hpp)
+        server/core/RequestHandler/RequestHandler.hpp server/core/Request/IRequest.hpp server/core/Request/GetRequest.hpp server/core/Request/PostRequest.hpp server/core/Request/OptionsRequest.hpp server/core/Request/HeadRequest.hpp server/core/Request/PutRequest.hpp server/core/Request/DeleteRequest.hpp server/core/Request/TraceRequest.hpp server/core/Request/ConnectRequest.hpp)
 
 add_executable(server ${SOURCES} ${INCLUDES})
 
@@ -73,6 +73,7 @@ target_include_directories(server PRIVATE
         server/client
         server/include/rapidjson
         server/core/RequestHandler
+        server/core/Request
         )
 
 message("===========================================")

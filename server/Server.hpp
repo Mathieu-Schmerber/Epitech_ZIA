@@ -8,6 +8,7 @@
 
 #include "TcpProtocol.hpp"
 #include "Client.hpp"
+#include "RequestHandler.hpp"
 
 class Server {
 public:
@@ -20,7 +21,7 @@ private:
     TcpProtocol _tcp = TcpProtocol("0.0.0.0", 4242);
 
     std::vector<std::unique_ptr<Client>> _clients;
-
+    std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
 };
 
 

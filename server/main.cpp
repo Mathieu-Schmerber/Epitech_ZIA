@@ -7,7 +7,7 @@
 
 using namespace rapidjson;
 
-int main(void) {
+int main() {
 //    ConfigurationHandler configurationHandler;
 //
 //    configurationHandler.loadConfiguration("config.json");

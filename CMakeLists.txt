@@ -35,7 +35,7 @@ set(SOURCES
 
         server/modules/IModule.cpp
         server/modules/PHP_CGI.cpp
-        )
+        server/core/RequestHandler/RequestHandler.cpp)
 
 set(INCLUDES
         server/Server.hpp
@@ -59,7 +59,7 @@ set(INCLUDES
 
         server/modules/IModule.hpp
         server/modules/PHP_CGI.hpp
-        )
+        server/core/RequestHandler/RequestHandler.hpp)
 
 add_executable(server ${SOURCES} ${INCLUDES})
 
@@ -72,6 +72,7 @@ target_include_directories(server PRIVATE
         server/network/tcp
         server/client
         server/include/rapidjson
+        server/core/RequestHandler
         )
 
 message("===========================================")

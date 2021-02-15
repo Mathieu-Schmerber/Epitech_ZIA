@@ -59,7 +59,7 @@ set(INCLUDES
 
         server/modules/IModule.hpp
         server/modules/PHP_CGI.hpp
-        server/core/RequestHandler/RequestHandler.hpp server/core/Request/IRequest.hpp server/core/Request/GetRequest.hpp server/core/Request/PostRequest.hpp server/core/Request/OptionsRequest.hpp server/core/Request/HeadRequest.hpp server/core/Request/PutRequest.hpp server/core/Request/DeleteRequest.hpp server/core/Request/TraceRequest.hpp server/core/Request/ConnectRequest.hpp server/core/Response/IResponse.hpp server/core/RequestParser/RequestParser.cpp server/core/RequestParser/RequestParser.hpp)
+        server/core/RequestHandler/RequestHandler.hpp server/core/Request/IRequest.hpp server/core/Request/GetRequest.hpp server/core/Request/PostRequest.hpp server/core/Request/OptionsRequest.hpp server/core/Request/HeadRequest.hpp server/core/Request/PutRequest.hpp server/core/Request/DeleteRequest.hpp server/core/Request/TraceRequest.hpp server/core/Request/ConnectRequest.hpp server/core/Response/IResponse.hpp server/core/RequestParser/RequestParser.cpp server/core/RequestParser/RequestParser.hpp server/core/ExceptionCore/ExceptionCore.hpp server/exception/ZiaError.hpp)
 
 add_executable(server ${SOURCES} ${INCLUDES})
 
@@ -72,6 +72,7 @@ target_include_directories(server PRIVATE
         server/network/tcp
         server/client
         server/include/rapidjson
+        server/exception
         server/core/RequestHandler
         server/core/Request
         server/core/RequestParser

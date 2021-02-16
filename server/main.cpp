@@ -20,8 +20,9 @@ int main() {
 
     ZiaRequest::RequestParser newElem(std::string("GET /hello HTTP/1.1\r\nHost: www.emiliendelevoye.fr\r\nAccept-Language: fr\r\n"));
 
-    std::unique_ptr<ZiaRequest::Request> request = newElem.parseData();
-    std::cout << "Type -> " << ZiaRequest::requestTypesNames[request->getRequestType()] << std::endl;
-    std::cout << "Path -> " << request->getRequestPath() << std::endl;
+    newElem.parseData();
+    std::unique_ptr<ZiaRequest::Request> &request = newElem.getRequest();
+    //std::cout << "Type -> " << ZiaRequest::requestTypesNames[request->getRequestType()] << std::endl;
+    //std::cout << "Path -> " << request->getRequestPath() << std::endl;
     return (0);
 }

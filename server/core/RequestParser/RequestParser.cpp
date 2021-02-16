@@ -11,6 +11,7 @@
 #include <sstream>
 #include <vector>
 #include <iostream>
+#include <algorithm>
 
 /** ====== Request Parser ====== **/
 
@@ -45,8 +46,10 @@ void ZiaRequest::Request::setRequestPath(const std::string &requestPath)
     _path = requestPath;
 }
 
-void ZiaRequest::Request::setRequestVersion(const std::string &requestVersion)
+void ZiaRequest::Request::setRequestVersion(std::string requestVersion)
 {
+    RMCHAR(requestVersion, '\r')
+    RMCHAR(requestVersion, '\n')
     _correctVersion = requestVersion == "HTTP/1.1";
     if (!_correctVersion)
         throw ServerError("Server Error 5xx", "HTTP Version Not Supported", 505);
@@ -66,30 +69,42 @@ const std::string &ZiaRequest::Request::getRequestPath() const
 
 ZiaRequest::RequestParser::RequestParser(const std::string &in) : _request(in)
 {
+    _toReturn = std::make_unique<Request>(in);
 }
 
-std::unique_ptr<ZiaRequest::Request> ZiaRequest::RequestParser::parseData()
+void ZiaRequest::RequestParser::parseData()
 {
-    std::unique_ptr<Request> toReturn = std::make_unique<Request>(_request);
     std::istringstream requestToParse(_request);
     std::string out;
     int position = 0;
 
     while (std::getline(requestToParse, out)) {
-        std::vector<std::string> tokens;
-        std::istringstream lineToParse(out);
-        std::string each;
-
-        if (position == 0) {
-            while (std::getline(lineToParse, each, ' '))
-                tokens.push_back(each);
-            toReturn->setRequestType(tokens.at(0));
-            toReturn->setRequestPath(tokens.at(1));
-            toReturn->setRequestVersion(tokens.at(2));
-        } else {
-            //std::cout << out << std::endl;
-        }
+        if (position == 0)
+            _parseRequestMethod(out);
         ++position;
     }
-    return toReturn;
+}
+
+std::unique_ptr<ZiaRequest::Request> &ZiaRequest::RequestParser::getRequest()
+{
+    return _toReturn;
+}
+
+void ZiaRequest::RequestParser::_parseRequestMethod(const std::string& out)
+{
+    std::vector<std::string> tokens;
+    std::istringstream lineToParse(out);
+    std::string each;
+
+    while (std::getline(lineToParse, each, ' '))
+        tokens.push_back(each);
+    std::cout << "1" << std::endl;
+    _toReturn->setRequestType(tokens.at(0));
+    std::cout << "1" << std::endl;
+    _toReturn->setRequestPath(tokens.at(1));
+    std::cout << "1" << std::endl;
+    _toReturn->setRequestVersion(tokens.at(2));
+    std::cout << "1" << std::endl;
+    std::cout << "Type -> " << ZiaRequest::requestTypesNames[_toReturn->getRequestType()] << std::endl;
+    std::cout << "Path -> " << _toReturn->getRequestPath() << std::endl;
 }

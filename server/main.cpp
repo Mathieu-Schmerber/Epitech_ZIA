@@ -18,11 +18,13 @@ int main() {
 //    Server _server;
 //    _server.run();
 
-    ZiaRequest::RequestParser newElem(std::string("GET /hello HTTP/1.1\r\nHost: www.emiliendelevoye.fr\r\nAccept-Language: fr\r\n"));
+    ZiaRequest::RequestParser newElem(std::string("GET /hello HTTP/1.1\r\nHost: www.emiliendelevoye.fr\r\nAccept-Language: fr\r\npouet: coucou"));
 
     newElem.parseData();
     std::unique_ptr<ZiaRequest::Request> &request = newElem.getRequest();
-    //std::cout << "Type -> " << ZiaRequest::requestTypesNames[request->getRequestType()] << std::endl;
-    //std::cout << "Path -> " << request->getRequestPath() << std::endl;
+    std::cout << "Type -> " << ZiaRequest::requestTypesNames[request->getRequestType()] << std::endl;
+    std::cout << "Path -> " << request->getRequestPath() << std::endl;
+    for (const auto& a : request->getRequestHeaders())
+        std::cout << "[" << a.first << "] -> [" << a.second << "]" << std::endl;
     return (0);
 }

@@ -48,11 +48,14 @@ void ZiaRequest::Request::setRequestPath(const std::string &requestPath)
 
 void ZiaRequest::Request::setRequestVersion(std::string requestVersion)
 {
-    RMCHAR(requestVersion, '\r')
-    RMCHAR(requestVersion, '\n')
     _correctVersion = requestVersion == "HTTP/1.1";
     if (!_correctVersion)
         throw ServerError("Server Error 5xx", "HTTP Version Not Supported", 505);
+}
+
+void ZiaRequest::Request::setRequestHeader(const std::pair<std::string, std::string>& header)
+{
+    _headerlist.push_back(header);
 }
 
 ZiaRequest::Type ZiaRequest::Request::getRequestType() const
@@ -63,6 +66,11 @@ ZiaRequest::Type ZiaRequest::Request::getRequestType() const
 const std::string &ZiaRequest::Request::getRequestPath() const
 {
     return _path;
+}
+
+std::vector<std::pair<std::string, std::string>> ZiaRequest::Request::getRequestHeaders() const
+{
+    return _headerlist;
 }
 
 /** ====== Request Parser ====== **/
@@ -79,8 +87,12 @@ void ZiaRequest::RequestParser::parseData()
     int position = 0;
 
     while (std::getline(requestToParse, out)) {
+        RMCHAR(out, '\r')
+        RMCHAR(out, '\n')
         if (position == 0)
             _parseRequestMethod(out);
+        else
+            _parseRequestHeaders(out);
         ++position;
     }
 }
@@ -98,13 +110,27 @@ void ZiaRequest::RequestParser::_parseRequestMethod(const std::string& out)
 
     while (std::getline(lineToParse, each, ' '))
         tokens.push_back(each);
-    std::cout << "1" << std::endl;
     _toReturn->setRequestType(tokens.at(0));
-    std::cout << "1" << std::endl;
     _toReturn->setRequestPath(tokens.at(1));
-    std::cout << "1" << std::endl;
     _toReturn->setRequestVersion(tokens.at(2));
-    std::cout << "1" << std::endl;
-    std::cout << "Type -> " << ZiaRequest::requestTypesNames[_toReturn->getRequestType()] << std::endl;
-    std::cout << "Path -> " << _toReturn->getRequestPath() << std::endl;
+}
+
+void ZiaRequest::RequestParser::_parseRequestHeaders(const std::string &out)
+{
+    std::istringstream lineToParse(out);
+    std::string each;
+    std::pair<std::string, std::string> header;
+    bool first = true;
+
+    while (std::getline(lineToParse, each, ':')) {
+        if (first) {
+            header.first = each;
+            first = !first;
+        } else {
+            each.erase(0, 1);
+            header.second = each;
+            _toReturn->setRequestHeader(header);
+            return;
+        }
+    }
 }

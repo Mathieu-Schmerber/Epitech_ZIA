@@ -10,6 +10,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #if WIN32
     #undef DELETE
@@ -34,22 +35,29 @@ namespace ZiaRequest {
         UNDEFINED
     };
 
+    /** === Request === **/
+
     class Request {
     public:
         explicit Request(const std::string &in);
         void setRequestType(const std::string &requestType);
         void setRequestPath(const std::string &requestPath);
         void setRequestVersion(std::string requestVersion);
+        void setRequestHeader(const std::pair<std::string, std::string>& header);
 
         [[nodiscard]] Type getRequestType() const;
         [[nodiscard]] const std::string &getRequestPath() const;
+        [[nodiscard]] std::vector<std::pair<std::string, std::string>> getRequestHeaders() const;
 
     private:
         Type _requestType;
         std::string _path;
         bool _correctVersion{};
         const std::string &_request;
+        std::vector<std::pair<std::string, std::string>> _headerlist;
     };
+
+    /** === Request Parser === **/
 
     class RequestParser {
     public:
@@ -59,8 +67,10 @@ namespace ZiaRequest {
         std::unique_ptr<ZiaRequest::Request> &getRequest();
 
     private:
+        void _parseRequestMethod(const std::string &out);
+        void _parseRequestHeaders(const std::string &out);
+
         std::string _request;
-        void _parseRequestMethod(const std::string& out);
         std::unique_ptr<ZiaRequest::Request> _toReturn;
     };
 }

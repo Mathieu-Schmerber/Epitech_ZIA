@@ -14,7 +14,7 @@
 class ZiaError : public std::exception {
 public:
     explicit ZiaError(std::string component = "ZiaError: ",
-        std::string message = "An error occured.", int errorCode) : _component(std::move(component)), _message(std::move(message)), _errorCode(errorCode) {};
+        std::string message = "An error occured.", int errorCode = 0) : _component(std::move(component)), _message(std::move(message)), _errorCode(errorCode) {};
 
     [[nodiscard]] const char* what() const noexcept override { return this->_message.c_str(); };
     [[nodiscard]] std::string const &getComponent() const { return this->_component; };

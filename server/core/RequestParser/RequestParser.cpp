@@ -6,6 +6,7 @@
 */
 
 #include "RequestParser.hpp"
+#include "ExceptionCore.hpp"
 
 #include <sstream>
 #include <vector>
@@ -13,7 +14,7 @@
 
 /** ====== Request Parser ====== **/
 
-ZiaRequest::Request::Request(const std::string &in) : _request(in), _requestType(UNDEFINED)
+ZiaRequest::Request::Request(const std::string &in) : _request(in), _requestType(UNDEFINED), _correctVersion(false)
 {
 }
 
@@ -36,7 +37,7 @@ void ZiaRequest::Request::setRequestType(const std::string &requestType)
     else if (requestType == std::string("CONNECT"))
         _requestType = ZiaRequest::CONNECT;
     else
-        _requestType = ZiaRequest::UNDEFINED;
+        throw ClientError("Client Error 4xx", "Bad Request", 400);
 }
 
 void ZiaRequest::Request::setRequestPath(const std::string &requestPath)
@@ -47,6 +48,8 @@ void ZiaRequest::Request::setRequestPath(const std::string &requestPath)
 void ZiaRequest::Request::setRequestVersion(const std::string &requestVersion)
 {
     _correctVersion = requestVersion == "HTTP/1.1";
+    if (!_correctVersion)
+        throw ServerError("Server Error 5xx", "HTTP Version Not Supported", 505);
 }
 
 ZiaRequest::Type ZiaRequest::Request::getRequestType() const

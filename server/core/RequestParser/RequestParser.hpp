@@ -45,7 +45,7 @@ namespace ZiaRequest {
     private:
         Type _requestType;
         std::string _path;
-        bool _correctVersion;
+        bool _correctVersion{};
         const std::string &_request;
     };
 

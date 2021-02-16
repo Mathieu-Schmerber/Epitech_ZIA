@@ -76,6 +76,7 @@ target_include_directories(server PRIVATE
         server/core/RequestHandler
         server/core/Request
         server/core/RequestParser
+        server/core/ExceptionCore
         )
 
 message("===========================================")

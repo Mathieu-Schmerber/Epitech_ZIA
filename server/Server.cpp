@@ -15,8 +15,8 @@ Server::Server()
     LOG(INFO) << "Server Started";
     while (true) {
         for (auto &a : _requestsHandlers) {
-            if (a->getState()) {
-               std::cout << a << " is ready." << std::endl;
+            if (a->getState() == READY) {
+
             }
         }
     }

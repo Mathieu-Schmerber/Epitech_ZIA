@@ -26,22 +26,22 @@ set(SOURCES
         server/main.cpp
 
         server/Server.cpp
-        server/network/tcp/TcpProtocol.cpp
-        server/network/tcp/TcpSocket.cpp
+        server/modules/HTTP/network/tcp/TcpProtocol.cpp
+        server/modules/HTTP/network/tcp/TcpSocket.cpp
 
         server/client/Client.cpp
 
         server/ConfigurationHandler.cpp
 
         server/modules/IModule.cpp
-        server/modules/PHP_CGI.cpp
+        #server/modules/PHP/PHP_CGI.cpp
         server/core/RequestHandler/RequestHandler.cpp
         server/core/RequestParser/RequestParser.cpp
         server/Server.hpp
 
-        server/network/tcp/TcpProtocol.hpp
-        server/network/tcp/TcpSocket.hpp
-        server/network/tcp/ReceiveData.hpp
+        server/modules/HTTP/network/tcp/TcpProtocol.hpp
+        server/modules/HTTP/network/tcp/TcpSocket.hpp
+        server/modules/HTTP/network/tcp/ReceiveData.hpp
 
         server/client/Client.hpp
 
@@ -57,7 +57,7 @@ set(SOURCES
         server/loader/DynamicLibManager.hpp
 
         server/modules/IModule.hpp
-        server/modules/PHP_CGI.hpp
+        #server/modules/PHP/PHP_CGI.hpp
         server/core/RequestHandler/RequestHandler.hpp
         server/core/Request/IRequest.hpp
         server/core/Request/GetRequest.hpp
@@ -71,7 +71,13 @@ set(SOURCES
         server/core/Response/IResponse.hpp
         server/core/RequestParser/RequestParser.hpp
         server/core/ExceptionCore/ExceptionCore.hpp
-        server/exception/ZiaError.hpp server/loader/ExceptionsDLLoader.hpp)
+        server/exception/ZiaError.hpp
+        server/loader/ExceptionsDLLoader.hpp)
+
+set(SOURCES_HTTP_MODULE
+        server/modules/HTTP/HttpModule.cpp
+        server/modules/HTTP/HttpModule.hpp
+        server/modules/IModule.hpp)
 
 add_executable(server ${SOURCES})
 
@@ -80,8 +86,9 @@ include(GNUInstallDirs)
 target_include_directories(server PRIVATE
         server
         server/tools
-        server/network
-        server/network/tcp
+        server/modules
+        server/modules/HTTP/network
+        server/modules/HTTP/network/tcp
         server/client
         server/include/rapidjson
         server/exception
@@ -91,6 +98,12 @@ target_include_directories(server PRIVATE
         server/core/ExceptionCore
         server/loader
         )
+
+add_library(httpModule SHARED
+        ${SOURCES_HTTP_MODULE})
+
+target_include_directories(httpModule PRIVATE
+        server/modules)
 
 message("===========================================")
 message(${CONAN_LIBS})

@@ -15,13 +15,13 @@
 #include <iostream>
 
 #ifdef __unix__
-
-#include <dlfcn.h>
-
+    #include <dlfcn.h>
+    #define DYNLIB(name) (std::string(name) + std::string(".so")).c_str()
 #elif defined(_WIN32) || defined(WIN32)
-#include <winsock2.h>
-#include <windows.h>
-#include <stdio.h>
+    #include <winsock2.h>
+    #include <windows.h>
+    #include <cstdio>
+    #define DYNLIB(name) (std::string(name) + std::string(".dll")).c_str()
 #endif
 
 namespace ModuleLoader {
@@ -52,7 +52,7 @@ namespace ModuleLoader {
         try {
             open();
         } catch (ModuleLoader::ModuleLoaderException &e) {
-            std::cerr << e << std::endl;
+            std::cerr << e.getComponent() << ": " << e.what() << std::endl;
         }
     }
 

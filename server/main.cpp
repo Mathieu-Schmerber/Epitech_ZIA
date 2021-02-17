@@ -8,7 +8,7 @@
 
 //tmp
 #include "DynamicLibManager.hpp"
-#include "modules/IModule.hpp"
+#include "IModule.hpp"
 
 using namespace rapidjson;
 
@@ -20,7 +20,9 @@ void fct_server()
     //Sleep(15000);
     //configurationHandler.loadConfiguration("config.json");
     ModuleLoader::DynamicLibManager dlManager;
-    //dlManager.loadNewLib<IModule>()
+
+    dlManager.loadNewLib<IModule>(DYNLIB("httpModule"));
+    dlManager.getInstance<IModule>(DYNLIB("httpModule"));
     Server _server;
     _server.run();
 }

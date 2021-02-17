@@ -10,5 +10,8 @@
     for (int i = 0; i < 5; ++i)
         _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
     while (true) {
+        for (auto &a : _requestsHandlers) {
+
+        }
     }
 }

@@ -10,13 +10,21 @@
 
 #include <thread>
 
+enum ThreadState {
+    PROCESSING = 1,
+    PROCESSED,
+    READY
+};
+
 class RequestHandler {
 public:
     explicit RequestHandler(int id);
     ~RequestHandler();
     void run();
+    [[nodiscard]] ThreadState getState() const;
 private:
     std::thread _thread;
+    ThreadState _state;
     bool _running;
     int _id;
 };

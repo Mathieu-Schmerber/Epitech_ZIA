@@ -42,7 +42,7 @@ namespace ZiaRequest {
         explicit Request(const std::string &in);
         void setRequestType(const std::string &requestType);
         void setRequestPath(const std::string &requestPath);
-        void setRequestVersion(std::string requestVersion);
+        void setRequestVersion(const std::string& requestVersion);
         void setRequestHeader(const std::pair<std::string, std::string>& header);
 
         [[nodiscard]] Type getRequestType() const;

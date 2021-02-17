@@ -9,17 +9,17 @@
 #ifndef ZIA_DYNAMICLIBMANAGER_HPP
 #define ZIA_DYNAMICLIBMANAGER_HPP
 
+#include "DLLoader.hpp"
+#include "ExceptionsDLLoader.hpp"
 #include <vector>
 #include <algorithm>
 #include <memory>
-#include "DLLoader.hpp"
-#include "entities/Enemy.hpp"
 
-namespace Engine {
+namespace ModuleLoader {
 
     class DynamicLibManager {
     private:
-        std::vector<Engine::ADLLoader *> _libs;
+        std::vector<ModuleLoader::ADLLoader *> _libs;
 
     public:
         template<typename T>
@@ -37,12 +37,12 @@ namespace Engine {
             if (it != _libs.end()) {
                 try {
                     return dynamic_cast<DLLoader<T> *>(*it)->getInstance();
-                } catch (EngineException &e) {
+                } catch (ModuleLoader::ModuleLoaderException &e) {
                     std::cerr << e << std::endl;
-                    throw EngineException("DynamicLibManager", "Unable to get instance for lib " + libName);
+                    throw ModuleLoader::ModuleLoaderException("DynamicLibManager", "Unable to get instance for lib " + libName);
                 }
             }
-            throw EngineException("DynamicLibManager", "Lib not registered");
+            throw ModuleLoader::ModuleLoaderException("DynamicLibManager", "Lib not registered");
         }
 
         bool libStocked(std::string libName)

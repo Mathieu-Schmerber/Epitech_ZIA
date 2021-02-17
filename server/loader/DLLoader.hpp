@@ -9,10 +9,10 @@
 #ifndef ZIA_DLLOADER_HPP
 #define ZIA_DLLOADER_HPP
 
-#include <string>
 #include "ADLLoader.hpp"
+#include "ExceptionsDLLoader.hpp"
+#include <string>
 #include <iostream>
-#include "tools/EngineExceptions.hpp"
 
 #ifdef __unix__
 
@@ -24,10 +24,10 @@
 #include <stdio.h>
 #endif
 
-namespace Engine {
+namespace ModuleLoader {
 
     template<typename T>
-    class DLLoader : public Engine::ADLLoader {
+    class DLLoader : public ModuleLoader::ADLLoader {
     public:
         explicit DLLoader(const std::string &libName);
 
@@ -51,7 +51,7 @@ namespace Engine {
     {
         try {
             open();
-        } catch (Engine::EngineException &e) {
+        } catch (ModuleLoader::ModuleLoaderException &e) {
             std::cerr << e << std::endl;
         }
     }
@@ -60,31 +60,31 @@ namespace Engine {
     void DLLoader<T>::open()
     {
         #ifdef __unix__
-        _lib = dlopen(_libName.c_str(), RTLD_LAZY);
-        if (!_lib)
-            std::cerr << dlerror() << std::endl;
+            _lib = dlopen(_libName.c_str(), RTLD_LAZY);
+            if (!_lib)
+                std::cerr << dlerror() << std::endl;
         #elif defined(_WIN32) || defined(WIN32)
-        _lib = LoadLibrary(TEXT(_libName.c_str()));
+            _lib = LoadLibrary(TEXT(_libName.c_str()));
         #endif
         if (!_lib)
-            throw Engine::DynamicLibError("Invalid open lib: " + _libName);
+            throw ModuleLoader::DynamicLibError("Invalid open lib: " + _libName);
     }
 
     template<typename T>
     T *DLLoader<T>::getInstance() const
     {
         if (!_lib)
-            throw Engine::DynamicLibError("Lib Not loaded");
+            throw ModuleLoader::DynamicLibError("Lib Not loaded");
 
         #ifdef __unix__
-        if (!dlsym(_lib, "newInstance"))
-            throw Engine::DynamicLibError("Unable to load function \"newInstance\"");
-        T *(*f)();
-        *(void **) (&f) = dlsym(_lib, "newInstance");
-        return ((*f)());
+            if (!dlsym(_lib, "newInstance"))
+                throw ModuleLoader::DynamicLibError("Unable to load function \"newInstance\"");
+            T *(*f)();
+            *(void **) (&f) = dlsym(_lib, "newInstance");
+            return ((*f)());
         #elif defined(_WIN32) || defined(WIN32)
         if (!static_cast<void *>(GetProcAddress(static_cast<HINSTANCE>(_lib), "newInstance")))
-            throw Engine::DynamicLibError("Unable to load function \"newInstance\"");
+            throw ModuleLoader::DynamicLibError("Unable to load function \"newInstance\"");
         fct f = (fct) GetProcAddress(static_cast<HINSTANCE>(_lib), "newInstance");
         return ((f)());
         #endif
@@ -96,14 +96,14 @@ namespace Engine {
         if (!_lib)
             return;
         #ifdef __unix__
-        if (!dlsym(_lib, "destroyInstance"))
-            throw std::exception();
-        T (*f)(T);
-        *(void **) (&f) = dlsym(_lib, "destroyInstance");
-        ((*f)(instance));
-        dlclose(_lib);
+            if (!dlsym(_lib, "destroyInstance"))
+                throw std::exception();
+            T (*f)(T);
+            *(void **) (&f) = dlsym(_lib, "destroyInstance");
+            ((*f)(instance));
+            dlclose(_lib);
         #elif defined(_WIN32) || defined(WIN32)
-        FreeLibrary(_lib);
+            FreeLibrary(_lib);
         #endif
     }
 }

@@ -12,7 +12,7 @@
 
 class Server {
 public:
-    Server() = default;
+    explicit Server();
     ~Server() = default;
 
     [[noreturn]] void run();

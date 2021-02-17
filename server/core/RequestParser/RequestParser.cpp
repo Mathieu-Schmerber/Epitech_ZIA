@@ -46,7 +46,7 @@ void ZiaRequest::Request::setRequestPath(const std::string &requestPath)
     _path = requestPath;
 }
 
-void ZiaRequest::Request::setRequestVersion(std::string requestVersion)
+void ZiaRequest::Request::setRequestVersion(const std::string& requestVersion)
 {
     _correctVersion = requestVersion == "HTTP/1.1";
     if (!_correctVersion)

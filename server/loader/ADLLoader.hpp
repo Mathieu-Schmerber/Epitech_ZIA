@@ -9,7 +9,9 @@
 #ifndef ZIA_ADLLOADER_HPP
 #define ZIA_ADLLOADER_HPP
 
-namespace Engine {
+#include <string>
+
+namespace ModuleLoader {
 
     class ADLLoader {
     protected:

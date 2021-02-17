@@ -4,14 +4,20 @@
 
 #include "Server.hpp"
 
+Server::Server()
+{
+    for (int i = 0; i < 5; ++i)
+        _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
+}
+
 [[noreturn]] void Server::run()
 {
     LOG(INFO) << "Server Started";
-    for (int i = 0; i < 5; ++i)
-        _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
     while (true) {
         for (auto &a : _requestsHandlers) {
-
+            if (a->getState()) {
+               std::cout << a << " is ready." << std::endl;
+            }
         }
     }
 }

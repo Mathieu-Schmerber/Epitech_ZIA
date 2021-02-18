@@ -6,6 +6,7 @@
 #define ZIA_HTTPMODULE_HPP
 
 #include "IModule.hpp"
+#include <thread>
 
 class HTTPModule : public IModule {
 public:
@@ -15,8 +16,9 @@ public:
     void dataInput(const std::string &input) override;
     std::string dataOutput() override;
     bool isInputData() override;
+    void run() override;
 private:
-
+    std::thread _thread;
 };
 
 #endif //ZIA_HTTPMODULE_HPP

@@ -13,6 +13,7 @@ public:
     virtual void dataInput(const std::string &) = 0;
     virtual std::string dataOutput() = 0;
     virtual bool isInputData() = 0;
+    virtual void run() = 0;
 };
 
 #endif //ZIA_IMODULE_HPP

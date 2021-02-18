@@ -37,3 +37,8 @@ bool HTTPModule::isInputData()
 {
     return true;
 }
+
+void HTTPModule::run()
+{
+
+}

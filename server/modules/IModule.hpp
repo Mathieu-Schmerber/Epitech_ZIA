@@ -14,6 +14,9 @@ public:
     virtual std::string dataOutput() = 0;
     virtual bool isInputData() = 0;
     virtual void run() = 0;
+    virtual bool getStatus() = 0;
+    virtual void startModule() = 0;
+    virtual void stopModule() = 0;
 };
 
 #endif //ZIA_IMODULE_HPP

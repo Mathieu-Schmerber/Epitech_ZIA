@@ -5,10 +5,11 @@
 #ifndef ZIA_HTTPMODULE_HPP
 #define ZIA_HTTPMODULE_HPP
 
-#include "IModule.hpp"
+#include "AModule.hpp"
+#include <string>
 #include <thread>
 
-class HTTPModule : public IModule {
+class HTTPModule : public AModule {
 public:
     explicit HTTPModule() = default;
 
@@ -18,7 +19,6 @@ public:
     bool isInputData() override;
     void run() override;
 private:
-    std::thread _thread;
 };
 
 #endif //ZIA_HTTPMODULE_HPP

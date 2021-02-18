@@ -2,6 +2,7 @@
 // Created by Emilien on 17/02/2021.
 //
 
+#include "IModule.hpp"
 #include "HttpModule.hpp"
 
 #if defined(_WIN32) || defined(WIN32)
@@ -40,5 +41,7 @@ bool HTTPModule::isInputData()
 
 void HTTPModule::run()
 {
+    while (getStatus()) {
 
+    }
 }

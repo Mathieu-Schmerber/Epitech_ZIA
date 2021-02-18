@@ -4,6 +4,7 @@
 
 #include "IModule.hpp"
 #include "HttpModule.hpp"
+#include <iostream>
 
 #if defined(_WIN32) || defined(WIN32)
     #include <Windows.h>
@@ -41,6 +42,7 @@ bool HTTPModule::isInputData()
 
 void HTTPModule::run()
 {
+    std::cout << "run oui oui baguette bonjour aaa" << std::endl;
     while (getStatus()) {
 
     }

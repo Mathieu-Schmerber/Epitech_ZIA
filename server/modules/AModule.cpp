@@ -3,10 +3,16 @@
 //
 
 #include "AModule.hpp"
+#include <iostream>
 
 AModule::AModule() : _running(false)
 {
 
+}
+
+void AModule::run()
+{
+    std::cout << "???" << std::endl;
 }
 
 bool AModule::getStatus()

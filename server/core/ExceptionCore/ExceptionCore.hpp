@@ -8,14 +8,14 @@
 #ifndef ZIA_EXCEPTIONCORE_HPP
 #define ZIA_EXCEPTIONCORE_HPP
 
-#include "ZiaError.hpp"
+#include "ZiaHTTPError.hpp"
 #include <exception>
 #include <string>
 #include <utility>
 
-class CoreError : public ZiaError {
+class CoreError : public ZiaHTTPError {
 public:
-    explicit CoreError(const std::string &errorType, const std::string &errorMessage, int errorCode) : ZiaError(errorType, errorMessage, errorCode) {};
+    explicit CoreError(const std::string &errorType, const std::string &errorMessage, int errorCode) : ZiaHTTPError(errorType, errorMessage, errorCode) {};
 };
 
 class ClientError : public CoreError {

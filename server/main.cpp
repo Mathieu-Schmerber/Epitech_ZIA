@@ -3,27 +3,30 @@
 //
 
 #include "Server.hpp"
-#include "ConfigurationHandler.hpp"
+//#include "ConfigurationHandler.hpp"
 #include "RequestParser.hpp"
 
 //tmp
 #include "DynamicLibManager.hpp"
-#include "IModule.hpp"
 
-using namespace rapidjson;
+//using namespace rapidjson;
 
 void fct_server()
 {
     //ConfigurationHandler configurationHandler;
-//
+
     //configurationHandler.loadConfiguration("config.json");
     //Sleep(15000);
     //configurationHandler.loadConfiguration("config.json");
-    ModuleLoader::DynamicLibManager dlManager;
+    /**ModuleLoader::DynamicLibManager dlManager;
 
-    dlManager.loadNewLib<IModule>(DYNLIB("httpModule"));
-    dlManager.getInstance<IModule>(DYNLIB("httpModule"));
+    dlManager.loadNewLib<AModule>(DYNLIB("httpModule"));
+    auto *pouet = dlManager.getInstance<AModule>(DYNLIB("httpModule"));
+    std::cout << pouet << std::endl;
+    pouet->startModule();
+    pouet->stopModule();**/
     Server _server;
+
     _server.run();
 }
 

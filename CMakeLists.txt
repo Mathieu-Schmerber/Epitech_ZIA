@@ -71,8 +71,8 @@ set(SOURCES
         server/core/Response/IResponse.hpp
         server/core/RequestParser/RequestParser.hpp
         server/core/ExceptionCore/ExceptionCore.hpp
-        server/exception/ZiaError.hpp
-        server/loader/ExceptionsDLLoader.hpp server/modules/AModule.cpp server/modules/AModule.hpp)
+        server/exception/ZiaHTTPError.hpp
+        server/loader/ExceptionsDLLoader.hpp server/modules/AModule.cpp server/modules/AModule.hpp server/modules/ModuleHandler.cpp server/modules/ModuleHandler.hpp server/modules/ModuleException.hpp)
 
 set(SOURCES_HTTP_MODULE
         server/modules/HTTP/HttpModule.cpp

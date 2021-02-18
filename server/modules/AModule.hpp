@@ -5,7 +5,7 @@
 #ifndef ZIA_AMODULE_HPP
 #define ZIA_AMODULE_HPP
 
-#include "modules/IModule.hpp"
+#include "IModule.hpp"
 
 class AModule : public IModule {
 public:
@@ -14,10 +14,10 @@ public:
     void dataInput(const std::string &) override = 0;
     std::string dataOutput() override = 0;
     bool isInputData() override = 0;
-    void run() override = 0;
+    void run() override;
     bool getStatus() final;
-    void startModule() override;
-    void stopModule() override;
+    void startModule() final;
+    void stopModule() final;
 private:
     bool _running;
 };

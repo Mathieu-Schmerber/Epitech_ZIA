@@ -5,7 +5,7 @@
 #ifndef ZIA_MODULEEXCEPTION_HPP
 #define ZIA_MODULEEXCEPTION_HPP
 
-#include "ZiaHTTPError.hpp"
+#include "ZiaError.hpp"
 
 class ZiaModuleError : public ZiaError {
 public:

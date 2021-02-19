@@ -1,29 +1,16 @@
-/*
-** EPITECH PROJECT, 2020
-** Zia
-** File description:
-** Created by Emilien
-*/
+//
+// Created by Emilien on 19/02/2021.
+//
 
 #ifndef ZIA_ZIAHTTPERROR_HPP
 #define ZIA_ZIAHTTPERROR_HPP
 
+#include "ZiaError.hpp"
 #include <exception>
-#include <string>
-#include <utility>
-
-class ZiaError : public std::exception {
-public:
-    explicit ZiaError(const std::string& component, const std::string& message) : _message(std::move(component + ": " + message)) {};
-
-    [[nodiscard]] const char *what() const noexcept override { return _message.c_str(); };
-private:
-    std::string _message;
-};
 
 class ZiaHTTPError : public ZiaError {
 public:
-    explicit ZiaHTTPError(std::string component = "ZiaHTTPError: ",
+    explicit ZiaHTTPError(std::string component = "ZiaHTTPError",
         std::string message = "An error occured.", int errorCode = 0) : ZiaError(component, message), _component(std::move(component)), _message(std::move(message)), _errorCode(errorCode) {};
 
     [[nodiscard]] const char *what() const noexcept override { return this->_message.c_str(); };

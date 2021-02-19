@@ -4,6 +4,7 @@
 
 #include "Server.hpp"
 #include "ModuleException.hpp"
+#include "ServerException.hpp"
 
 Server::Server()
 {
@@ -59,8 +60,6 @@ void Server::_readInput()
 
         while (std::getline(lineToParse, block, ' '))
             cmdLine.push_back(block);
-        for (auto &a : cmdLine)
-            std::cout << "block : " << a << std::endl;
         if (cmdLine[0] == "loadmodule")
             _loadModule(cmdLine);
     }
@@ -69,8 +68,12 @@ void Server::_readInput()
 void Server::_loadModule(const std::vector<std::string>& cmdLine)
 {
     if (cmdLine.size() > 2)
-        return;
-    dlManager.loadNewLib<AModule>(DYNLIB(cmdLine[1]));
-    _modules.insert(std::pair<std::string, ModuleHandler>("httpModule", ModuleHandler(dlManager.getInstance<AModule>(DYNLIB("httpModule")))));
-
+        throw ZiaCmdLineError("ZiaCmdLineError", "loadmodule requires one argument.");
+    try {
+        dlManager.loadNewLib<AModule>(DYNLIB(cmdLine[1]));
+        _modules.insert(std::pair<std::string, ModuleHandler>(cmdLine[1],
+            ModuleHandler(dlManager.getInstance<AModule>(DYNLIB(cmdLine[1])))));
+    } catch (const ModuleLoader::ModuleLoaderException &e) {
+        std::cerr << e.getComponent() << ": " << e.what() << std::endl;
+    }
 }

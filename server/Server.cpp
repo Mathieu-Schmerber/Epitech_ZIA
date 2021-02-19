@@ -24,13 +24,6 @@ Server::Server()
             }
         }
     }
-
-
-    try {
-        _modules["httpModule"].stopModule();
-    } catch (const ZiaModuleError &e) {
-        std::cerr << e.getErrorMessage() << std::endl;
-    }
 }
 
 std::string Server::readAsyncFunction()
@@ -61,6 +54,8 @@ void Server::_readInput()
                 _loadModule(cmdLine);
             else if (cmdLine[0] == "startmodule")
                 _startModule(cmdLine);
+            else if (cmdLine[0] == "stopmodule")
+                _stopModule(cmdLine);
             else
                 throw ZiaCmdLineError("Zia command line error", "command \'" + cmdLine[0] + "\' not found.");
         } catch (const ZiaCmdLineError &e) {
@@ -88,6 +83,17 @@ void Server::_startModule(const std::vector<std::string> &cmdLine)
         throw ZiaCmdLineError("ZiaCmdLineError", "startmodule requires one argument.");
     try {
         _modules[cmdLine[1]].startModule();
+    } catch (const ZiaModuleError &e) {
+        std::cerr << e.getErrorMessage() << std::endl;
+    }
+}
+
+void Server::_stopModule(const std::vector<std::string> &cmdLine)
+{
+    if (cmdLine.size() != 2)
+        throw ZiaCmdLineError("ZiaCmdLineError", "stopmodule requires one argument.");
+    try {
+        _modules[cmdLine[1]].stopModule();
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;
     }

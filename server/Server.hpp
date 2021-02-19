@@ -24,6 +24,7 @@ private:
     void _readInput();
     void _loadModule(const std::vector<std::string>& cmdLine);
     void _startModule(const std::vector<std::string>& cmdLine);
+    void _stopModule(const std::vector<std::string>& cmdLine);
 
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
     std::map<std::string, ModuleHandler> _modules;

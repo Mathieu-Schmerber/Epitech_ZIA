@@ -22,6 +22,7 @@ public:
 
 private:
     void _readInput();
+    void _loadModule(const std::vector<std::string>& cmdLine);
 
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
     std::map<std::string, ModuleHandler> _modules;

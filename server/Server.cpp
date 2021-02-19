@@ -13,8 +13,6 @@ Server::Server()
 
 [[noreturn]] void Server::run()
 {
-    dlManager.loadNewLib<AModule>(DYNLIB("httpModule"));
-    _modules.insert(std::pair<std::string, ModuleHandler>("httpModule", ModuleHandler(dlManager.getInstance<AModule>(DYNLIB("httpModule")))));
     LOG(INFO) << "Server Started";
 
     try {
@@ -61,8 +59,18 @@ void Server::_readInput()
 
         while (std::getline(lineToParse, block, ' '))
             cmdLine.push_back(block);
-        for (auto &a : cmdLine) {
+        for (auto &a : cmdLine)
             std::cout << "block : " << a << std::endl;
-        }
+        if (cmdLine[0] == "loadmodule")
+            _loadModule(cmdLine);
     }
+}
+
+void Server::_loadModule(const std::vector<std::string>& cmdLine)
+{
+    if (cmdLine.size() > 2)
+        return;
+    dlManager.loadNewLib<AModule>(DYNLIB(cmdLine[1]));
+    _modules.insert(std::pair<std::string, ModuleHandler>("httpModule", ModuleHandler(dlManager.getInstance<AModule>(DYNLIB("httpModule")))));
+
 }

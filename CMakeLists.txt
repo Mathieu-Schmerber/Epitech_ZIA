@@ -72,12 +72,20 @@ set(SOURCES
         server/core/RequestParser/RequestParser.hpp
         server/core/ExceptionCore/ExceptionCore.hpp
         server/exception/ZiaHTTPError.hpp
-        server/loader/ExceptionsDLLoader.hpp server/modules/AModule.cpp server/modules/AModule.hpp server/modules/ModuleHandler.cpp server/modules/ModuleHandler.hpp server/modules/ModuleException.hpp)
+        server/loader/ExceptionsDLLoader.hpp
+        server/modules/AModule.cpp
+        server/modules/AModule.hpp
+        server/modules/ModuleHandler.cpp
+        server/modules/ModuleHandler.hpp
+        server/modules/ModuleException.hpp
+        server/ServerException.hpp)
 
 set(SOURCES_HTTP_MODULE
         server/modules/HTTP/HttpModule.cpp
         server/modules/HTTP/HttpModule.hpp
-        server/modules/IModule.hpp server/modules/AModule.cpp server/modules/AModule.hpp)
+        server/modules/IModule.hpp
+        server/modules/AModule.cpp
+        server/modules/AModule.hpp)
 
 add_executable(server ${SOURCES})
 

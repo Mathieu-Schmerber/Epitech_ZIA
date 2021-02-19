@@ -14,6 +14,7 @@ public:
     explicit ModuleHandler() : _module(nullptr) {};
     explicit ModuleHandler(AModule *module);
     void startModule();
+    void stopModule();
     AModule *get();
     AModule *operator->();
 private:

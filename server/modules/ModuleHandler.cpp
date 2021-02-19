@@ -18,6 +18,14 @@ void ModuleHandler::startModule()
     _thread = std::thread(&AModule::run, _module);
 }
 
+void ModuleHandler::stopModule()
+{
+    if (!_module)
+        throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+    _module->stopModule();
+    _thread.join();
+}
+
 AModule *ModuleHandler::get()
 {
     if (!_module)

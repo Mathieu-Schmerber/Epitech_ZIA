@@ -23,8 +23,9 @@ private:
     TcpProtocol _tcp = TcpProtocol("0.0.0.0", 4242);
 
     std::map<std::string, ModuleHandler> _modules;
-    std::vector<std::unique_ptr<Client>> _clients;
+    //std::vector<std::unique_ptr<Client>> _clients;
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
+    bool _running = true;
     ModuleLoader::DynamicLibManager dlManager;
 };
 

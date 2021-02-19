@@ -7,7 +7,7 @@
 
 Server::Server()
 {
-    for (int i = 0; i < 1; ++i)
+    for (int i = 0; i < 0; ++i)
         _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
 }
 
@@ -22,11 +22,16 @@ Server::Server()
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;
     }
-    while (true) {
+    while (_running) {
         for (auto &a : _requestsHandlers) {
             if (a->getState() == READY) {
 
             }
         }
+    }
+    try {
+        _modules["httpModule"].stopModule();
+    } catch (const ZiaModuleError &e) {
+        std::cerr << e.getErrorMessage() << std::endl;
     }
 }

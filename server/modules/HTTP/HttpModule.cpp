@@ -42,8 +42,9 @@ bool HTTPModule::isInputData()
 
 void HTTPModule::run()
 {
-    std::cout << "run oui oui baguette bonjour aaa" << std::endl;
+    std::cout << "Start HTTP Module" << std::endl;
     while (getStatus()) {
 
     }
+    std::cout << "End HTTP Module" << std::endl;
 }

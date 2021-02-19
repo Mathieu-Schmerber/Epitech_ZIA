@@ -22,16 +22,47 @@ Server::Server()
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;
     }
+
     while (_running) {
+        _readInput();
         for (auto &a : _requestsHandlers) {
             if (a->getState() == READY) {
 
             }
         }
     }
+
+
     try {
         _modules["httpModule"].stopModule();
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;
+    }
+}
+
+std::string Server::readAsyncFunction()
+{
+    std::string line;
+
+    std::getline(std::cin, line);
+    return line;
+}
+
+void Server::_readInput()
+{
+    static auto future = std::async(std::launch::async, Server::readAsyncFunction);
+
+    if (future.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+        auto line = future.get();
+        future = std::async(std::launch::async, Server::readAsyncFunction);
+        std::istringstream lineToParse(line);
+        std::string block;
+        std::vector<std::string> cmdLine;
+
+        while (std::getline(lineToParse, block, ' '))
+            cmdLine.push_back(block);
+        for (auto &a : cmdLine) {
+            std::cout << "block : " << a << std::endl;
+        }
     }
 }

@@ -18,15 +18,16 @@ public:
     ~Server() = default;
 
     [[noreturn]] void run();
+    static std::string readAsyncFunction();
 
 private:
-    TcpProtocol _tcp = TcpProtocol("0.0.0.0", 4242);
+    void _readInput();
 
-    std::map<std::string, ModuleHandler> _modules;
-    //std::vector<std::unique_ptr<Client>> _clients;
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
-    bool _running = true;
+    std::map<std::string, ModuleHandler> _modules;
     ModuleLoader::DynamicLibManager dlManager;
+    bool _running = true;
+    //std::future _future;
 };
 
 

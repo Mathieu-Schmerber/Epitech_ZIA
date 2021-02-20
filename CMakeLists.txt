@@ -33,7 +33,6 @@ set(SOURCES
 
         server/ConfigurationHandler.cpp
 
-        server/modules/IModule.cpp
         #server/modules/PHP/PHP_CGI.cpp
         server/core/RequestHandler/RequestHandler.cpp
         server/core/RequestParser/RequestParser.cpp

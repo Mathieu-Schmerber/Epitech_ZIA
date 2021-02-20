@@ -1,11 +1,19 @@
-//
-// Created by Cyprien on 1/25/2021.
-//
+/**
+ * \file IModule.hpp
+ * \brief Interface for the modules
+ * \author Cyprien.R
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_IMODULE_HPP
 #define ZIA_IMODULE_HPP
 
 #include <string>
+
+/**
+ * \class IModule IModule.hpp "IModule.hpp"
+ * \brief Interface for the modules
+**/
 
 class IModule {
 public:

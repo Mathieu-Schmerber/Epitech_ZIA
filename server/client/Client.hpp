@@ -1,6 +1,8 @@
-//
-// Created by Cyprien on 1/21/2021.
-//
+/**
+ * \file Client.hpp
+ * \brief File for the client class
+ * \author Cyprien.R
+**/
 
 #ifndef ZIA_SERVER_CLIENT_HPP
 #define ZIA_SERVER_CLIENT_HPP
@@ -13,6 +15,11 @@
 
 #include "Utils.hpp"
 #include "Log.hpp"
+
+/**
+ * \class Client Client.hpp "Client.hpp"
+ * \brief This class is to store the connected clients
+**/
 
 class Client {
 public:

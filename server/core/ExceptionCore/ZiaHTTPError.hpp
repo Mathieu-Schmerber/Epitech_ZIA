@@ -1,12 +1,19 @@
-//
-// Created by Emilien on 19/02/2021.
-//
+/**
+ * \file ZiaHTTPError.hpp
+ * \brief Exceptions classes for the HTTP Protocol errors
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_ZIAHTTPERROR_HPP
 #define ZIA_ZIAHTTPERROR_HPP
 
 #include "ZiaError.hpp"
 #include <exception>
+
+/**
+ * \class ZiaHTTPError ZiaHTTPError.hpp "ZiaHTTPError.hpp"
+ * \brief Class for the HTTP protocol errors
+**/
 
 class ZiaHTTPError : public ZiaError {
 public:

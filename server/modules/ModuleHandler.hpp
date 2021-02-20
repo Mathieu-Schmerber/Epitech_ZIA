@@ -1,6 +1,8 @@
-//
-// Created by Emilien on 18/02/2021.
-//
+/**
+ * \file ModuleHandler.hpp
+ * \brief ModuleHandler classes
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_MODULEHANDLER_HPP
 #define ZIA_MODULEHANDLER_HPP
@@ -8,6 +10,11 @@
 #include "AModule.hpp"
 #include <iostream>
 #include <thread>
+
+/**
+ * \class ModuleHandler ModuleHandler.hpp "ModuleHandler.hpp"
+ * \brief Class which contains the modules loaded by the server
+**/
 
 class ModuleHandler {
 public:

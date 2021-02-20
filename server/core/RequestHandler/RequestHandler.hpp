@@ -1,9 +1,8 @@
-/*
-** EPITECH PROJECT, 2020
-** Zia
-** File description:
-** Created by Emilien
-*/
+/**
+ * \file RequestHandler.hpp
+ * \brief Definitions for the Request Handler threads
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_REQUESTHANDLER_HPP
 #define ZIA_REQUESTHANDLER_HPP
@@ -15,6 +14,11 @@ enum ThreadState {
     PROCESSED,
     READY
 };
+
+/**
+ * \class RequestHandler RequestHandler.hpp "RequestHandler.hpp"
+ * \brief Class for the request handlers threads
+**/
 
 class RequestHandler {
 public:

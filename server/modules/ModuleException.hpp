@@ -1,11 +1,18 @@
-//
-// Created by Emilien on 18/02/2021.
-//
+/**
+ * \file ModuleException.hpp
+ * \brief Exceptions classes for the modules
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_MODULEEXCEPTION_HPP
 #define ZIA_MODULEEXCEPTION_HPP
 
 #include "ZiaError.hpp"
+
+/**
+ * \class ZiaModuleError ModuleException.hpp "ModuleException.hpp"
+ * \brief Class for the modules exceptions
+**/
 
 class ZiaModuleError : public ZiaError {
 public:

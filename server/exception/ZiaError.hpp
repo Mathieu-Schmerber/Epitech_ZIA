@@ -1,9 +1,8 @@
-/*
-** EPITECH PROJECT, 2020
-** Zia
-** File description:
-** Created by Emilien
-*/
+/**
+ * \file ZiaError.hpp
+ * \brief Base exceptions for the Zia Project
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_ZIAERROR_HPP
 #define ZIA_ZIAERROR_HPP
@@ -11,6 +10,11 @@
 #include <exception>
 #include <string>
 #include <utility>
+
+/**
+ * \class ZiaError ZiaError.hpp "ZiaError.hpp"
+ * \brief Class which defines the base for all Zia exceptions
+**/
 
 class ZiaError : public std::exception {
 public:

@@ -1,6 +1,8 @@
-//
-// Created by alexa on 26/01/2021.
-//
+/**
+ * \file ConfigurationHandler.hpp
+ * \brief Classes which parse json files for the modules and the server
+ * \author Alexandre.M
+**/
 
 #ifndef ZIA_CONFIGURATIONHANDLER_HPP
 #define ZIA_CONFIGURATIONHANDLER_HPP

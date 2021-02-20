@@ -1,9 +1,8 @@
-/*
-** EPITECH PROJECT, 2020
-** Zia
-** File description:
-** Created by Emilien
-*/
+/**
+ * \file ServerException.hpp
+ * \brief Exceptions classes for the server
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_SERVEREXCEPTION_HPP
 #define ZIA_SERVEREXCEPTION_HPP
@@ -11,6 +10,11 @@
 #include <string>
 #include <utility>
 #include "ZiaError.hpp"
+
+/**
+ * \class ZiaCmdLineError ServerException.hpp "ServerException.hpp"
+ * \brief Class for the command line errors
+**/
 
 class ZiaCmdLineError : public ZiaError {
 public:

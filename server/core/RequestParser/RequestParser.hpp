@@ -1,9 +1,8 @@
-/*
-** EPITECH PROJECT, 2020
-** Zia
-** File description:
-** Created by Emilien
-*/
+/**
+ * \file RequestParser.hpp
+ * \brief HTTP Request Parser
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_REQUESTPARSER_HPP
 #define ZIA_REQUESTPARSER_HPP
@@ -17,6 +16,11 @@
 #endif
 
 #define RMCHAR(x, y) x.erase(std::remove(x.begin(), x.end(), y), x.end());
+
+/**
+ * \namespace ZiaRequest
+ * \brief Store all the classes and const variables for the HTTP Request parser
+**/
 
 namespace ZiaRequest {
 
@@ -35,7 +39,10 @@ namespace ZiaRequest {
         UNDEFINED
     };
 
-    /** === Request === **/
+    /**
+     * \class Request RequestParser.hpp "RequestParser.hpp"
+     * \brief Class which define the HTTP request
+    **/
 
     class Request {
     public:
@@ -57,7 +64,10 @@ namespace ZiaRequest {
         std::vector<std::pair<std::string, std::string>> _headerlist;
     };
 
-    /** === Request Parser === **/
+    /**
+     * \class RequestParser RequestParser.hpp "RequestParser.hpp"
+     * \brief Class which parse the HTTP request
+    **/
 
     class RequestParser {
     public:

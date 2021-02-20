@@ -1,11 +1,18 @@
-//
-// Created by Emilien on 18/02/2021.
-//
+/**
+ * \file AModule.hpp
+ * \brief Abstract for the modules
+ * \author Emilien.D
+**/
 
 #ifndef ZIA_AMODULE_HPP
 #define ZIA_AMODULE_HPP
 
 #include "IModule.hpp"
+
+/**
+ * \class AModule AModule.hpp "AModule.hpp"
+ * \brief Abstract of the IModule interface
+**/
 
 class AModule : public IModule {
 public:

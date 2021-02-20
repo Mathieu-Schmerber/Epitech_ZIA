@@ -1,6 +1,8 @@
-//
-// Created by Cyprien on 1/22/2021.
-//
+/**
+ * \file Log.hpp
+ * \brief Display macros
+ * \author Cyprien.R
+**/
 
 #ifndef ZIA_SERVER_LOG_HPP
 #define ZIA_SERVER_LOG_HPP

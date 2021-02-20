@@ -1,6 +1,9 @@
-//
-// Created by Cyprien on 12/6/2020.
-//
+/**
+ * \file Log.hpp
+ * \brief Display macros
+ * \author Emilien.D
+ * \author Cyprien.R
+**/
 
 #ifndef SERVER_SERVER_HPP
 #define SERVER_SERVER_HPP
@@ -15,6 +18,11 @@
 #ifdef _WIN32
     #define _WIN32_WINNT  0x0601
 #endif
+
+/**
+ * \class Server Server.hpp "Server.hpp"
+ * \brief Main class for the server
+**/
 
 class Server {
 public:

@@ -1,6 +1,8 @@
-//
-// Created by Cyprien on 12/7/2020.
-//
+/**
+ * \file Utils.hpp
+ * \brief Utils class
+ * \author Cyprien.R
+**/
 
 #ifndef ZIA_SERVER_UTILS_HPP
 #define ZIA_SERVER_UTILS_HPP

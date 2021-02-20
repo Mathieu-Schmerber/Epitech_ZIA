@@ -72,7 +72,10 @@ void Server::_loadModule(const std::vector<std::string>& cmdLine)
         dlManager.loadNewLib<AModule>(DYNLIB(cmdLine[1]));
         _modules.insert(std::pair<std::string, ModuleHandler>(cmdLine[1],
             ModuleHandler(dlManager.getInstance<AModule>(DYNLIB(cmdLine[1])))));
+        std::cout << "Module " << DYNLIB(cmdLine[1]) << " loaded." << std::endl;
     } catch (const ModuleLoader::ModuleLoaderException &e) {
+        for (auto &a : _modules)
+            std::cout << a.first << " & " << a.second.get() << std::endl;
         std::cerr << e.getComponent() << ": " << e.what() << std::endl;
     }
 }
@@ -82,6 +85,8 @@ void Server::_startModule(const std::vector<std::string> &cmdLine)
     if (cmdLine.size() != 2)
         throw ZiaCmdLineError("ZiaCmdLineError", "startmodule requires one argument.");
     try {
+        if (_modules.find(cmdLine[1]) == _modules.end())
+            throw ZiaModuleError("ZiaCmdLineError", "module " + cmdLine[1] + " not loaded.");
         _modules[cmdLine[1]].startModule();
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;
@@ -93,6 +98,8 @@ void Server::_stopModule(const std::vector<std::string> &cmdLine)
     if (cmdLine.size() != 2)
         throw ZiaCmdLineError("ZiaCmdLineError", "stopmodule requires one argument.");
     try {
+        if (_modules.find(cmdLine[1]) == _modules.end())
+            throw ZiaModuleError("ZiaCmdLineError", "module " + cmdLine[1] + " not loaded.");
         _modules[cmdLine[1]].stopModule();
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;

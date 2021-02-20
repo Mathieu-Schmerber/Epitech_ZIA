@@ -17,7 +17,7 @@ public:
     explicit Server();
     ~Server() = default;
 
-    [[noreturn]] void run();
+    void run();
     static std::string readAsyncFunction();
 
 private:
@@ -25,11 +25,13 @@ private:
     void _loadModule(const std::vector<std::string>& cmdLine);
     void _startModule(const std::vector<std::string>& cmdLine);
     void _stopModule(const std::vector<std::string>& cmdLine);
+    void _stopServer(const std::vector<std::string>& cmdLine);
 
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
     std::map<std::string, ModuleHandler> _modules;
     ModuleLoader::DynamicLibManager dlManager;
     bool _running = true;
+    std::future<std::string> _future;
 };
 
 

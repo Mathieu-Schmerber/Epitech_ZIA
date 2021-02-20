@@ -10,11 +10,12 @@ Server::Server()
 {
     for (int i = 0; i < 0; ++i)
         _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
+    _future = std::async(std::launch::async, Server::readAsyncFunction);
 }
 
-[[noreturn]] void Server::run()
+void Server::run()
 {
-    LOG(INFO) << "Server Started";
+    LOG(INFO) << "Server started";
 
     while (_running) {
         _readInput();
@@ -24,6 +25,7 @@ Server::Server()
             }
         }
     }
+    LOG(INFO) << "Server stopped";
 }
 
 std::string Server::readAsyncFunction()
@@ -36,17 +38,17 @@ std::string Server::readAsyncFunction()
 
 void Server::_readInput()
 {
-    static auto future = std::async(std::launch::async, Server::readAsyncFunction);
+    std::vector<std::string> cmdLine;
+    bool restart = false;
 
-    if (future.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
-        auto line = future.get();
-        future = std::async(std::launch::async, Server::readAsyncFunction);
+    if (_future.wait_for(std::chrono::seconds(0)) == std::future_status::ready) {
+        auto line = _future.get();
         std::istringstream lineToParse(line);
         std::string block;
-        std::vector<std::string> cmdLine;
 
         while (std::getline(lineToParse, block, ' '))
             cmdLine.push_back(block);
+        restart = true;
         try {
             if (cmdLine.empty())
                 return;
@@ -56,12 +58,16 @@ void Server::_readInput()
                 _startModule(cmdLine);
             else if (cmdLine[0] == "stopmodule")
                 _stopModule(cmdLine);
+            else if (cmdLine[0] == "stopserver")
+                _stopServer(cmdLine);
             else
                 throw ZiaCmdLineError("Zia command line error", "command \'" + cmdLine[0] + "\' not found.");
         } catch (const ZiaCmdLineError &e) {
             std::cerr << e.getComponent() << ": " << e.what() << std::endl;
         }
     }
+    if (restart && (cmdLine.empty() || cmdLine[0] != "stopserver"))
+        _future = std::async(std::launch::async, Server::readAsyncFunction);
 }
 
 void Server::_loadModule(const std::vector<std::string>& cmdLine)
@@ -108,4 +114,15 @@ void Server::_stopModule(const std::vector<std::string> &cmdLine)
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;
     }
+}
+
+void Server::_stopServer(const std::vector<std::string>& cmdLine)
+{
+    if (cmdLine.size() != 1)
+        throw ZiaCmdLineError("ZiaCmdLineError", "stopserver requires no argument.");
+    for (auto &a : _modules) {
+        if (a.second->getStatus())
+            a.second.stopModule();
+    }
+    _running = false;
 }

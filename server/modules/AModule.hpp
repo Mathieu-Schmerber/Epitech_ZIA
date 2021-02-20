@@ -11,8 +11,8 @@ class AModule : public IModule {
 public:
     explicit AModule();
     void loadConfigFile(const std::string &configFilePath) override = 0;
-    void dataInput(const std::string &) override = 0;
-    std::string dataOutput() override = 0;
+    void dataInput(const std::string &, int id) override = 0;
+    std::pair<std::string, int> dataOutput() override = 0;
     bool isInputData() override = 0;
     void run() override;
     bool getStatus() final;

@@ -26,13 +26,13 @@ void HTTPModule::loadConfigFile(const std::string &configFilePath)
 {
 }
 
-void HTTPModule::dataInput(const std::string &input)
+void HTTPModule::dataInput(const std::string &input, int id)
 {
 }
 
-std::string HTTPModule::dataOutput()
+std::pair<std::string, int> HTTPModule::dataOutput()
 {
-    return std::string("");
+    return std::pair<std::string, int>("oui", 0);
 }
 
 bool HTTPModule::isInputData()

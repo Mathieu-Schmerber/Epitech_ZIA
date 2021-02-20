@@ -14,8 +14,8 @@ public:
     explicit HTTPModule() = default;
 
     void loadConfigFile(const std::string &configFilePath) override;
-    void dataInput(const std::string &input) override;
-    std::string dataOutput() override;
+    void dataInput(const std::string &input, int id) override;
+    std::pair<std::string, int> dataOutput() override;
     bool isInputData() override;
     void run() override;
 private:

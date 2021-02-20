@@ -51,8 +51,8 @@ set(SOURCES
         server/main.cpp
 
         server/Server.cpp
-        server/modules/HTTP/network/tcp/TcpProtocol.cpp
-        server/modules/HTTP/network/tcp/TcpSocket.cpp
+        modules/HTTP/network/tcp/TcpProtocol.cpp
+        modules/HTTP/network/tcp/TcpSocket.cpp
 
         server/client/Client.cpp
 
@@ -63,9 +63,9 @@ set(SOURCES
         server/core/RequestParser/RequestParser.cpp
         server/Server.hpp
 
-        server/modules/HTTP/network/tcp/TcpProtocol.hpp
-        server/modules/HTTP/network/tcp/TcpSocket.hpp
-        server/modules/HTTP/network/tcp/ReceiveData.hpp
+        modules/HTTP/network/tcp/TcpProtocol.hpp
+        modules/HTTP/network/tcp/TcpSocket.hpp
+        modules/HTTP/network/tcp/ReceiveData.hpp
 
         server/client/Client.hpp
 
@@ -106,8 +106,8 @@ set(SOURCES
         server/core/ExceptionCore/ZiaHTTPError.hpp)
 
 set(SOURCES_HTTP_MODULE
-        server/modules/HTTP/HttpModule.cpp
-        server/modules/HTTP/HttpModule.hpp
+        modules/HTTP/HttpModule.cpp
+        modules/HTTP/HttpModule.hpp
         server/modules/IModule.hpp
         server/modules/AModule.cpp
         server/modules/AModule.hpp)
@@ -120,8 +120,8 @@ target_include_directories(server PRIVATE
         server
         server/tools
         server/modules
-        server/modules/HTTP/network
-        server/modules/HTTP/network/tcp
+        modules/HTTP/network
+        modules/HTTP/network/tcp
         server/client
         server/include/rapidjson
         server/exception

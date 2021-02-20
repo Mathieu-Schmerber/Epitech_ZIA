@@ -87,6 +87,8 @@ void Server::_startModule(const std::vector<std::string> &cmdLine)
     try {
         if (_modules.find(cmdLine[1]) == _modules.end())
             throw ZiaModuleError("ZiaCmdLineError", "module " + cmdLine[1] + " not loaded.");
+        if (_modules[cmdLine[1]]->getStatus())
+            throw ZiaModuleError("ZiaModuleError", "module " + cmdLine[1] + " is already started.");
         _modules[cmdLine[1]].startModule();
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;
@@ -100,6 +102,8 @@ void Server::_stopModule(const std::vector<std::string> &cmdLine)
     try {
         if (_modules.find(cmdLine[1]) == _modules.end())
             throw ZiaModuleError("ZiaCmdLineError", "module " + cmdLine[1] + " not loaded.");
+        if (!_modules[cmdLine[1]]->getStatus())
+            throw ZiaModuleError("ZiaModuleError", "module " + cmdLine[1] + " is not started.");
         _modules[cmdLine[1]].stopModule();
     } catch (const ZiaModuleError &e) {
         std::cerr << e.getErrorMessage() << std::endl;

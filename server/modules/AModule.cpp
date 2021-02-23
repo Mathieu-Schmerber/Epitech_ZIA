@@ -10,6 +10,7 @@ AModule::AModule(const std::string &name) : _running(false), _name(name) {}
 void AModule::run()
 {
     std::cout << "Start " << this->_name << " Module" << std::endl;
+    this->dataInput("php_rsc/test.php", 0);
     while (getStatus()) {
         this->handleQueue();
     }

@@ -6,12 +6,11 @@
 
 #include "PHP_CGI.hpp"
 #include <filesystem>
+#include <iostream>
 
 #if defined(_WIN32) || defined(WIN32)
     #include <Windows.h>
     #include <cstdio>
-#include <iostream>
-
 #endif
 
 extern "C" {
@@ -30,7 +29,7 @@ extern "C" {
 PHP_CGI::PHP_CGI() : AModule("PHP CGI")
 {
     #ifdef __unix__
-    // TODO: add php-cgi for unix
+        this->_cgiPath = "php_rsc/unix/php-cgi";
     #elif defined(_WIN32) || defined(WIN32)
         this->_cgiPath = "php_rsc/windows/php-cgi.exe";
     #endif
@@ -71,7 +70,7 @@ FILE *PHP_CGI::openOSPipe(const std::string &cmd)
 void PHP_CGI::closeOSPipe(FILE *pipe)
 {
 #ifdef __unix__
-    _pclose(pipe);
+    pclose(pipe);
 #elif defined(_WIN32) || defined(WIN32)
     _pclose(pipe);
 #endif
@@ -106,8 +105,7 @@ std::string PHP_CGI::handleRequest(const std::string &request)
     std::string cmd = PHP_CGI::getOSCmd(this->_cgiPath + " " + request);
 
     try {
-        std::string res = PHP_CGI::execute(cmd);
-        return res;
+        return PHP_CGI::execute(cmd);
     } catch (std::exception &error) {
         return error.what();
     }

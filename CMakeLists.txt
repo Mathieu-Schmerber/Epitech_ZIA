@@ -158,10 +158,6 @@ message("===========================================")
 
 target_link_libraries(server ${CONAN_LIBS})
 
-# copy php module sources to bin dir
-message("Copying php resources ${RESOURCES_PHP_MODULE} to ${CMAKE_BINARY_DIR}")
-file(COPY ${RESOURCES_PHP_MODULE} DESTINATION ${CMAKE_BINARY_DIR}/bin)
-
 if(MSVC)
     set(Boost_USE_STATIC_LIBS        ON)  # only find static libs
     set(Boost_USE_DEBUG_LIBS         OFF) # ignore debug libs and
@@ -173,3 +169,12 @@ if(MSVC)
         target_link_libraries(server ${Boost_LIBRARIES})
     endif()
 endif()
+
+if (UNIX)
+    # copy lib dir to bin dir
+    message("Copying lib ${CMAKE_BINARY_DIR}/lib to ${CMAKE_BINARY_DIR}/bin")
+    file(COPY ${CMAKE_BINARY_DIR}/lib DESTINATION ${CMAKE_BINARY_DIR}/bin)
+endif()
+# copy php module sources to bin dir
+message("Copying php resources ${RESOURCES_PHP_MODULE} to ${CMAKE_BINARY_DIR}/bin")
+file(COPY ${RESOURCES_PHP_MODULE} DESTINATION ${CMAKE_BINARY_DIR}/bin)

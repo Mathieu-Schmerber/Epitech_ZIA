@@ -16,7 +16,7 @@
 
 #ifdef __unix__
     #include <dlfcn.h>
-    #define DYNLIB(name) (std::string(name) + std::string(".so")).c_str()
+    #define DYNLIB(name) ("lib/lib" + std::string(name) + std::string(".so")).c_str()
 #elif defined(_WIN32) || defined(WIN32)
     #include <winsock2.h>
     #include <windows.h>

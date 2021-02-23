@@ -10,14 +10,15 @@ AModule::AModule(const std::string &name) : _running(false), _name(name) {}
 void AModule::run()
 {
     std::cout << "Start " << this->_name << " Module" << std::endl;
-    while (getStatus())
+    while (getStatus()) {
         this->handleQueue();
+    }
     std::cout << "End " << this->_name << " Module" << std::endl;
 }
 
 //region Queue handling
 /**
- * \brief Push new request to be handle
+ * \brief Push new request to be handled
  **/
 void AModule::dataInput(const std::string &str, int id)
 {
@@ -40,7 +41,7 @@ std::pair<std::string, int> AModule::dataOutput()
 /**
  * \brief Looping from AModule::run() method while AModule::_running
  **/
-void AModule::handleQueue() {}
+void AModule::handleQueue() {std::cout << ":c" << std::endl;}
 //endregion
 
 //region Getters and setters

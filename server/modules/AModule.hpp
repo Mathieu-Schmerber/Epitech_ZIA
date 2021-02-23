@@ -7,6 +7,7 @@
 #ifndef ZIA_AMODULE_HPP
 #define ZIA_AMODULE_HPP
 
+#include <vector>
 #include "IModule.hpp"
 
 /**
@@ -16,21 +17,29 @@
 
 class AModule : public IModule {
 public:
-    explicit AModule();
+    explicit AModule(const std::string &name);
     void loadConfigFile(const std::string &configFilePath) override {};
-    void dataInput(const std::string &, int id) override {};
-    std::pair<std::string, int> dataOutput() override {
-        return std::pair<std::string, int>("", 0);
-    };
+
+    void dataInput(const std::string &, int id) final;
+    std::pair<std::string, int> dataOutput() final;
+
     bool isInputData() override {
         return false;
     };
-    void run() override;
+    void run() final;
     bool getStatus() final;
     void startModule() final;
     void stopModule() final;
+
 private:
     bool _running;
+
+protected:
+    const std::string _name;
+    std::vector<std::pair<std::string, int>> _inQueue;
+    std::vector<std::pair<std::string, int>> _outQueue;
+
+    virtual void handleQueue();
 };
 
 #endif //ZIA_AMODULE_HPP

@@ -22,29 +22,17 @@ extern "C" {
     }
 }
 
+HTTPModule::HTTPModule() : AModule("HTTP") {}
+
 void HTTPModule::loadConfigFile(const std::string &configFilePath)
 {
+
 }
 
-void HTTPModule::dataInput(const std::string &input, int id)
+/**
+ * \brief Looping on AModule::run() while AModule::_running
+ * **/
+void HTTPModule::handleQueue()
 {
-}
 
-std::pair<std::string, int> HTTPModule::dataOutput()
-{
-    return std::pair<std::string, int>("oui", 0);
-}
-
-bool HTTPModule::isInputData()
-{
-    return true;
-}
-
-void HTTPModule::run()
-{
-    std::cout << "Start HTTP Module" << std::endl;
-    while (getStatus()) {
-
-    }
-    std::cout << "End HTTP Module" << std::endl;
 }

@@ -58,7 +58,6 @@ set(SOURCES
 
         server/ConfigurationHandler.cpp
 
-        #server/modules/PHP/PHP_CGI.cpp
         server/core/RequestHandler/RequestHandler.cpp
         server/core/RequestParser/RequestParser.cpp
         server/Server.hpp
@@ -81,7 +80,6 @@ set(SOURCES
         server/loader/DynamicLibManager.hpp
 
         server/modules/IModule.hpp
-        #server/modules/PHP/PHP_CGI.hpp
         server/core/RequestHandler/RequestHandler.hpp
         server/core/Request/IRequest.hpp
         server/core/Request/GetRequest.hpp
@@ -112,6 +110,13 @@ set(SOURCES_HTTP_MODULE
         server/modules/AModule.cpp
         server/modules/AModule.hpp)
 
+set(SOURCES_PHP_MODULE
+        modules/PHP/PHP_CGI.cpp
+        modules/PHP/PHP_CGI.hpp
+        server/modules/IModule.hpp
+        server/modules/AModule.cpp
+        server/modules/AModule.hpp)
+
 add_executable(server ${SOURCES})
 
 include(GNUInstallDirs)
@@ -122,6 +127,7 @@ target_include_directories(server PRIVATE
         server/modules
         modules/HTTP/network
         modules/HTTP/network/tcp
+        modules/PHP
         server/client
         server/include/rapidjson
         server/exception
@@ -135,7 +141,13 @@ target_include_directories(server PRIVATE
 add_library(httpModule SHARED
         ${SOURCES_HTTP_MODULE})
 
+add_library(phpModule SHARED
+        ${SOURCES_PHP_MODULE})
+
 target_include_directories(httpModule PRIVATE
+        server/modules)
+
+target_include_directories(phpModule PRIVATE
         server/modules)
 
 message("===========================================")

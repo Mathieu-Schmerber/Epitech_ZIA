@@ -11,14 +11,11 @@
 
 class HTTPModule : public AModule {
 public:
-    explicit HTTPModule() = default;
-
+    explicit HTTPModule();
     void loadConfigFile(const std::string &configFilePath) override;
-    void dataInput(const std::string &input, int id) override;
-    std::pair<std::string, int> dataOutput() override;
-    bool isInputData() override;
-    void run() override;
+
 private:
+    void handleQueue() override;
 };
 
 #endif //ZIA_HTTPMODULE_HPP

@@ -42,23 +42,9 @@ void fct_request()
         std::cout << "[" << a.first << "] -> [" << a.second << "]" << std::endl;
 }
 
-// \TMP
-
-#include "Router/Router.hpp"
-
-// TMP\
-
 int main() {
-    //fct_server();
+    fct_server();
     //fct_request();
 
-
-    try {
-        Router router;
-
-        router.init();
-    } catch (std::exception &err) {
-        std::cerr << err.what() << std::endl;
-    }
     return (0);
 }

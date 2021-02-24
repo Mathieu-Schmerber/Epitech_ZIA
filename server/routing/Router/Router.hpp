@@ -7,13 +7,14 @@
 
 #include <map>
 #include <memory>
-#include "Route/Route.hpp"
+#include <filesystem>
+
+namespace fs = std::filesystem;
 
 class Router
 {
 private:
-    std::filesystem::path _wwwPath;
-    std::map<std::string, std::shared_ptr<Route>> _routes;
+    fs::path _wwwPath;
 
     [[nodiscard]] std::string getPath(const std::string &route) const;
 
@@ -21,11 +22,15 @@ public:
     explicit Router() = default;
     ~Router() = default;
 
-    std::shared_ptr<Route> addRoute(const std::string &routePath, const std::string &fromFolder = "");
-    [[nodiscard]] std::shared_ptr<Route> getRoute(const std::string &routePath);
+    void addRoute(const std::string &routePath, const std::string &fromFolder = "");
+    void deleteRoute(const std::string &routePath);
+    void clearRoute(const std::string &routePath, bool clearFolders = false);
+
+    std::string create(const std::string &routePath, const std::string &filename, const std::string &content = "");
+    std::string get(const std::string &routePath, const std::string &filename);
+    void remove(const std::string &routePath, const std::string &filename);
 
     void init();
-
     [[nodiscard]] bool initialized() const;
 };
 

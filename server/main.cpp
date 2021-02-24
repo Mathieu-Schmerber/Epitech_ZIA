@@ -42,8 +42,29 @@ void fct_request()
         std::cout << "[" << a.first << "] -> [" << a.second << "]" << std::endl;
 }
 
+// \TMP
+
+#include "Router/Router.hpp"
+
+// TMP\
+
 int main() {
-    fct_server();
+    //fct_server();
     //fct_request();
+
+
+    try {
+        std::cout << "testing" << std::endl;
+        auto *router = new Router();
+
+        router->init();
+        std::cout << "initialized" << std::endl;
+        router->addRoute("/test");
+        std::cout << "?" << std::endl;
+        router->addRoute("/zizi");
+        //router.addRoute("/pouet", "/php_rsc");
+    } catch (std::exception &err) {
+        std::cerr << err.what() << std::endl;
+    }
     return (0);
 }

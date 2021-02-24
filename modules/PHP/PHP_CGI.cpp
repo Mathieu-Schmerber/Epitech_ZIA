@@ -35,7 +35,7 @@ PHP_CGI::PHP_CGI() : AModule("PHP CGI")
     #endif
 }
 
-void PHP_CGI::loadConfigFile(const std::string &configFilePath) {std::cout << "PHP CGI pouet" << std::endl;}
+void PHP_CGI::loadConfigFile(const std::string &configFilePath) {}
 
 /**
  * \brief Get command OS independently

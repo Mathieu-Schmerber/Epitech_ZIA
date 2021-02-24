@@ -100,7 +100,7 @@ set(SOURCES
         server/modules/ModuleHandler.hpp
         server/modules/ModuleException.hpp
         server/ServerException.hpp
-        server/core/ExceptionCore/ZiaHTTPError.hpp)
+        server/core/ExceptionCore/ZiaHTTPError.hpp server/routing/Route/Route.cpp server/routing/Route/Route.hpp server/routing/Router/Router.cpp server/routing/Router/Router.hpp)
 
 set(SOURCES_HTTP_MODULE
         modules/HTTP/HttpModule.cpp
@@ -137,6 +137,7 @@ target_include_directories(server PRIVATE
         server/core/Request
         server/core/RequestParser
         server/core/ExceptionCore
+        server/routing
         server/loader
         )
 

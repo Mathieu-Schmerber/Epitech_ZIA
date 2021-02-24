@@ -54,15 +54,9 @@ int main() {
 
 
     try {
-        std::cout << "testing" << std::endl;
-        auto *router = new Router();
+        Router router;
 
-        router->init();
-        std::cout << "initialized" << std::endl;
-        router->addRoute("/test");
-        std::cout << "?" << std::endl;
-        router->addRoute("/zizi");
-        //router.addRoute("/pouet", "/php_rsc");
+        router.init();
     } catch (std::exception &err) {
         std::cerr << err.what() << std::endl;
     }

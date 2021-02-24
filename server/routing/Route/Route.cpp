@@ -5,7 +5,7 @@
 #include <iostream>
 #include "Route.hpp"
 
-Route::Route(const std::string &path) : _path(path) {std::cout << "+ Route: " << path << std::endl;}
+Route::Route(const std::string &path) : _path(path) {}
 
 void Route::addFile(const std::string &source)
 {

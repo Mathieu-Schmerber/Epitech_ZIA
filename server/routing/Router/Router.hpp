@@ -21,7 +21,7 @@ public:
     explicit Router() = default;
     ~Router() = default;
 
-    std::shared_ptr<Route> addRoute(const std::string &routePath, const std::string &fromFolder = nullptr);
+    std::shared_ptr<Route> addRoute(const std::string &routePath, const std::string &fromFolder = "");
     [[nodiscard]] std::shared_ptr<Route> getRoute(const std::string &routePath);
 
     void init();

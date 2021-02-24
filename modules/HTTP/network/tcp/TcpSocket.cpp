@@ -68,40 +68,6 @@ void TcpSocket::send(int id, const std::string &msg)
     }
 }
 
-void TcpSocket::sendToEveryone(const std::string &msg, int id = -1)
-{
-    for (const auto &client : _clients) {
-        if (client->getId() != id)
-            client->send(msg);
-    }
-}
-
-void TcpSocket::setUsername(int id, const std::string& username)
-{
-    for (const auto &client : _clients) {
-        if (client->getId() == id)
-            client->setUsername(username);
-    }
-}
-
-std::string TcpSocket::getUsername(int id)
-{
-    for (const auto &client : _clients) {
-        if (client->getId() == id)
-            return client->getUsername();
-    }
-    return "";
-}
-
-int TcpSocket::getId(const std::string &ip) const
-{
-    for (const auto &client : _clients) {
-        if (client->getIp() == ip)
-            return client->getId();
-    }
-    return -1;
-}
-
 std::string TcpSocket::getNewDisconnect()
 {
     if (!_ipDisconnect.empty()) {
@@ -162,14 +128,4 @@ void InstanceClientTCP::send(const std::string &msg)
 int InstanceClientTCP::getId() const
 {
     return _id;
-}
-
-void InstanceClientTCP::setUsername(std::string username)
-{
-    _username = std::move(username);
-}
-
-std::string InstanceClientTCP::getUsername()
-{
-    return _username;
 }

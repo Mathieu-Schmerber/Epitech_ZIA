@@ -20,8 +20,8 @@ public:
     explicit AModule(const std::string &name);
     void loadConfigFile(const std::string &configFilePath) override {};
 
-    void dataInput(const std::string &, int id) final;
-    std::pair<std::string, int> dataOutput() final;
+    void dataInput(const std::string &, int id) override;
+    std::pair<std::string, int> dataOutput() override;
 
     bool isInputData() override {
         return false;

@@ -16,6 +16,7 @@ public:
 
 private:
     void handleQueue() override;
+    const std::string filePath = "./http.json";
 };
 
 #endif //ZIA_HTTPMODULE_HPP

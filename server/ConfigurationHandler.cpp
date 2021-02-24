@@ -19,7 +19,7 @@ std::string ConfigurationHandler::readFile(const std::string &filepath)
     std::string file;
     std::string line;
 
-    std::ifstream myfile("config.json");
+    std::ifstream myfile(filepath);
     if (myfile.is_open()) {
         while (getline(myfile, line)) {
             file += line + '\n';
@@ -38,6 +38,21 @@ void ConfigurationHandler::loadConfiguration(const std::string &filepath)
     _doc.Parse(file.c_str());
 
     loadModules();
+}
+
+int ConfigurationHandler::loadHttpModule(const std::string &filepath)
+{
+    std::string file = readFile(filepath);
+
+    _docHttp.Parse(file.c_str());
+
+    if (_docHttp.HasMember("port") == 0) {
+        LOG(WARN) << "No port found";
+        return -1;
+    }
+    if (_docHttp["port"].IsInt64())
+        return _docHttp["port"].GetInt64();
+    return -1;
 }
 
 void ConfigurationHandler::loadModules()

@@ -4,6 +4,7 @@
 
 #include "IModule.hpp"
 #include "HttpModule.hpp"
+#include "ConfigurationHandler.hpp"
 #include <iostream>
 
 #if defined(_WIN32) || defined(WIN32)
@@ -22,11 +23,16 @@ extern "C" {
     }
 }
 
-HTTPModule::HTTPModule() : AModule("HTTP") {}
+HTTPModule::HTTPModule() : AModule("HTTP")
+{
+    HTTPModule::loadConfigFile(filePath);
+}
 
 void HTTPModule::loadConfigFile(const std::string &configFilePath)
 {
-
+    ConfigurationHandler config = ConfigurationHandler();
+    int port = config.loadHttpModule(configFilePath);
+    std::cout << port << std::endl;
 }
 
 /**

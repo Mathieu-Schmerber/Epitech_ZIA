@@ -33,6 +33,7 @@ class ConfigurationHandler
 
         std::string readFile(const std::string &filepath);
         void loadConfiguration(const std::string &filepath);
+        int loadHttpModule(const std::string &filepath);
         std::vector<t_module> getLoadedModules();
 
     private:
@@ -41,6 +42,7 @@ class ConfigurationHandler
         std::vector<t_module> _modules;
         int _numberOfLoadedModules;
         rapidjson::Document _doc;
+        rapidjson::Document _docHttp;
 
 };
 

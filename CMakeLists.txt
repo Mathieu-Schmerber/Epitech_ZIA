@@ -108,7 +108,9 @@ set(SOURCES_HTTP_MODULE
         modules/HTTP/HttpModule.hpp
         server/modules/IModule.hpp
         server/modules/AModule.cpp
-        server/modules/AModule.hpp)
+        server/modules/AModule.hpp
+        server/ConfigurationHandler.cpp
+        server/ConfigurationHandler.hpp)
 
 set(SOURCES_PHP_MODULE
         modules/PHP/PHP_CGI.cpp
@@ -145,7 +147,10 @@ add_library(phpModule SHARED
         ${SOURCES_PHP_MODULE})
 
 target_include_directories(httpModule PRIVATE
-        server/modules)
+        server/modules
+        server
+        server/include/rapidjson
+        server/tools)
 
 target_include_directories(phpModule PRIVATE
         server/modules)

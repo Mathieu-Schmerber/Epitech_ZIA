@@ -6,6 +6,7 @@
 #define ZIA_HTTPMODULE_HPP
 
 #include "AModule.hpp"
+#include "TcpProtocol.hpp"
 #include <string>
 #include <thread>
 
@@ -13,10 +14,14 @@ class HTTPModule : public AModule {
 public:
     explicit HTTPModule();
     void loadConfigFile(const std::string &configFilePath) override;
+    std::pair<std::string, int> getInput();
 
-private:
+
+    private:
     void handleQueue() override;
-    const std::string filePath = "./http.json";
+    const std::string _filePath = "./http.json";
+    int _port;
+    TcpProtocol *_sTcp;
 };
 
 #endif //ZIA_HTTPMODULE_HPP

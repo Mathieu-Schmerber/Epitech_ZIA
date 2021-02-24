@@ -110,7 +110,12 @@ set(SOURCES_HTTP_MODULE
         server/modules/AModule.cpp
         server/modules/AModule.hpp
         server/ConfigurationHandler.cpp
-        server/ConfigurationHandler.hpp)
+        server/ConfigurationHandler.hpp
+        modules/HTTP/network/tcp/TcpProtocol.hpp
+        modules/HTTP/network/tcp/TcpProtocol.cpp
+        modules/HTTP/network/tcp/TcpSocket.hpp
+        modules/HTTP/network/tcp/TcpSocket.cpp
+        modules/HTTP/network/tcp/ReceiveData.hpp)
 
 set(SOURCES_PHP_MODULE
         modules/PHP/PHP_CGI.cpp
@@ -150,7 +155,8 @@ target_include_directories(httpModule PRIVATE
         server/modules
         server
         server/include/rapidjson
-        server/tools)
+        server/tools
+        modules/HTTP/network/tcp)
 
 target_include_directories(phpModule PRIVATE
         server/modules)

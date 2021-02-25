@@ -28,8 +28,8 @@ public:
     };
     void run() final;
     bool getStatus() final;
-    void startModule() final;
-    void stopModule() final;
+    void startModule() override;
+    void stopModule() override;
 
 private:
     bool _running;

@@ -15,7 +15,8 @@ public:
     explicit HTTPModule();
     void loadConfigFile(const std::string &configFilePath) override;
     std::pair<std::string, int> getInput();
-
+    void startModule() override;
+    void stopModule() override;
 
     private:
     void handleQueue() override;

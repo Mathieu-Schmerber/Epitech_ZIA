@@ -48,10 +48,10 @@ int ConfigurationHandler::loadHttpModule(const std::string &filepath)
 
     if (_docHttp.HasMember("port") == 0) {
         LOG(WARN) << "No port found";
-        return -1;
+        return 80;
     }
     if (_docHttp["port"].IsInt64())
-        return _docHttp["port"].GetInt64();
+        return _docHttp["port"].GetInt();
     return -1;
 }
 

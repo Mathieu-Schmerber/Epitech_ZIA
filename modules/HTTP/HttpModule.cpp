@@ -25,8 +25,6 @@ extern "C" {
 
 HTTPModule::HTTPModule() : AModule("HTTP")
 {
-    HTTPModule::loadConfigFile(_filePath);
-    _sTcp = new TcpProtocol("0.0.0.0", _port);
 }
 
 void HTTPModule::loadConfigFile(const std::string &configFilePath)
@@ -61,4 +59,17 @@ std::pair<std::string, int> HTTPModule::getInput()
     std::pair<std::string, int> in = _inQueue.front();
     _inQueue.erase(_inQueue.begin());
     return in;
+}
+
+void HTTPModule::startModule()
+{
+    AModule::startModule();
+    HTTPModule::loadConfigFile(_filePath);
+    _sTcp = new TcpProtocol("0.0.0.0", _port);
+}
+
+void HTTPModule::stopModule()
+{
+    AModule::stopModule();
+    delete _sTcp;
 }

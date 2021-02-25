@@ -62,6 +62,7 @@ int ConfigurationHandler::loadHttpModule(const std::string &filepath)
 void ConfigurationHandler::loadModules()
 {
     _numberOfLoadedModules = 0;
+    _modules.clear();
     if (_doc.HasMember("modules") == 0) {
         LOG(WARN) << "No modules found.";
         return;

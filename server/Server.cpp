@@ -60,6 +60,8 @@ void Server::_readInput()
                 _stopModule(cmdLine);
             else if (cmdLine[0] == "stopserver")
                 _stopServer(cmdLine);
+            else if (cmdLine[0] == "reload" || cmdLine[0] == "r")
+                _reloadConfiguration(cmdLine);
             else
                 throw ZiaCmdLineError("Zia command line error", "command \'" + cmdLine[0] + "\' not found.");
         } catch (const ZiaCmdLineError &e) {
@@ -130,4 +132,9 @@ void Server::_stopServer(const std::vector<std::string>& cmdLine)
         }
     }
     _running = false;
+}
+
+void Server::_reloadConfiguration(const std::vector<std::string> &)
+{
+    _configHandler.loadConfiguration("config.json");
 }

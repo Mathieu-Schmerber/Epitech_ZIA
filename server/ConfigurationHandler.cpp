@@ -26,7 +26,8 @@ std::string ConfigurationHandler::readFile(const std::string &filepath)
         }
         myfile.close();
     } else {
-        std::cerr << "Unable to open file" << std::endl;
+        LOG(WARN) << "Unable to open file";
+        return "";
     }
     return file;
 }
@@ -35,6 +36,8 @@ void ConfigurationHandler::loadConfiguration(const std::string &filepath)
 {
     std::string file = readFile(filepath);
 
+    if (file.empty())
+        return;
     _doc.Parse(file.c_str());
 
     loadModules();
@@ -43,6 +46,8 @@ void ConfigurationHandler::loadConfiguration(const std::string &filepath)
 int ConfigurationHandler::loadHttpModule(const std::string &filepath)
 {
     std::string file = readFile(filepath);
+    if (file.empty())
+        return -1;
 
     _docHttp.Parse(file.c_str());
 
@@ -57,6 +62,7 @@ int ConfigurationHandler::loadHttpModule(const std::string &filepath)
 
 void ConfigurationHandler::loadModules()
 {
+    _numberOfLoadedModules = 0;
     if (_doc.HasMember("modules") == 0) {
         LOG(WARN) << "No modules found.";
         return;
@@ -75,7 +81,7 @@ void ConfigurationHandler::loadModules()
             _numberOfLoadedModules++;
         }
     }
-    LOG(INFO) << "Loaded: " << _numberOfLoadedModules << " modules.";
+    LOG(INFO) << "Loaded " << _numberOfLoadedModules << " modules.";
 }
 
 std::vector<t_module> ConfigurationHandler::getLoadedModules()

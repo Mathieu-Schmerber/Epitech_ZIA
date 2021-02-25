@@ -14,6 +14,7 @@
 #include "TcpProtocol.hpp"
 #include "AModule.hpp"
 #include "Client.hpp"
+#include "ConfigurationHandler.hpp"
 
 #ifdef _WIN32
     #define _WIN32_WINNT  0x0601
@@ -42,12 +43,15 @@ private:
     void _startModule(const std::vector<std::string>& cmdLine);
     void _stopModule(const std::vector<std::string>& cmdLine);
     void _stopServer(const std::vector<std::string>& cmdLine);
+    void _reloadConfiguration(const std::vector<std::string>& cmdLine);
 
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
     std::map<std::string, std::shared_ptr<ModuleHandler>> _modules[2];
     ModuleLoader::DynamicLibManager dlManager;
     bool _running = true;
     std::future<std::string> _future;
+    ConfigurationHandler _configHandler;
+
 };
 
 

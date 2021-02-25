@@ -84,6 +84,7 @@ void Server::_loadModule(const std::vector<std::string>& cmdLine)
     try {
         dlManager.loadNewLib<AModule>(DYNLIB(cmdLine[1]));
         std::shared_ptr<ModuleHandler> toAdd = std::make_shared<ModuleHandler>(ModuleHandler(dlManager.getInstance<AModule>(DYNLIB(cmdLine[1]))));
+        //FIXME
         if (toAdd->get()->isInputData())
             _modules[MODULE_IN].insert(std::pair<std::string, std::shared_ptr<ModuleHandler>>(cmdLine[1], toAdd));
         else

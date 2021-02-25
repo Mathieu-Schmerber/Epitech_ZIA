@@ -41,9 +41,6 @@ void HTTPModule::handleQueue()
 {
     ReceiveData receive;
     std::pair<std::string, int> in;
-    if (_sTcp->userDisconnected() && !_sTcp->getNewDisconnect().empty()) {
-        //TODO remove user
-    }
     if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
         _outQueue.emplace_back(receive.receive, receive.id);
     }

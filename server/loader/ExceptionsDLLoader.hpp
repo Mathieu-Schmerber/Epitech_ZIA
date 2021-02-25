@@ -30,6 +30,11 @@ namespace ModuleLoader {
     public:
         explicit DynamicLibError(std::string const &message) : ModuleLoaderException("DynamicLibError", message) {};
     };
+
+    class DynamicLibAlreadyExist : public ModuleLoaderException {
+    public:
+        explicit DynamicLibAlreadyExist(std::string const &message) : ModuleLoaderException("DynamicLibAlreadyExist", message) {};
+    };
 }
 
 #endif //ZIA_EXCEPTIONSDLLOADER_HPP

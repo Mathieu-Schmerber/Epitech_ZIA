@@ -23,10 +23,12 @@ namespace ModuleLoader {
 
     public:
         template<typename T>
-        void loadNewLib(std::string libName)
+        void loadNewLib(const std::string& libName)
         {
             if (!libStocked(libName))
                 _libs.push_back(new DLLoader<T>(libName));
+            else
+                throw DynamicLibAlreadyExist("module " + libName + " is already loaded.");
         }
 
         template<typename T>

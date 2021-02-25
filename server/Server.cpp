@@ -142,17 +142,20 @@ void Server::_cmdExitServer(const std::vector<std::string>& cmdLine)
 void Server::_cmdLoadConfiguration(const std::vector<std::string> &cmdLine)
 {
     std::vector<t_module> _loadedModules;
-    _loadedModules = _configHandler.getLoadedModules();
-
-
-    for (auto & _loadedModule : _loadedModules) {
-        _stopModule(_loadedModule.name);
+    for (auto & module : _modules)
+    {
+        for (auto & a : module)
+        {
+            if (a.second->get()->getStatus())
+                a.second->stopModule();
+        }
     }
 
     _configHandler.loadConfiguration("config.json"); ///FIXME : Change path
     _loadedModules = _configHandler.getLoadedModules();
     for (auto & _loadedModule : _loadedModules) {
-        _loadModule(_loadedModule.name);
+        if (!dlManager.libStocked(DYNLIB(_loadedModule.name)))
+            _loadModule(_loadedModule.name);
         _startModule(_loadedModule.name);
     }
 }

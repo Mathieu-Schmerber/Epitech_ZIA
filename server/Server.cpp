@@ -65,6 +65,8 @@ void Server::_readInput()
                 _reloadModules(cmdLine);
             else if (cmdLine[0] == "exit")
                 _exitServer(cmdLine);
+            else if (cmdLine[0] == "reload" || cmdLine[0] == "r")
+                _reloadConfiguration(cmdLine);
             else
                 throw ZiaCmdLineError("Zia command line error", "command \'" + cmdLine[0] + "\' not found.");
         } catch (const ZiaCmdLineError &e) {
@@ -163,4 +165,9 @@ void Server::_exitServer(const std::vector<std::string>& cmdLine)
         }
     }
     _running = false;
+}
+
+void Server::_reloadConfiguration(const std::vector<std::string> &)
+{
+    _configHandler.loadConfiguration("config.json");
 }

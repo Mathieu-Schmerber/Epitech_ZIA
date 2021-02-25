@@ -13,6 +13,7 @@
 #include "ModuleHandler.hpp"
 #include "AModule.hpp"
 #include "Client.hpp"
+#include "ConfigurationHandler.hpp"
 #include <future>
 
 #ifdef _WIN32
@@ -44,12 +45,14 @@ private:
     void _reloadModule(const std::vector<std::string>& cmdLine);
     void _reloadModules(const std::vector<std::string>& cmdLine);
     void _exitServer(const std::vector<std::string>& cmdLine);
+    void _reloadConfiguration(const std::vector<std::string>& cmdLine);
 
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
     std::map<std::string, std::shared_ptr<ModuleHandler>> _modules[2];
     ModuleLoader::DynamicLibManager dlManager;
     bool _running = true;
     std::future<std::string> _future;
+    ConfigurationHandler _configHandler;
 };
 
 

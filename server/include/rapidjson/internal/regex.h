@@ -104,7 +104,7 @@ class GenericRegexSearch;
 
     \note This is a Thompson NFA engine, implemented with reference to 
         Cox, Russ. "Regular Expression Matching Can Be Simple And Fast (but is slow in Java, Perl, PHP, Python, Ruby,...).", 
-        https://swtch.com/~rsc/regexp/regexp1.html 
+        https://swtch.com/~php_rsc/regexp/regexp1.html
 */
 template <typename Encoding, typename Allocator = CrtAllocator>
 class GenericRegex {

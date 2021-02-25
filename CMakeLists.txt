@@ -12,7 +12,6 @@ if (DOXYGEN_FOUND)
     set(DOXYGEN_IN ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile.in)
     set(DOXYGEN_OUT ${CMAKE_CURRENT_BINARY_DIR}/build/Doxyfile)
 
-
     # request to configure the file
     configure_file(${DOXYGEN_IN} ${DOXYGEN_OUT} @ONLY)
     message("Doxygen build started")
@@ -101,7 +100,9 @@ set(SOURCES
         server/modules/ModuleHandler.hpp
         server/modules/ModuleException.hpp
         server/ServerException.hpp
-        server/core/ExceptionCore/ZiaHTTPError.hpp)
+        server/core/ExceptionCore/ZiaHTTPError.hpp
+        server/routing/Router/Router.cpp
+        server/routing/Router/Router.hpp)
 
 set(SOURCES_HTTP_MODULE
         modules/HTTP/HttpModule.cpp
@@ -124,6 +125,9 @@ set(SOURCES_PHP_MODULE
         server/modules/AModule.cpp
         server/modules/AModule.hpp)
 
+set(RESOURCES_PHP_MODULE
+        modules/PHP/php_rsc)
+
 add_executable(server ${SOURCES})
 
 include(GNUInstallDirs)
@@ -142,6 +146,7 @@ target_include_directories(server PRIVATE
         server/core/Request
         server/core/RequestParser
         server/core/ExceptionCore
+        server/routing
         server/loader
         )
 
@@ -178,3 +183,12 @@ if(MSVC)
         target_link_libraries(server ${Boost_LIBRARIES})
     endif()
 endif()
+
+if (UNIX)
+    # copy lib dir to bin dir
+    message("Copying lib ${CMAKE_BINARY_DIR}/lib to ${CMAKE_BINARY_DIR}/bin")
+    file(COPY ${CMAKE_BINARY_DIR}/lib DESTINATION ${CMAKE_BINARY_DIR}/bin)
+endif()
+# copy php module sources to bin dir
+message("Copying php resources ${RESOURCES_PHP_MODULE} to ${CMAKE_BINARY_DIR}/bin")
+file(COPY ${RESOURCES_PHP_MODULE} DESTINATION ${CMAKE_BINARY_DIR}/bin)

@@ -9,10 +9,16 @@
 
 #include "AModule.hpp"
 
+#define BUFFER_SIZE 256
+
 class PHP_CGI : public AModule {
 private:
-    std::pair<std::string, int> _in;
+    std::string _cgiPath;
 
+    static std::string getOSCmd(const std::string &cmd);
+    static FILE *openOSPipe(const std::string &cmd);
+    static void closeOSPipe(FILE *pipe);
+    static std::string execute(const std::string &cmd);
     std::string handleRequest(const std::string &request);
     void handleQueue() override;
 

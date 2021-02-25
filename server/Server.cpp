@@ -5,6 +5,7 @@
 #include "Server.hpp"
 #include "ModuleException.hpp"
 #include "ServerException.hpp"
+#include <sstream>
 
 Server::Server()
 {
@@ -58,15 +59,19 @@ void Server::_readInput()
                 _startModule(cmdLine);
             else if (cmdLine[0] == "stopmodule")
                 _stopModule(cmdLine);
-            else if (cmdLine[0] == "stopserver")
-                _stopServer(cmdLine);
+            else if (cmdLine[0] == "reloadmodule")
+                _reloadModule(cmdLine);
+            else if (cmdLine[0] == "reloadmodules")
+                _reloadModules(cmdLine);
+            else if (cmdLine[0] == "exit")
+                _exitServer(cmdLine);
             else
                 throw ZiaCmdLineError("Zia command line error", "command \'" + cmdLine[0] + "\' not found.");
         } catch (const ZiaCmdLineError &e) {
             std::cerr << e.getComponent() << ": " << e.what() << std::endl;
         }
     }
-    if (restart && (cmdLine.empty() || cmdLine[0] != "stopserver"))
+    if (restart && (cmdLine.empty() || cmdLine[0] != "exit"))
         _future = std::async(std::launch::async, Server::readAsyncFunction);
 }
 
@@ -119,7 +124,35 @@ void Server::_stopModule(const std::vector<std::string> &cmdLine)
     }
 }
 
-void Server::_stopServer(const std::vector<std::string>& cmdLine)
+void Server::_reloadModule(const std::vector<std::string> &cmdLine)
+{
+    if (cmdLine.size() != 2)
+        throw ZiaCmdLineError("ZiaCmdLineError", "reloadmodule requires one argument.");
+    for (auto &a : _modules) {
+        for (auto &b : a) {
+            if (b.first == cmdLine.at(1) && b.second->get()->getStatus()) {
+                b.second->stopModule();
+                b.second->startModule();
+            }
+        }
+    }
+}
+
+void Server::_reloadModules(const std::vector<std::string> &cmdLine)
+{
+    if (cmdLine.size() != 1)
+        throw ZiaCmdLineError("ZiaCmdLineError", "reloadmodule requires no argument.");
+    for (auto &a : _modules) {
+        for (auto &b : a) {
+            if (b.second->get()->getStatus()) {
+                b.second->stopModule();
+                b.second->startModule();
+            }
+        }
+    }
+}
+
+void Server::_exitServer(const std::vector<std::string>& cmdLine)
 {
     if (cmdLine.size() != 1)
         throw ZiaCmdLineError("ZiaCmdLineError", "stopserver requires no argument.");

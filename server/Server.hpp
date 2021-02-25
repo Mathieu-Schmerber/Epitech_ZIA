@@ -11,9 +11,9 @@
 #include "DynamicLibManager.hpp"
 #include "RequestHandler.hpp"
 #include "ModuleHandler.hpp"
-#include "TcpProtocol.hpp"
 #include "AModule.hpp"
 #include "Client.hpp"
+#include <future>
 
 #ifdef _WIN32
     #define _WIN32_WINNT  0x0601
@@ -41,7 +41,9 @@ private:
     void _loadModule(const std::vector<std::string>& cmdLine);
     void _startModule(const std::vector<std::string>& cmdLine);
     void _stopModule(const std::vector<std::string>& cmdLine);
-    void _stopServer(const std::vector<std::string>& cmdLine);
+    void _reloadModule(const std::vector<std::string>& cmdLine);
+    void _reloadModules(const std::vector<std::string>& cmdLine);
+    void _exitServer(const std::vector<std::string>& cmdLine);
 
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
     std::map<std::string, std::shared_ptr<ModuleHandler>> _modules[2];

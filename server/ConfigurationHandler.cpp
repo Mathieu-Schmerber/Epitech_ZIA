@@ -1,18 +1,17 @@
-//
-// Created by alexa on 26/01/2021.
-//
+/**
+ * \file ConfigurationHandler.cpp
+ * \brief Classes which parse json files for the modules and the server
+ * \author Alexandre.M
+**/
 
 #include "ConfigurationHandler.hpp"
 
 ConfigurationHandler::ConfigurationHandler() : _numberOfLoadedModules(0)
 {
-
 }
 
 ConfigurationHandler::~ConfigurationHandler()
-{
-
-}
+= default;
 
 std::string ConfigurationHandler::readFile(const std::string &filepath)
 {
@@ -73,7 +72,7 @@ void ConfigurationHandler::loadModules()
         && modules[i].FindMember("id")->value.IsInt64()
         && modules[i].FindMember("name")->value.IsString()) {
             s_module module;
-            LOG(INFO) << "Loaded module: \"" << modules[i].FindMember("name")->value.GetString() << "\" with id: "
+            LOG(INFO) << "Config loaded module: \"" << modules[i].FindMember("name")->value.GetString() << "\" with id: "
             << modules[i].FindMember("id")->value.GetInt64();
             module.id = modules[i].FindMember("id")->value.GetInt64();
             module.name = modules[i].FindMember("name")->value.GetString();
@@ -81,7 +80,7 @@ void ConfigurationHandler::loadModules()
             _numberOfLoadedModules++;
         }
     }
-    LOG(INFO) << "Loaded " << _numberOfLoadedModules << " modules.";
+    LOG(INFO) << "Config loaded " << _numberOfLoadedModules << " modules.";
 }
 
 std::vector<t_module> ConfigurationHandler::getLoadedModules()

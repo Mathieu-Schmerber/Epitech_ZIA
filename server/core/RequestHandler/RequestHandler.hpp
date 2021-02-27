@@ -28,8 +28,8 @@ public:
     ~RequestHandler();
     void run();
     [[nodiscard]] ThreadState getState() const;
-    std::pair<std::string, std::map<std::string, int>> getProcessedRequest();
-    void setRequestToProcess(const std::pair<std::string, std::map<std::string, int>>& request);
+    std::pair<std::string, std::pair<std::string, int>> getProcessedRequest();
+    void setRequestToProcess(const std::pair<std::string, std::pair<std::string, int>>& request);
 private:
     std::thread _thread;
     ThreadState _state;
@@ -41,7 +41,7 @@ private:
     std::string _request;
     std::string _response;
     int _requestId;
-    int _moduleId;
+    std::string _moduleName;
 };
 
 #endif //ZIA_REQUESTHANDLER_HPP

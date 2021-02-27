@@ -21,6 +21,11 @@ void RequestHandler::run()
 {
     std::cout << "Thread " << _requestHandlerId << " started." << std::endl;
     while (_running) {
+        if (_state == PROCESSING) {
+            _response = _request;
+            std::cout << "Request " << _requestId << " processed (" << _moduleName << ")" << std::endl;
+            _state = PROCESSED;
+        }
     }
     std::cout << "Thread " << _requestHandlerId << " stopped." << std::endl;
 }
@@ -30,18 +35,17 @@ ThreadState RequestHandler::getState() const
     return _state;
 }
 
-std::pair<std::string, std::map<std::string, int>> RequestHandler::getProcessedRequest()
+std::pair<std::string, std::pair<std::string, int>> RequestHandler::getProcessedRequest()
 {
-    std::map<std::string, int> toReturn;
-
-    toReturn["requestID"] = _requestId;
-    toReturn["moduleID"] = _moduleId;
-    return std::pair<std::string, std::map<std::string, int>>(_response, toReturn);
     _state = READY;
+    return std::pair<std::string, std::pair<std::string, int>>(_response, {_moduleName, _requestId});
 }
 
-void RequestHandler::setRequestToProcess(const std::pair<std::string, std::map<std::string, int>>& request)
+void RequestHandler::setRequestToProcess(const std::pair<std::string, std::pair<std::string, int>>& request)
 {
     _state = PROCESSING;
+    _request = request.first;
+    _moduleName = request.second.first;
+    _requestId = request.second.second;
 }
 

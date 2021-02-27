@@ -25,14 +25,17 @@ void Server::run()
                 if (a->getState() == PROCESSED)
                     a->getProcessedRequest();
             }
-            if (inputModule.second->get()->getStatus())
-                std::cout << inputModule.first << std::endl;
-            //for (auto &a : _modules[MODULE_IN]) {
-            //    if (a.second->get()->getStatus())
-            //        std::cout << a.first << std::endl;
-            //}
+            if (inputModule.second->get()->getStatus()) {
+                for (auto &a : _requestsHandlers) {
+                    if (a->getState() == READY) {
+                        std::pair<std::string, int> requestIn = inputModule.second->get()->dataOutput();
+                        std::pair<std::string, std::pair<std::string, int>> requestToProcess(requestIn.first, {inputModule.first, requestIn.second});
+                        if (!requestToProcess.first.empty())
+                            a->setRequestToProcess(requestToProcess);
+                    }
+                }
+            }
         }
-        Sleep(2000);
     }
     LOG(INFO) << "Server stopped";
 }

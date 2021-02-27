@@ -8,7 +8,7 @@
 #include "RequestHandler.hpp"
 #include <iostream>
 
-RequestHandler::RequestHandler(int id) : _thread(&RequestHandler::run, this), _running(true), _id(id), _state(READY)
+RequestHandler::RequestHandler(int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY)
 {}
 
 RequestHandler::~RequestHandler()
@@ -19,14 +19,29 @@ RequestHandler::~RequestHandler()
 
 void RequestHandler::run()
 {
-    std::cout << "Thread " << _id << " started." << std::endl;
+    std::cout << "Thread " << _requestHandlerId << " started." << std::endl;
     while (_running) {
-
     }
-    std::cout << "Thread " << _id << " stopped." << std::endl;
+    std::cout << "Thread " << _requestHandlerId << " stopped." << std::endl;
 }
 
 ThreadState RequestHandler::getState() const
 {
     return _state;
 }
+
+std::pair<std::string, std::map<std::string, int>> RequestHandler::getProcessedRequest()
+{
+    std::map<std::string, int> toReturn;
+
+    toReturn["requestID"] = _requestId;
+    toReturn["moduleID"] = _moduleId;
+    return std::pair<std::string, std::map<std::string, int>>(_response, toReturn);
+    _state = READY;
+}
+
+void RequestHandler::setRequestToProcess(const std::pair<std::string, std::map<std::string, int>>& request)
+{
+    _state = PROCESSING;
+}
+

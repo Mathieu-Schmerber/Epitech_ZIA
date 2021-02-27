@@ -8,6 +8,8 @@
 #define ZIA_REQUESTHANDLER_HPP
 
 #include <thread>
+#include <string>
+#include <map>
 
 enum ThreadState {
     PROCESSING = 1,
@@ -26,11 +28,20 @@ public:
     ~RequestHandler();
     void run();
     [[nodiscard]] ThreadState getState() const;
+    std::pair<std::string, std::map<std::string, int>> getProcessedRequest();
+    void setRequestToProcess(const std::pair<std::string, std::map<std::string, int>>& request);
 private:
     std::thread _thread;
     ThreadState _state;
     bool _running;
-    int _id;
+
+    //HTTP Request
+
+    int _requestHandlerId;
+    std::string _request;
+    std::string _response;
+    int _requestId;
+    int _moduleId;
 };
 
 #endif //ZIA_REQUESTHANDLER_HPP

@@ -9,7 +9,7 @@
 
 Server::Server()
 {
-    for (int i = 0; i < 0; ++i)
+    for (int i = 0; i < 2; ++i)
         _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
     _future = std::async(std::launch::async, Server::readAsyncFunction);
 }
@@ -20,11 +20,19 @@ void Server::run()
 
     while (_running) {
         _readInput();
-        for (auto &a : _requestsHandlers) {
-            if (a->getState() == READY) {
-
+        for (auto &inputModule : _modules[MODULE_IN]) {
+            for (auto &a : _requestsHandlers) {
+                if (a->getState() == PROCESSED)
+                    a->getProcessedRequest();
             }
+            if (inputModule.second->get()->getStatus())
+                std::cout << inputModule.first << std::endl;
+            //for (auto &a : _modules[MODULE_IN]) {
+            //    if (a.second->get()->getStatus())
+            //        std::cout << a.first << std::endl;
+            //}
         }
+        Sleep(2000);
     }
     LOG(INFO) << "Server stopped";
 }

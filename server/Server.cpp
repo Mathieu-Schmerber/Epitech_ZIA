@@ -22,8 +22,11 @@ void Server::run()
         _readInput();
         for (auto &inputModule : _modules[MODULE_IN]) {
             for (auto &a : _requestsHandlers) {
-                if (a->getState() == PROCESSED)
-                    a->getProcessedRequest();
+                std::pair<std::string, std::pair<std::string, int>> pRequest;
+                if (a->getState() == PROCESSED) {
+                    pRequest = a->getProcessedRequest();
+                    _modules[MODULE_IN][pRequest.second.first]->get()->dataInput(pRequest.first, pRequest.second.second);
+                }
             }
             if (inputModule.second->get()->getStatus()) {
                 for (auto &a : _requestsHandlers) {

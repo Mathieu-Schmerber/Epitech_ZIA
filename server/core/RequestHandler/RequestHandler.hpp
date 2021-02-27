@@ -36,7 +36,6 @@ private:
     bool _running;
 
     //HTTP Request
-
     int _requestHandlerId;
     std::string _request;
     std::string _response;

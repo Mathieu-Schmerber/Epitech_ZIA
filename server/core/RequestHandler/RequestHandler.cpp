@@ -6,7 +6,6 @@
 */
 
 #include "RequestHandler.hpp"
-#include "RequestParser.hpp"
 #include "ExceptionCore.hpp"
 #include "Response.hpp"
 #include "Router.hpp"
@@ -53,18 +52,28 @@ void RequestHandler::setRequestToProcess(const std::pair<std::string, std::pair<
 void RequestHandler::_processRequest()
 {
     ZiaRequest::RequestParser requestParser;
-    Response response;
-    Router router;
-    std::string fileContent;
     ZiaRequest::Request requestParsed;
+    Response response;
 
     try {
-        router.init();
         requestParsed = requestParser.parseData(_request);
-        fileContent = router.get("/", requestParsed.getRequestPath());
-        _response = response.getResponse(fileContent, "OK", 200);
+        if (requestParsed.getRequestType() == ZiaRequest::GET)
+            _getRequest(requestParsed);
+        else
+            throw ServerError("ServerError", "Not implemented", 501);
     } catch (const CoreError &e) {
         _response = response.getResponse(e.what(), e.what(), e.getErrorCode());
     }
     _state = PROCESSED;
+}
+
+void RequestHandler::_getRequest(const ZiaRequest::Request& requestParsed)
+{
+    Router router;
+    Response response;
+    std::string fileContent;
+
+    router.init();
+    fileContent = router.get("/", requestParsed.getRequestPath());
+    _response = response.getResponse(fileContent, "OK", 200);
 }

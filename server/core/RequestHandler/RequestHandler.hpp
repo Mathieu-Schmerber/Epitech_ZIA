@@ -10,6 +10,7 @@
 #include <thread>
 #include <string>
 #include <map>
+#include "RequestParser.hpp"
 
 enum ThreadState {
     PROCESSING = 1,
@@ -33,6 +34,7 @@ public:
 private:
     //Private methods
     void _processRequest();
+    void _getRequest(const ZiaRequest::Request& requestParsed);
 
     //Request Handlers variables
     std::thread _thread;

@@ -56,7 +56,6 @@ namespace ZiaRequest {
         [[nodiscard]] Type getRequestType() const;
         [[nodiscard]] const std::string &getRequestPath() const;
         [[nodiscard]] std::vector<std::pair<std::string, std::string>> getRequestHeaders() const;
-
     private:
         Type _requestType;
         std::string _path;
@@ -72,7 +71,6 @@ namespace ZiaRequest {
     class RequestParser {
     public:
         explicit RequestParser();
-        ~RequestParser() { std::cout << "Request parser destroyed" << std::endl; }
 
         [[nodiscard]] ZiaRequest::Request parseData(const std::string &in);
     private:

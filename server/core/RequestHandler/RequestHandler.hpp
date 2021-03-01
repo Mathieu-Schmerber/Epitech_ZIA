@@ -31,6 +31,10 @@ public:
     std::pair<std::string, std::pair<std::string, int>> getProcessedRequest();
     void setRequestToProcess(const std::pair<std::string, std::pair<std::string, int>>& request);
 private:
+    //Private methods
+    void _processRequest();
+
+    //Request Handlers variables
     std::thread _thread;
     ThreadState _state;
     bool _running;

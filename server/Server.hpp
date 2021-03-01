@@ -16,10 +16,6 @@
 #include "ConfigurationHandler.hpp"
 #include <future>
 
-#ifdef _WIN32
-    #define _WIN32_WINNT  0x0601
-#endif
-
 /**
  * \class Server Server.hpp "Server.hpp"
  * \brief Main class for the server

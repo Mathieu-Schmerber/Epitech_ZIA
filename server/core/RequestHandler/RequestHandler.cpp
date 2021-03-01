@@ -6,6 +6,10 @@
 */
 
 #include "RequestHandler.hpp"
+#include "RequestParser.hpp"
+#include "ExceptionCore.hpp"
+#include "Response.hpp"
+#include "Router.hpp"
 #include <iostream>
 
 RequestHandler::RequestHandler(int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY)
@@ -21,11 +25,8 @@ void RequestHandler::run()
 {
     std::cout << "Thread " << _requestHandlerId << " started." << std::endl;
     while (_running) {
-        if (_state == PROCESSING) {
-            _response = _request;
-            std::cout << "Request " << _requestId << " processed (" << _moduleName << ")" << std::endl;
-            _state = PROCESSED;
-        }
+        if (_state == PROCESSING)
+            _processRequest();
     }
     std::cout << "Thread " << _requestHandlerId << " stopped." << std::endl;
 }
@@ -49,3 +50,21 @@ void RequestHandler::setRequestToProcess(const std::pair<std::string, std::pair<
     _requestId = request.second.second;
 }
 
+void RequestHandler::_processRequest()
+{
+    ZiaRequest::RequestParser requestParser(_request);
+    Response response;
+    Router router;
+    std::string fileContent;
+
+    try {
+        router.init();
+        requestParser.parseData();
+        fileContent = router.get("/", requestParser.getRequest()->getRequestPath());
+        _response = response.getResponse(fileContent, "OK", 200);
+    } catch (const CoreError &e) {
+        _response = response.getResponse(e.what(), e.what(), e.getErrorCode());
+    }
+    //std::cout << "Request " << _requestId << " processed (" << _moduleName << ") -> " << _response << std::endl;
+    _state = PROCESSED;
+}

@@ -10,7 +10,7 @@
 #include <string>
 #include <thread>
 
-class HTTPModule : public AModule {
+class HTTPModule : public AModuleInput {
 public:
     explicit HTTPModule();
     void loadConfigFile(const std::string &configFilePath) override;

@@ -23,9 +23,7 @@ public:
     void dataInput(const std::string &, int id) override;
     std::pair<std::string, int> dataOutput() override;
 
-    bool isInputData() override {
-        return false;
-    };
+    bool isInputData() override = 0;
     void run() final;
     bool getStatus() final;
     void startModule() override;
@@ -40,6 +38,21 @@ protected:
     std::vector<std::pair<std::string, int>> _outQueue;
 
     virtual void handleQueue();
+};
+
+class AModuleInput : public AModule {
+public:
+    explicit AModuleInput(const std::string &name) : AModule(name) {}
+
+    bool isInputData() override { return true; }
+};
+
+class AModuleOutput : public AModule {
+public:
+    explicit AModuleOutput(const std::string &name) : AModule(name) {}
+
+    bool isInputData() override { return false; }
+    [[nodiscard]] virtual std::string getFileExtension() const = 0;
 };
 
 #endif //ZIA_AMODULE_HPP

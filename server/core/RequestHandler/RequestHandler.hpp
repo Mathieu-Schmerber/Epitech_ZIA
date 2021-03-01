@@ -35,6 +35,7 @@ private:
     //Private methods
     void _processRequest();
     void _getRequest(const ZiaRequest::Request& requestParsed);
+    void _postRequest(const ZiaRequest::Request& requestParsed);
 
     //Request Handlers variables
     std::thread _thread;

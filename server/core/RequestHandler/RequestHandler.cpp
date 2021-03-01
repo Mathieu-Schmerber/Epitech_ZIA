@@ -11,7 +11,8 @@
 #include "Router.hpp"
 #include <iostream>
 
-RequestHandler::RequestHandler(int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY)
+RequestHandler::RequestHandler(int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY),
+_requestId(0)
 {}
 
 RequestHandler::~RequestHandler()
@@ -59,6 +60,8 @@ void RequestHandler::_processRequest()
         requestParsed = requestParser.parseData(_request);
         if (requestParsed.getRequestType() == ZiaRequest::GET)
             _getRequest(requestParsed);
+        else if (requestParsed.getRequestType() == ZiaRequest::POST)
+            _postRequest(requestParsed);
         else
             throw ServerError("ServerError", "Not implemented", 501);
     } catch (const CoreError &e) {
@@ -75,5 +78,22 @@ void RequestHandler::_getRequest(const ZiaRequest::Request& requestParsed)
 
     router.init();
     fileContent = router.get("/", requestParsed.getRequestPath());
-    _response = response.getResponse(fileContent, "OK", 200);
+    if (fileContent.empty())
+        _response = response.getResponse(fileContent, "No content", 204);
+    else
+        _response = response.getResponse(fileContent, "OK", 200);
+}
+
+void RequestHandler::_postRequest(const ZiaRequest::Request &requestParsed)
+{
+    Router router;
+    Response response;
+    std::string fileContent;
+
+    router.init();
+    fileContent = router.get("/", requestParsed.getRequestPath());
+    if (fileContent.empty())
+        _response = response.getResponse(fileContent, "No content", 204);
+    else
+        _response = response.getResponse(fileContent, "OK", 200);
 }

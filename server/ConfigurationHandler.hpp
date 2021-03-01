@@ -17,6 +17,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include "document.h"
 #include "Log.hpp"
 
@@ -33,8 +34,11 @@ class ConfigurationHandler
 
         std::string readFile(const std::string &filepath);
         void loadConfiguration(const std::string &filepath);
-        int loadHttpModule(const std::string &filepath);
         std::vector<t_module> getLoadedModules();
+        int loadHttpModule(const std::string &filepath);
+        int getInt(const std::string &filepath, const std::string& varName);
+        std::string getString(const std::string &filepath, const std::string& varName);
+
 
     private:
         void loadModules();
@@ -42,6 +46,7 @@ class ConfigurationHandler
         std::vector<t_module> _modules;
         int _numberOfLoadedModules;
         rapidjson::Document _doc;
+        rapidjson::Document _docModule;
         rapidjson::Document _docHttp;
 
 };

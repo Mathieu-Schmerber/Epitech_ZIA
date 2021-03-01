@@ -189,12 +189,11 @@ void Server::_loadModule(const std::string &moduleName)
 {
     try {
         dlManager.loadNewLib<AModule>(DYNLIB(moduleName));
-        std::shared_ptr<ModuleHandler> toAdd = std::make_shared<ModuleHandler>(
-                ModuleHandler(dlManager.getInstance<AModule>(DYNLIB(moduleName))));
-        if (toAdd->get()->isInputData())
-            _modules[MODULE_IN].insert(std::pair<std::string, std::shared_ptr<ModuleHandler>>(moduleName, toAdd));
+        auto *newModule = dlManager.getInstance<AModule>(DYNLIB(moduleName));
+        if (newModule->isInputData())
+            _modules[MODULE_IN].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerInput>>(moduleName, std::make_shared<ModuleHandlerInput>(ModuleHandlerInput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
         else
-            _modules[MODULE_OUT].insert(std::pair<std::string, std::shared_ptr<ModuleHandler>>(moduleName, toAdd));
+            _modules[MODULE_OUT].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerOutput>>(moduleName, std::make_shared<ModuleHandlerOutput>(ModuleHandlerOutput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
         std::cout << "Module " << DYNLIB(moduleName) << " loaded." << std::endl;
     } catch (const ModuleLoader::ModuleLoaderException &e) {
         std::cerr << e.getComponent() << ": " << e.what() << std::endl;
@@ -230,4 +229,3 @@ void Server::_stopModule(const std::string &moduleName)
         std::cerr << e.getErrorMessage() << std::endl;
     }
 }
-

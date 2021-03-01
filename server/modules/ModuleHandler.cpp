@@ -3,9 +3,8 @@
 //
 
 #include "ModuleHandler.hpp"
-#include "ModuleException.hpp"
 #include <thread>
-
+/*
 ModuleHandler::ModuleHandler(AModule *module) : _module(module)
 {
 }
@@ -38,4 +37,4 @@ AModule *ModuleHandler::operator->()
     if (!_module)
         throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
     return this->get();
-}
+}*/

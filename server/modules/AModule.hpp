@@ -22,6 +22,7 @@ public:
 
     void dataInput(const std::string &, int id) override;
     std::pair<std::string, int> dataOutput() override;
+    [[nodiscard]] std::string getFileExtension() const override { return ""; };
 
     bool isInputData() override = 0;
     void run() final;
@@ -52,7 +53,7 @@ public:
     explicit AModuleOutput(const std::string &name) : AModule(name) {}
 
     bool isInputData() override { return false; }
-    [[nodiscard]] virtual std::string getFileExtension() const = 0;
+    [[nodiscard]] std::string getFileExtension() const override { return ""; };
 };
 
 #endif //ZIA_AMODULE_HPP

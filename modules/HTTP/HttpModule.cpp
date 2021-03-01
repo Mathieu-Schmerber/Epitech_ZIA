@@ -64,7 +64,12 @@ void HTTPModule::startModule()
 {
     AModule::startModule();
     HTTPModule::loadConfigFile(_filePath);
-    _sTcp = new TcpProtocol("0.0.0.0", _port);
+    try {
+        _sTcp = new TcpProtocol("0.0.0.0", _port);
+    } catch (boost::system::system_error &error) {
+        std::cout << error.what() << std::endl;
+        exit(84);
+    }
 }
 
 void HTTPModule::stopModule()

@@ -9,9 +9,18 @@
 
 Server::Server()
 {
+    std::vector<t_module> loadedModules;
+
     for (int i = 0; i < 2; ++i)
         _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
     _future = std::async(std::launch::async, Server::readAsyncFunction);
+    _configHandler.loadConfiguration("config.json"); ///FIXME : Change path
+    loadedModules = _configHandler.getLoadedModules();
+    for (auto & _loadedModule : loadedModules) {
+        if (!dlManager.libStocked(DYNLIB(_loadedModule.name)))
+            _loadModule(_loadedModule.name);
+        _startModule(_loadedModule.name);
+    }
 }
 
 void Server::run()

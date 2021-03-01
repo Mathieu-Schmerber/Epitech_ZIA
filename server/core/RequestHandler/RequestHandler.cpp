@@ -52,19 +52,19 @@ void RequestHandler::setRequestToProcess(const std::pair<std::string, std::pair<
 
 void RequestHandler::_processRequest()
 {
-    ZiaRequest::RequestParser requestParser(_request);
+    ZiaRequest::RequestParser requestParser;
     Response response;
     Router router;
     std::string fileContent;
+    ZiaRequest::Request requestParsed;
 
     try {
         router.init();
-        requestParser.parseData();
-        fileContent = router.get("/", requestParser.getRequest()->getRequestPath());
+        requestParsed = requestParser.parseData(_request);
+        fileContent = router.get("/", requestParsed.getRequestPath());
         _response = response.getResponse(fileContent, "OK", 200);
     } catch (const CoreError &e) {
         _response = response.getResponse(e.what(), e.what(), e.getErrorCode());
     }
-    //std::cout << "Request " << _requestId << " processed (" << _moduleName << ") -> " << _response << std::endl;
     _state = PROCESSED;
 }

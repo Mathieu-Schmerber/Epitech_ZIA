@@ -7,6 +7,7 @@
 #ifndef ZIA_REQUESTPARSER_HPP
 #define ZIA_REQUESTPARSER_HPP
 
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -46,7 +47,7 @@ namespace ZiaRequest {
 
     class Request {
     public:
-        explicit Request(const std::string &in);
+        explicit Request();
         void setRequestType(const std::string &requestType);
         void setRequestPath(const std::string &requestPath);
         void setRequestVersion(const std::string& requestVersion);
@@ -60,7 +61,6 @@ namespace ZiaRequest {
         Type _requestType;
         std::string _path;
         bool _correctVersion{};
-        const std::string &_request;
         std::vector<std::pair<std::string, std::string>> _headerlist;
     };
 
@@ -71,17 +71,15 @@ namespace ZiaRequest {
 
     class RequestParser {
     public:
-        explicit RequestParser(const std::string &in);
+        explicit RequestParser();
+        ~RequestParser() { std::cout << "Request parser destroyed" << std::endl; }
 
-        void parseData();
-        std::unique_ptr<ZiaRequest::Request> &getRequest();
-
+        [[nodiscard]] ZiaRequest::Request parseData(const std::string &in);
     private:
-        void _parseRequestMethod(const std::string &out);
-        void _parseRequestHeaders(const std::string &out);
+        void _parseRequestMethod(const std::string& out, ZiaRequest::Request &request);
+        void _parseRequestHeaders(const std::string &out, ZiaRequest::Request &request);
 
         std::string _request;
-        std::unique_ptr<ZiaRequest::Request> _toReturn;
     };
 }
 #endif //ZIA_REQUESTPARSER_HPP

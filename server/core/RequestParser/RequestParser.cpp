@@ -10,12 +10,11 @@
 
 #include <sstream>
 #include <vector>
-#include <iostream>
 #include <algorithm>
 
 /** ====== Request Parser ====== **/
 
-ZiaRequest::Request::Request(const std::string &in) : _request(in), _requestType(UNDEFINED), _correctVersion(false)
+ZiaRequest::Request::Request() : _requestType(UNDEFINED), _correctVersion(false)
 {
 }
 
@@ -75,14 +74,13 @@ std::vector<std::pair<std::string, std::string>> ZiaRequest::Request::getRequest
 
 /** ====== Request Parser ====== **/
 
-ZiaRequest::RequestParser::RequestParser(const std::string &in) : _request(in)
-{
-    _toReturn = std::make_unique<Request>(in);
-}
+ZiaRequest::RequestParser::RequestParser() : _request() {}
 
-void ZiaRequest::RequestParser::parseData()
+ZiaRequest::Request ZiaRequest::RequestParser::parseData(const std::string &in)
 {
+    _request = in;
     std::istringstream requestToParse(_request);
+    ZiaRequest::Request request;
     std::string out;
     int position = 0;
 
@@ -90,19 +88,17 @@ void ZiaRequest::RequestParser::parseData()
         RMCHAR(out, '\r')
         RMCHAR(out, '\n')
         if (position == 0)
-            _parseRequestMethod(out);
+            _parseRequestMethod(out, request);
         else
-            _parseRequestHeaders(out);
+            _parseRequestHeaders(out, request);
         ++position;
     }
+    if (request.getRequestType() == UNDEFINED)
+        throw ClientError("Client Error", "Bad request", 400);
+    return request;
 }
 
-std::unique_ptr<ZiaRequest::Request> &ZiaRequest::RequestParser::getRequest()
-{
-    return _toReturn;
-}
-
-void ZiaRequest::RequestParser::_parseRequestMethod(const std::string& out)
+void ZiaRequest::RequestParser::_parseRequestMethod(const std::string& out, ZiaRequest::Request &request)
 {
     std::vector<std::string> tokens;
     std::istringstream lineToParse(out);
@@ -110,12 +106,12 @@ void ZiaRequest::RequestParser::_parseRequestMethod(const std::string& out)
 
     while (std::getline(lineToParse, each, ' '))
         tokens.push_back(each);
-    _toReturn->setRequestType(tokens.at(0));
-    _toReturn->setRequestPath(tokens.at(1));
-    _toReturn->setRequestVersion(tokens.at(2));
+    request.setRequestType(tokens.at(0));
+    request.setRequestPath(tokens.at(1));
+    request.setRequestVersion(tokens.at(2));
 }
 
-void ZiaRequest::RequestParser::_parseRequestHeaders(const std::string &out)
+void ZiaRequest::RequestParser::_parseRequestHeaders(const std::string &out, ZiaRequest::Request &request)
 {
     std::istringstream lineToParse(out);
     std::string each;
@@ -129,7 +125,7 @@ void ZiaRequest::RequestParser::_parseRequestHeaders(const std::string &out)
         } else {
             each.erase(0, 1);
             header.second = each;
-            _toReturn->setRequestHeader(header);
+            request.setRequestHeader(header);
             return;
         }
     }

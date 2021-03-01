@@ -74,8 +74,10 @@ void Server::_readInput()
             cmdLine.push_back(block);
         restart = true;
         try {
-            if (cmdLine.empty())
+            if (cmdLine.empty()) {
+                _future = std::async(std::launch::async, Server::readAsyncFunction);
                 return;
+            }
             if (cmdLine[0] == "loadmodule")
                 _cmdLoadModule(cmdLine);
             else if (cmdLine[0] == "startmodule")

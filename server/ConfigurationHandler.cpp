@@ -46,7 +46,7 @@ int ConfigurationHandler::loadHttpModule(const std::string &filepath)
 {
     std::string file = readFile(filepath);
     if (file.empty())
-        return -1;
+        return 80;
 
     _docHttp.Parse(file.c_str());
 
@@ -56,7 +56,24 @@ int ConfigurationHandler::loadHttpModule(const std::string &filepath)
     }
     if (_docHttp["port"].IsInt64())
         return _docHttp["port"].GetInt();
-    return -1;
+    return 80;
+}
+
+int ConfigurationHandler::loadHttpsModule(const std::string &filepath)
+{
+    std::string file = readFile(filepath);
+    if (file.empty())
+        return 443;
+
+    _docHttp.Parse(file.c_str());
+
+    if (_docHttp.HasMember("port") == 0) {
+        LOG(WARN) << "No port found";
+        return 443;
+    }
+    if (_docHttp["port"].IsInt64())
+        return _docHttp["port"].GetInt();
+    return 443; // FIXME faire une méthode unique pour load les fichiers
 }
 
 void ConfigurationHandler::loadModules()

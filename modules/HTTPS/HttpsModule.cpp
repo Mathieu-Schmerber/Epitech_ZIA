@@ -3,7 +3,7 @@
 //
 
 #include "IModule.hpp"
-#include "HttpModule.hpp"
+#include "HttpsModule.hpp"
 #include "ConfigurationHandler.hpp"
 #include <iostream>
 
@@ -19,31 +19,48 @@ extern "C" {
 
     IModule* newInstance()
     {
-        return new HTTPModule();
+        return new HTTPSModule();
     }
 }
 
-HTTPModule::HTTPModule() : AModule("HTTP")
+HTTPSModule::HTTPSModule() : AModule("HTTPS")
 {
 }
 
-void HTTPModule::loadConfigFile(const std::string &configFilePath)
+/**
+ * \brief Load https configuration file
+ *
+ * \param configFilePath file path to the configuration file
+ *
+**/
+void HTTPSModule::loadConfigFile(const std::string &configFilePath)
 {
     ConfigurationHandler config = ConfigurationHandler();
-    _port = config.loadHttpModule(configFilePath);
+    _port = config.loadHttpsModule(configFilePath);
     std::cout << _port << std::endl;
+}
+
+static void print_buf(const char *title, const unsigned char *buf, size_t buf_len)
+{
+    size_t i = 0;
+    fprintf(stdout, "%s\n", title);
+    for(i = 0; i < buf_len; ++i)
+        fprintf(stdout, "%02X%s", buf[i],
+                ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+
 }
 
 /**
  * \brief Looping on AModule::run() while AModule::_running
  *
 **/
-void HTTPModule::handleQueue()
+void HTTPSModule::handleQueue()
 {
     ReceiveData receive;
     std::pair<std::string, int> in;
 
     if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
+        print_buf("Message received :", reinterpret_cast<const unsigned char *>(receive.receive.data()), receive.receive.length());
         _outQueue.emplace_back(receive.receive, receive.id);
     }
     if ((in = getInput()).second != -1) {
@@ -51,7 +68,7 @@ void HTTPModule::handleQueue()
     }
 }
 
-std::pair<std::string, int> HTTPModule::getInput()
+std::pair<std::string, int> HTTPSModule::getInput()
 {
     if (_inQueue.empty())
         return {};
@@ -60,14 +77,14 @@ std::pair<std::string, int> HTTPModule::getInput()
     return in;
 }
 
-void HTTPModule::startModule()
+void HTTPSModule::startModule()
 {
     AModule::startModule();
-    HTTPModule::loadConfigFile(_filePath);
+    HTTPSModule::loadConfigFile(_filePath);
     _sTcp = new TcpProtocol("0.0.0.0", _port);
 }
 
-void HTTPModule::stopModule()
+void HTTPSModule::stopModule()
 {
     AModule::stopModule();
     delete _sTcp;

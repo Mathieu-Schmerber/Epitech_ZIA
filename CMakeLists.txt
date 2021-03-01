@@ -38,7 +38,7 @@ if(WIN32)
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     if(CMAKE_COMPILER_IS_GNUCXX)
         message(STATUS "GCC detected, adding compile flags")
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ansi -W -Wall -Wextra -g")
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ansi -W -Wall -Wextra -g") # FIXME -g
     endif(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
@@ -118,6 +118,23 @@ set(SOURCES_HTTP_MODULE
         modules/HTTP/network/tcp/TcpSocket.cpp
         modules/HTTP/network/tcp/ReceiveData.hpp)
 
+set(SOURCES_HTTPS_MODULE
+        modules/HTTPS/HttpsModule.cpp
+        modules/HTTPS/HttpsModule.hpp
+        server/modules/IModule.hpp
+        server/modules/AModule.cpp
+        server/modules/AModule.hpp
+        server/ConfigurationHandler.cpp
+        server/ConfigurationHandler.hpp
+        modules/HTTPS/network/tcp/TcpProtocol.hpp
+        modules/HTTPS/network/tcp/TcpProtocol.cpp
+        modules/HTTPS/network/tcp/TcpSocket.hpp
+        modules/HTTPS/network/tcp/TcpSocket.cpp
+        modules/HTTPS/network/tcp/ReceiveData.hpp
+        modules/HTTPS/cryption/Cryption.cpp
+        modules/HTTPS/cryption/Cryption.hpp
+        )
+
 set(SOURCES_PHP_MODULE
         modules/PHP/PHP_CGI.cpp
         modules/PHP/PHP_CGI.hpp
@@ -136,8 +153,8 @@ target_include_directories(server PRIVATE
         server
         server/tools
         server/modules
-        modules/HTTP/network
-        modules/HTTP/network/tcp
+        "modules/HTTP/network"
+        "modules/HTTP/network/tcp"
         modules/PHP
         server/client
         server/include/rapidjson
@@ -153,6 +170,9 @@ target_include_directories(server PRIVATE
 add_library(httpModule SHARED
         ${SOURCES_HTTP_MODULE})
 
+add_library(httpsModule SHARED
+        ${SOURCES_HTTPS_MODULE})
+
 add_library(phpModule SHARED
         ${SOURCES_PHP_MODULE})
 
@@ -163,6 +183,13 @@ target_include_directories(httpModule PRIVATE
         server/tools
         modules/HTTP/network/tcp)
 
+target_include_directories(httpsModule PRIVATE
+        server/modules
+        server
+        server/include/rapidjson
+        server/tools
+        modules/HTTPS/network/tcp)
+
 target_include_directories(phpModule PRIVATE
         server/modules)
 
@@ -171,6 +198,10 @@ message(${CONAN_LIBS})
 message("===========================================")
 
 target_link_libraries(server ${CONAN_LIBS})
+set_target_properties(server PROPERTIES LINK_FLAGS "/ignore:4099")
+
+target_link_libraries(httpsModule ${CONAN_LIBS})
+set_target_properties(httpsModule PROPERTIES LINK_FLAGS "/ignore:4099")
 
 if(MSVC)
     set(Boost_USE_STATIC_LIBS        ON)  # only find static libs

@@ -34,6 +34,7 @@ class ConfigurationHandler
         std::string readFile(const std::string &filepath);
         void loadConfiguration(const std::string &filepath);
         int loadHttpModule(const std::string &filepath);
+        int loadHttpsModule(const std::string &filepath);
         std::vector<t_module> getLoadedModules();
 
     private:

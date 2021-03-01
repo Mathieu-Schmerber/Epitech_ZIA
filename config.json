@@ -7,6 +7,10 @@
     {
       "id": 2,
       "name": "phpModule"
+    },
+    {
+      "id": 3,
+      "name": "httpsModule"
     }
   ]
 }

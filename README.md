@@ -64,6 +64,12 @@ reload the module "httpModule"<br>
 reload all the modules<br>
 ``reloadmodules``
 
+
+#### Conan remotes
+conan remote add <REMOTE> 
+- https://api.bintray.com/conan/conan-community/conan 
+- ... FIXME
+
 ## Made with
 
 * [RapidJson](https://rapidjson.org/) - JSON parser library

@@ -11,12 +11,13 @@
 struct ReceiveData {
     std::string receive;
     int id;
+    int fd;
     std::string ip;
 
-    ReceiveData() : id(0) {}
-    ReceiveData(std::string receive, int id, std::string ip) : receive(std::move(receive)), id(id), ip(std::move(ip)) {}
-    ReceiveData(ReceiveData const &other) : receive(other.receive), id(other.id), ip(other.ip) {}
-    ReceiveData(ReceiveData&& other) : receive(std::move(other.receive)), id(other.id), ip(std::move(other.ip)) {}
+    ReceiveData() : id(0), fd(0) {}
+    ReceiveData(std::string receive, int id, int fd, std::string ip) : receive(std::move(receive)), id(id), fd(fd), ip(std::move(ip)) {}
+    ReceiveData(ReceiveData const &other) : receive(other.receive), id(other.id), fd(other.fd), ip(other.ip) {}
+    ReceiveData(ReceiveData&& other) : receive(std::move(other.receive)), id(other.id), fd(other.fd), ip(std::move(other.ip)) {}
     ReceiveData& operator=(const ReceiveData& other) = default;
 };
 

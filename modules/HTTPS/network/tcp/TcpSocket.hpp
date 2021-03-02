@@ -28,6 +28,7 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
         bool _disconnected = false;
         char _read[MAX_SIZE] = {0};
         int _id;
+        int _fd;
         std::deque<ReceiveData> &_msgQueue;
 };
 

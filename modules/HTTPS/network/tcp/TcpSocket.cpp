@@ -80,10 +80,9 @@ std::string TcpSocket::getNewDisconnect()
 
 InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue) : _socket(std::move(socket)), _msgQueue(msgQueue)
 {
-//    boost::asio::detail::socket_type fd = socket.native_handle();
-//    std::cout << fd << std::endl;
     _ip = _socket.remote_endpoint().address().to_string();
     _id = id;
+    _fd = static_cast<int>(_socket.native_handle());
     LOG_GREEN( "User with ip : " + _ip + " has just connected")
 }
 
@@ -95,7 +94,7 @@ void InstanceClientTCP::startRead()
                 if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
                     _disconnected = true;
                 } else {
-                    _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id, _ip);
+                    _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id, _fd, _ip);
                     // FIXME LOG_BLUE_WN("TCP : " + std::string(_read, bytes_transferred));
                     startRead();
                 }

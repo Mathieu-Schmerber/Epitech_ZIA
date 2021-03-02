@@ -7,13 +7,17 @@
 #include "ConfigurationHandler.hpp"
 #include <iostream>
 
+/* Make these what you want for certificate & key files */
+#define CERT_FILE "./certs/certificate.pem"
+#define KEY_FILE "./certs/key.pem"
+/*Trusted CAs location*/
+#define CA_FILE "./certs/certificate.pem"
+#define CA_DIR  NULL
 
-//#include <openssl/ssl.h>
-//#include <openssl/err.h>
-
+#include <synchapi.h>
 
 #if defined(_WIN32) || defined(WIN32)
-    #include <Windows.h>
+    #include <windows.h>
     #include <cstdio>
 #endif
 
@@ -30,6 +34,22 @@ extern "C" {
 
 HTTPSModule::HTTPSModule() : AModule("HTTPS")
 {
+    SSL_load_error_strings();
+    OpenSSL_add_ssl_algorithms();
+    ctx = SSL_CTX_new(SSLv23_server_method());
+    if (!ctx) {
+        printf("Error creating the context.\n");
+        exit(0);
+    }
+    SSL_CTX_set_ecdh_auto(ctx, 1);
+    if (SSL_CTX_use_certificate_file(ctx, CERT_FILE, SSL_FILETYPE_PEM) <= 0) {
+        printf("Error setting the certificate file.\n");
+        exit(0);
+    }
+    if (SSL_CTX_use_PrivateKey_file(ctx, KEY_FILE, SSL_FILETYPE_PEM) <= 0) {
+        printf("Error setting the key file.\n");
+        exit(0);
+    }
 }
 
 /**
@@ -55,20 +75,6 @@ static void print_buf(const char *title, const unsigned char *buf, size_t buf_le
 
 }
 
-//void log_ssl()
-//{
-//    unsigned long err;
-//    err = ERR_get_error();
-//    while (err) {
-//        char *str = ERR_error_string(err, nullptr);
-//        if (!str)
-//            return;
-//        std::cout << str << std::endl;
-//        fflush(stdout);
-//        err = ERR_get_error();
-//    }
-//}
-
 /**
  * \brief Looping on AModule::run() while AModule::_running
  *
@@ -78,27 +84,45 @@ void HTTPSModule::handleQueue()
     ReceiveData receive;
     std::pair<std::string, int> in;
 
-
-//    SSL *ssl;
-//    int sock;
-
-
     if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
-        print_buf("Message received :", reinterpret_cast<const unsigned char *>(receive.receive.data()), receive.receive.length());
+        SSL  *ssl;
+
+//        print_buf("Message received :", reinterpret_cast<const unsigned char *>(receive.receive.data()), receive.receive.length());
         _outQueue.emplace_back(receive.receive, receive.id);
-//        SSL_library_init();
-//        SSLeay_add_ssl_algorithms();
-//        SSL_load_error_strings();
-//        const SSL_METHOD *meth = SSLv23_server_method();
-//        SSL_CTX *ctx = SSL_CTX_new(meth);
-//        ssl = SSL_new(ctx);
-//        if (!ssl) {
-//            std::cout << "Error creating SSL." << std::endl;
-//            log_ssl();
-//            return;
+
+
+//        if (SSL_CTX_set_cipher_list(ctx, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH") <= 0) {
+//            printf("Error setting the cipher list.\n");
+//            exit(0);
 //        }
-//        sock = SSL_get_fd(ssl);
-//        SSL_set_fd(ssl, s);
+//        if (!SSL_CTX_check_private_key(ctx)) {
+//            printf("Private key does not match the certificate public key\n");
+//            exit(0);
+//        }
+//        if (SSL_CTX_load_verify_locations(ctx, CA_FILE, CA_DIR) < 1) {
+//            printf("Error setting the verify locations.\n");
+//            exit(0);
+//        }
+        ssl=SSL_new(ctx);
+        if (!ssl) {
+            printf("Error creating SSL structure.\n");
+            exit(0);
+        }
+        if (SSL_set_fd(ssl, receive.fd) <= 0) {
+            printf("Error setting fd.\n");
+            exit(0);
+        }
+        Sleep(2000);
+        std::cout << "test2" << std::endl;
+        int err = SSL_accept(ssl);
+        std::cout << "test3" << std::endl;
+        if (err < 1) {
+            err = SSL_get_error(ssl,err);
+            printf("SSL error #%d in SSL_accept,program terminated\n",err);
+//            SSL_CTX_free(ctx);
+//            exit(0);
+        }
+        printf("SSL connection on socket %d,Version: %s, Cipher: %s\n", receive.fd, SSL_get_version(ssl), SSL_get_cipher(ssl));
     }
     if ((in = getInput()).second != -1) {
         _sTcp->send(in.second, in.first);

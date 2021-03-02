@@ -37,7 +37,7 @@ void ZiaRequest::Request::setRequestType(const std::string &requestType)
     else if (requestType == std::string("CONNECT"))
         _requestType = ZiaRequest::CONNECT;
     else
-        throw ClientError("Client Error 4xx", "Bad Request", 400);
+        throw ClientError("Bad Request", 400);
 }
 
 void ZiaRequest::Request::setRequestPath(const std::string &requestPath)
@@ -49,7 +49,7 @@ void ZiaRequest::Request::setRequestVersion(const std::string& requestVersion)
 {
     _correctVersion = requestVersion == "HTTP/1.1";
     if (!_correctVersion)
-        throw ServerError("Server Error 5xx", "HTTP Version Not Supported", 505);
+        throw ServerError("HTTP Version Not Supported", 505);
 }
 
 void ZiaRequest::Request::setRequestHeader(const std::pair<std::string, std::string>& header)
@@ -94,7 +94,7 @@ ZiaRequest::Request ZiaRequest::RequestParser::parseData(const std::string &in)
         ++position;
     }
     if (request.getRequestType() == UNDEFINED)
-        throw ClientError("Client Error", "Bad request", 400);
+        throw ClientError("Bad request", 400);
     return request;
 }
 

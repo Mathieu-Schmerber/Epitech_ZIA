@@ -60,13 +60,13 @@ void RequestHandler::_processRequest()
     try {
         requestParsed = requestParser.parseData(_request);
         if (_checkOutputModules(requestParsed))
-            throw ServerError("ServerError", "Not implemented", 501);
+            throw ServerError("Not implemented", 501);
         if (requestParsed.getRequestType() == ZiaRequest::GET)
             _getRequest(requestParsed);
         else if (requestParsed.getRequestType() == ZiaRequest::POST)
             _postRequest(requestParsed);
         else
-            throw ServerError("ServerError", "Not implemented", 501);
+            throw ServerError("Not implemented", 501);
     } catch (const CoreError &e) {
         _response = response.getResponse(e.what(), e.what(), e.getErrorCode());
     }

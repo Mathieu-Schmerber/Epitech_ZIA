@@ -5,6 +5,7 @@
 #include "Server.hpp"
 #include "ModuleException.hpp"
 #include "ServerException.hpp"
+#include "RequestHandler.hpp"
 #include <sstream>
 
 Server::Server()
@@ -12,7 +13,7 @@ Server::Server()
     std::vector<t_module> loadedModules;
 
     for (int i = 0; i < 2; ++i)
-        _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
+        _requestsHandlers.push_back(std::make_unique<RequestHandler>(this, i));
     _future = std::async(std::launch::async, Server::readAsyncFunction);
     _configHandler.loadConfiguration("config.json"); ///FIXME : Change path
     loadedModules = _configHandler.getLoadedModules();
@@ -58,6 +59,11 @@ std::string Server::readAsyncFunction()
 
     std::getline(std::cin, line);
     return line;
+}
+
+std::map<std::string, std::shared_ptr<ModuleHandler>> Server::getOutputModules()
+{
+    return _modules[MODULE_OUT];
 }
 
 void Server::_readInput()

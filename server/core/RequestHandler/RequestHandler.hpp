@@ -12,6 +12,8 @@
 #include <map>
 #include "RequestParser.hpp"
 
+class Server;
+
 enum ThreadState {
     PROCESSING = 1,
     PROCESSED,
@@ -25,7 +27,7 @@ enum ThreadState {
 
 class RequestHandler {
 public:
-    explicit RequestHandler(int id);
+    explicit RequestHandler(Server *server, int id);
     ~RequestHandler();
     void run();
     [[nodiscard]] ThreadState getState() const;
@@ -34,12 +36,14 @@ public:
 private:
     //Private methods
     void _processRequest();
+    bool _checkOutputModules(const ZiaRequest::Request& requestParsed);
     void _getRequest(const ZiaRequest::Request& requestParsed);
     void _postRequest(const ZiaRequest::Request& requestParsed);
 
     //Request Handlers variables
     std::thread _thread;
     ThreadState _state;
+    Server *_server;
     bool _running;
 
     //HTTP Request

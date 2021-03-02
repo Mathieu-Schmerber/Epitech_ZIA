@@ -21,7 +21,7 @@ private:
     static std::string execute(const std::string &cmd);
     std::string handleRequest(const std::string &request);
     void handleQueue() override;
-    [[nodiscard]] std::string getFileExtension() const override { return "php"; }
+    [[nodiscard]] std::string getFileExtension() const override { return ".php"; }
 
 public:
     explicit PHP_CGI();

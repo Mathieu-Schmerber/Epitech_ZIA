@@ -9,10 +9,11 @@
 #include "ExceptionCore.hpp"
 #include "Response.hpp"
 #include "Router.hpp"
+#include "Server.hpp"
 #include <iostream>
 
-RequestHandler::RequestHandler(int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY),
-_requestId(0)
+RequestHandler::RequestHandler(Server *server, int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY),
+_requestId(0), _server(server)
 {}
 
 RequestHandler::~RequestHandler()
@@ -58,6 +59,8 @@ void RequestHandler::_processRequest()
 
     try {
         requestParsed = requestParser.parseData(_request);
+        if (_checkOutputModules(requestParsed))
+            throw ServerError("ServerError", "Not implemented", 501);
         if (requestParsed.getRequestType() == ZiaRequest::GET)
             _getRequest(requestParsed);
         else if (requestParsed.getRequestType() == ZiaRequest::POST)
@@ -68,6 +71,28 @@ void RequestHandler::_processRequest()
         _response = response.getResponse(e.what(), e.what(), e.getErrorCode());
     }
     _state = PROCESSED;
+}
+
+bool RequestHandler::_checkOutputModules(const ZiaRequest::Request& requestParsed)
+{
+    auto modulesList = _server->getOutputModules();
+
+    for (auto &a : modulesList) {
+        bool valid = true;
+        std::string moduleFileExtension = a.second->get()->getFileExtension();
+        if (requestParsed.getRequestPath().size() <= a.second->get()->getFileExtension().size())
+            continue;
+        auto itPath = requestParsed.getRequestPath().end();
+        for (auto it = moduleFileExtension.end(); it != moduleFileExtension.begin(); --it) {
+            if (*it != *itPath)
+                valid = false;
+            --itPath;
+        }
+        if (!valid)
+            continue;
+        return true;
+    }
+    return false;
 }
 
 void RequestHandler::_getRequest(const ZiaRequest::Request& requestParsed)

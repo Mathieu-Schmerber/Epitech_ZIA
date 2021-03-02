@@ -28,6 +28,7 @@ public:
 
     void run();
     static std::string readAsyncFunction();
+    std::map<std::string, std::shared_ptr<ModuleHandler>> getOutputModules();
 
     enum MODULE_IN_OUT {
         MODULE_IN = 0,

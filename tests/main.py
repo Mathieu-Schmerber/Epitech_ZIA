@@ -1,6 +1,7 @@
 import requests
 import subprocess
 import os
+from shutil import copyfile
 
 
 def make_diff(path1, path2, r):
@@ -23,45 +24,55 @@ def check_status_code(r):
     return 0
 
 def test2():
+    test_nbr = 2
+    test_name = "post test"
     counter_error = 0
     r = requests.post('http://127.0.0.1', data={'key': '10'})
     counter_error += check_status_code(r)
     if counter_error == 0:
-        print('You pass the test 2')
+        print(str(test_nbr) + ': ' + 'You pass the test ' + test_name)
     else:
-        print('There was ' + str(counter_error) + " error(s) in the test 2")
+        print(str(test_nbr) + ': ' + 'There was ' + str(counter_error) + " error(s) in the test " + test_name)
 
 
 def test3():
+    test_name = "head request"
+    test_nbr = 3
     counter_error = 0
     r = requests.head('http://127.0.0.1/index.html')
     counter_error += check_status_code(r)
     if counter_error == 0:
-        print('You pass the test 3')
+        print(str(test_nbr) + ': ' + 'You pass the test ' + test_name)
     else:
-        print('There was ' + str(counter_error) + " error(s) in the test 3")
+        print(str(test_nbr) + ': ' + 'There was ' + str(counter_error) + " error(s) in the test " + test_name)
 
 
 def test4():
-    print("Test Delete")
-    test = 4
+    test_name = "delete request"
+    test_nbr = 4
     counter_error = 0
     r = requests.delete('http://127.0.0.1/indexdel.html')
     counter_error += check_status_code(r)
     if counter_error == 0:
-        print('You pass the test ' + str(test))
+        print(str(test_nbr) + ': ' + 'You pass the test ' + test_name)
     else:
-        print('There was ' + str(counter_error) + " error(s) in the test " + str(test))
+        print(str(test_nbr) + ': ' + 'There was ' + str(counter_error) + " error(s) in the test " + test_name)
 
 def test5():
-    test = 5
+    test_name = "options request"
+    test_nbr = 5
     counter_error = 0
     r = requests.options('http://127.0.0.1/index.html')
     counter_error += check_status_code(r)
     if counter_error == 0:
-        print('You pass the test ' + str(test))
+        print(str(test_nbr) + ': ' + 'You pass the test ' + test_name)
     else:
-        print('There was ' + str(counter_error) + " error(s) in the test " + str(test))
+        print(str(test_nbr) + ': ' + 'There was ' + str(counter_error) + " error(s) in the test " + test_name)
+
+
+def reset():
+    copyfile("file/indexdel.html", "../www/indexdel.html")
+
 
 def request_get_index(path):
     counter_error = 0
@@ -78,7 +89,7 @@ def request_get_index(path):
     test3()
     test4()
     test5()
-
+    reset()
 
 
 if __name__ == '__main__':

@@ -8,14 +8,16 @@
 #include <string>
 #include <deque>
 #include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
 #include "ReceiveData.hpp"
 
 #define MAX_SIZE 1024
 
 class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP> {
     public:
-        InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue);
+        InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context);
         ~InstanceClientTCP();
+        void startHandshake();
         void startRead();
         void send(const std::string &msg);
         bool getDisconnected() const;
@@ -23,7 +25,7 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
         int getId() const;
 
     private:
-        boost::asio::ip::tcp::socket _socket;
+        boost::asio::ssl::stream<boost::asio::ip::tcp::socket> _socket;
         std::string _ip;
         bool _disconnected = false;
         char _read[MAX_SIZE] = {0};
@@ -45,6 +47,7 @@ class TcpSocket {
         void startAccept();
         boost::asio::io_service _io_service;
         boost::asio::ip::tcp::acceptor _acceptor;
+        boost::asio::ssl::context _context;
         boost::asio::ip::tcp::socket _socket;
         std::deque<std::shared_ptr<InstanceClientTCP>> _clients;
         std::deque<ReceiveData> _msgQueue;

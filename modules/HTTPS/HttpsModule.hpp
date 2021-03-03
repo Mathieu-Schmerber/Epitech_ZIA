@@ -10,9 +10,6 @@
 #include <string>
 #include <thread>
 
-#include <openssl/ssl.h>
-#include <openssl/err.h>
-
 class HTTPSModule : public AModule {
 public:
     explicit HTTPSModule();
@@ -20,10 +17,6 @@ public:
     std::pair<std::string, int> getInput();
     void startModule() override;
     void stopModule() override;
-
-
-    SSL_CTX *ctx;
-
 
     private:
     void handleQueue() override;

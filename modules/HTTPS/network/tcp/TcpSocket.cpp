@@ -6,8 +6,14 @@
 #include "Log.hpp"
 
 TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_io_service, boost::asio::ip::tcp::endpoint(
-        boost::asio::ip::address::from_string(host), port)), _socket(_io_service)
+        boost::asio::ip::address::from_string(host), port)), _socket(_io_service), _context(boost::asio::ssl::context::sslv23)
 {
+    _context.set_options(
+            boost::asio::ssl::context::default_workarounds
+            | boost::asio::ssl::context::no_sslv2
+            | boost::asio::ssl::context::single_dh_use);
+    _context.use_certificate_chain_file("./certs/certificate.pem");
+    _context.use_private_key_file("./certs/key.pem", boost::asio::ssl::context::pem);
     startAccept();
     _tRunAccept = new std::thread([&] { _io_service.run(); });
 }
@@ -17,9 +23,9 @@ void TcpSocket::startAccept()
     auto handleAccept =
             [this](const boost::system::error_code &error) {
                 if (!error) {
-                    std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue);
+                    std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue, _context);
                     idCounter++;
-                    newConnection->startRead();
+                    newConnection->startHandshake();
                     TcpSocket::_clients.push_back(newConnection);
                 }
                 startAccept();
@@ -78,12 +84,19 @@ std::string TcpSocket::getNewDisconnect()
     return ("");
 }
 
-InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue) : _socket(std::move(socket)), _msgQueue(msgQueue)
+InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context) : _socket(std::move(socket), context), _msgQueue(msgQueue)
 {
-    _ip = _socket.remote_endpoint().address().to_string();
     _id = id;
-    _fd = static_cast<int>(_socket.native_handle());
     LOG_GREEN( "User with ip : " + _ip + " has just connected")
+}
+
+void InstanceClientTCP::startHandshake()
+{
+    auto self(shared_from_this());
+    _socket.async_handshake(boost::asio::ssl::stream_base::server,[this, self](const boost::system::error_code& error) {
+        if (!error)
+            startRead();
+    });
 }
 
 void InstanceClientTCP::startRead()
@@ -94,7 +107,7 @@ void InstanceClientTCP::startRead()
                 if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
                     _disconnected = true;
                 } else {
-                    _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id, _fd, _ip);
+                    _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id, _ip);
                     // FIXME LOG_BLUE_WN("TCP : " + std::string(_read, bytes_transferred));
                     startRead();
                 }

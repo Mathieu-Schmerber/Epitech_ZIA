@@ -26,12 +26,12 @@ RequestHandler::~RequestHandler()
 
 void RequestHandler::run()
 {
-    std::cout << "Thread " << _requestHandlerId << " started." << std::endl;
+    LOG(INFO) << "Thread " << _requestHandlerId << " started.";
     while (_running) {
         if (_state == PROCESSING)
             _processRequest();
     }
-    std::cout << "Thread " << _requestHandlerId << " stopped." << std::endl;
+    LOG(INFO) << "Thread " << _requestHandlerId << " stopped.";
 }
 
 ThreadState RequestHandler::getState() const

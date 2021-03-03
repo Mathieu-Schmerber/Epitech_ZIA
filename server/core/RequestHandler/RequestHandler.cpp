@@ -12,6 +12,8 @@
 #include "Server.hpp"
 #include <iostream>
 
+#undef DELETE
+
 RequestHandler::RequestHandler(Server *server, int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY),
 _requestId(0), _server(server)
 {}
@@ -65,6 +67,8 @@ void RequestHandler::_processRequest()
             _getRequest(requestParsed);
         else if (requestParsed.getRequestType() == ZiaRequest::POST)
             _postRequest(requestParsed);
+        else if (requestParsed.getRequestType() == ZiaRequest::DELETE)
+            _deleteRequest(requestParsed);
         else
             throw ServerError("Not implemented", 501);
     } catch (const CoreError &e) {
@@ -121,4 +125,15 @@ void RequestHandler::_postRequest(const ZiaRequest::Request &requestParsed)
         _response = response.getResponse(fileContent, "No content", 204);
     else
         _response = response.getResponse(fileContent, "OK", 200);
+}
+
+void RequestHandler::_deleteRequest(const ZiaRequest::Request &requestParsed)
+{
+    Router router;
+    Response response;
+
+    router.init();
+    std::cout << "www" + requestParsed.getRequestPath() << std::endl;
+    router.remove("/", requestParsed.getRequestPath());
+    _response = response.getResponse("", "OK", 200);
 }

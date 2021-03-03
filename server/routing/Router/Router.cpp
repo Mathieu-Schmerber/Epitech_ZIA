@@ -7,6 +7,9 @@
 #include "ExceptionCore.hpp"
 #include "Router.hpp"
 
+/**
+ * \brief Initialises the /www folder
+**/
 void Router::init()
 {
     if (!fs::exists("www") && !fs::create_directory("www"))
@@ -26,6 +29,11 @@ std::string Router::getPath(const std::string &route) const
     return res.concat(route).string();
 }
 
+/**
+ * \brief Creates a route folder in the /www path
+ * \param routePath     The path relative to /www
+ * \param fromFolder    [Optional] Copy the folder content into the newly created route folder
+**/
 void Router::addRoute(const std::string &routePath, const std::string &fromFolder)
 {
     std::string destination = this->getPath(routePath);
@@ -40,6 +48,10 @@ void Router::addRoute(const std::string &routePath, const std::string &fromFolde
     }
 }
 
+/**
+ * \brief Deletes the route folder from the /www path
+ * \param routePath     The path relative to /www
+**/
 void Router::deleteRoute(const std::string &routePath)
 {
     std::string destination = this->getPath(routePath);
@@ -53,6 +65,11 @@ void Router::deleteRoute(const std::string &routePath)
         throw ClientError("Route " + routePath + " not found.", 404);
 }
 
+/**
+ * \brief Deletes every files from /www relative path
+ * \param routePath     The path relative to /www
+ * \param fromFolder    [Optional] Should the call delete sub folders ?
+**/
 void Router::clearRoute(const std::string &routePath, bool clearFolders)
 {
     std::string destination = this->getPath(routePath);
@@ -70,6 +87,12 @@ void Router::clearRoute(const std::string &routePath, bool clearFolders)
         throw ClientError("Route " + routePath + " not found.", 404);
 }
 
+/**
+ * \brief Creates a new file and write into it
+ * \param routePath     The folder path relative to /www
+ * \param filename      The name of the file to create
+ * \param content    [Optional] Write content into the newly created file
+**/
 std::string Router::create(const std::string &routePath, const std::string &filename, const std::string &content)
 {
     std::string destination = this->getPath(routePath);
@@ -87,6 +110,11 @@ std::string Router::create(const std::string &routePath, const std::string &file
         throw ClientError("Route " + routePath + " not found.", 404);
 }
 
+/**
+ * \brief Gets a file content from route
+ * \param routePath     The folder path relative to /www
+ * \param filename      The file to get content from
+**/
 std::string Router::get(const std::string &routePath, const std::string &filename)
 {
     std::string destination = this->getPath(routePath);
@@ -104,6 +132,11 @@ std::string Router::get(const std::string &routePath, const std::string &filenam
         throw ClientError("Route " + routePath + " not found.", 404);
 }
 
+/**
+ * \brief Deletes the specified file from the specified route
+ * \param routePath     The path relative to /www
+ * \param filename      The file name to delete
+**/
 void Router::remove(const std::string &routePath, const std::string &filename)
 {
     std::string destination = this->getPath(routePath);

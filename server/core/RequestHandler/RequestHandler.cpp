@@ -13,6 +13,8 @@
 #include "Log.hpp"
 #include <iostream>
 
+#undef DELETE
+
 RequestHandler::RequestHandler(Server *server, int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY),
 _requestId(0), _server(server)
 {}
@@ -65,6 +67,8 @@ void RequestHandler::_processRequest()
             _getRequest(requestParsed);
         else if (requestParsed.getRequestType() == ZiaRequest::POST)
             _postRequest(requestParsed);
+        else if (requestParsed.getRequestType() == ZiaRequest::DELETE)
+            _deleteRequest(requestParsed);
         else if (requestParsed.getRequestType() == ZiaRequest::HEAD)
             _headRequest(requestParsed);
         else
@@ -131,4 +135,14 @@ void RequestHandler::_headRequest(const ZiaRequest::Request& requestParsed)
     router.init();
     fileContent = router.get("/", requestParsed.getRequestPath());
     _response = Response::headResponse(fileContent, "OK", 200);
+}
+
+void RequestHandler::_deleteRequest(const ZiaRequest::Request &requestParsed)
+{
+    Router router;
+
+    router.init();
+    std::cout << "www" + requestParsed.getRequestPath() << std::endl;
+    router.remove("/", requestParsed.getRequestPath());
+    _response = Response::getResponse("", "OK", 200);
 }

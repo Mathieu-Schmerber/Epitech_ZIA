@@ -142,7 +142,6 @@ void RequestHandler::_deleteRequest(const ZiaRequest::Request &requestParsed)
     Router router;
 
     router.init();
-    std::cout << "www" + requestParsed.getRequestPath() << std::endl;
     router.remove("/", requestParsed.getRequestPath());
     _response = Response::getResponse("", "OK", 200);
 }

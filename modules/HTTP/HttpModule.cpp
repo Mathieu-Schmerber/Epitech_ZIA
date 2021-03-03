@@ -45,8 +45,13 @@ void HTTPModule::handleQueue()
     std::string ipDisconnect;
     if (_sTcp->userDisconnected() && !(ipDisconnect = _sTcp->getNewDisconnect()).empty()) {
     }
-    if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
-        _outQueue.emplace_back(receive.receive, receive.id);
+    if ((receive = _sTcp->getNewMessage()).id != 0) {
+        if (receive.receive == "\r\n") {
+            _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
+            _fullReceive[receive.id].clear();
+        } else {
+            _fullReceive[receive.id] += receive.receive;
+        }
     }
     if ((in = getInput()).second != -1) {
         _sTcp->send(in.second, in.first);

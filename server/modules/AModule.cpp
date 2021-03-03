@@ -31,7 +31,7 @@ void AModule::dataInput(const std::string &str, int id)
 std::pair<std::string, int> AModule::dataOutput()
 {
     if (this->_outQueue.empty())
-        return {};
+        return std::pair<std::string, int>("", -1);
     std::pair<std::string, int> out = this->_outQueue.front();
 
     this->_outQueue.erase(this->_outQueue.begin());

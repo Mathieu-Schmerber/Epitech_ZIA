@@ -2,11 +2,11 @@
   "modules": [
     {
       "id": 1,
-      "name": "Https module"
+      "name": "httpModule"
     },
     {
       "id": 2,
-      "name": "CGI PHP"
+      "name": "phpModule"
     }
   ]
 }

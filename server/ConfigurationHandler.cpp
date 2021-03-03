@@ -1,32 +1,32 @@
-//
-// Created by alexa on 26/01/2021.
-//
+/**
+ * \file ConfigurationHandler.cpp
+ * \brief Classes which parse json files for the modules and the server
+ * \author Alexandre.M
+**/
 
 #include "ConfigurationHandler.hpp"
 
 ConfigurationHandler::ConfigurationHandler() : _numberOfLoadedModules(0)
 {
-
 }
 
 ConfigurationHandler::~ConfigurationHandler()
-{
-
-}
+= default;
 
 std::string ConfigurationHandler::readFile(const std::string &filepath)
 {
     std::string file;
     std::string line;
 
-    std::ifstream myfile("config.json");
+    std::ifstream myfile(filepath);
     if (myfile.is_open()) {
         while (getline(myfile, line)) {
             file += line + '\n';
         }
         myfile.close();
     } else {
-        std::cerr << "Unable to open file" << std::endl;
+        LOG(WARN) << "Unable to open file";
+        return "";
     }
     return file;
 }
@@ -35,13 +35,34 @@ void ConfigurationHandler::loadConfiguration(const std::string &filepath)
 {
     std::string file = readFile(filepath);
 
+    if (file.empty())
+        return;
     _doc.Parse(file.c_str());
 
     loadModules();
 }
 
+int ConfigurationHandler::loadHttpModule(const std::string &filepath)
+{
+    std::string file = readFile(filepath);
+    if (file.empty())
+        return -1;
+
+    _docHttp.Parse(file.c_str());
+
+    if (_docHttp.HasMember("port") == 0) {
+        LOG(WARN) << "No port found";
+        return 80;
+    }
+    if (_docHttp["port"].IsInt64())
+        return _docHttp["port"].GetInt();
+    return -1;
+}
+
 void ConfigurationHandler::loadModules()
 {
+    _numberOfLoadedModules = 0;
+    _modules.clear();
     if (_doc.HasMember("modules") == 0) {
         LOG(WARN) << "No modules found.";
         return;
@@ -52,7 +73,7 @@ void ConfigurationHandler::loadModules()
         && modules[i].FindMember("id")->value.IsInt64()
         && modules[i].FindMember("name")->value.IsString()) {
             s_module module;
-            LOG(INFO) << "Loaded module: \"" << modules[i].FindMember("name")->value.GetString() << "\" with id: "
+            LOG(INFO) << "Config loaded module: \"" << modules[i].FindMember("name")->value.GetString() << "\" with id: "
             << modules[i].FindMember("id")->value.GetInt64();
             module.id = modules[i].FindMember("id")->value.GetInt64();
             module.name = modules[i].FindMember("name")->value.GetString();
@@ -60,11 +81,41 @@ void ConfigurationHandler::loadModules()
             _numberOfLoadedModules++;
         }
     }
-    LOG(INFO) << "Loaded: " << _numberOfLoadedModules << " modules.";
+    LOG(INFO) << "Config loaded " << _numberOfLoadedModules << " modules.";
 }
 
 std::vector<t_module> ConfigurationHandler::getLoadedModules()
 {
     return _modules;
+}
+
+int ConfigurationHandler::getInt(const std::string &filepath, const std::string& varName)
+{
+    std::string file = readFile(filepath);
+    if (file.empty())
+        return 0;
+
+    _docModule.Parse(file.c_str());
+
+    if (_docModule.HasMember(varName.c_str()) == 0 && _docModule[varName.c_str()].IsInt64())
+    {
+        return _docModule[varName.c_str()].GetInt();
+    }
+    return 0;
+}
+
+std::string ConfigurationHandler::getString(const std::string &filepath, const std::string& varName)
+{
+    std::string file = readFile(filepath);
+    if (file.empty())
+        return "";
+
+    _docModule.Parse(file.c_str());
+
+    if (_docModule.HasMember(varName.c_str()) == 0 && _docModule[varName.c_str()].IsString())
+    {
+        return _docModule[varName.c_str()].GetString();
+    }
+    return "";
 }
 

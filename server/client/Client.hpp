@@ -7,9 +7,12 @@
 #ifndef ZIA_SERVER_CLIENT_HPP
 #define ZIA_SERVER_CLIENT_HPP
 
+#ifdef _WIN32
+    #define _WIN32_WINNT  0x0601
+#endif
 
-#include <string>
 #include <boost/asio/ip/address.hpp>
+#include <string>
 #include <utility>
 #include <iostream>
 

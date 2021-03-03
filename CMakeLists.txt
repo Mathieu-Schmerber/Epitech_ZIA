@@ -89,7 +89,6 @@ set(SOURCES
         server/core/Request/DeleteRequest.hpp
         server/core/Request/TraceRequest.hpp
         server/core/Request/ConnectRequest.hpp
-        server/core/Response/IResponse.hpp
         server/core/RequestParser/RequestParser.hpp
         server/core/ExceptionCore/ExceptionCore.hpp
         server/exception/ZiaError.hpp
@@ -102,14 +101,21 @@ set(SOURCES
         server/ServerException.hpp
         server/core/ExceptionCore/ZiaHTTPError.hpp
         server/routing/Router/Router.cpp
-        server/routing/Router/Router.hpp)
+        server/routing/Router/Router.hpp server/core/Response/Response.cpp server/core/Response/Response.hpp)
 
 set(SOURCES_HTTP_MODULE
         modules/HTTP/HttpModule.cpp
         modules/HTTP/HttpModule.hpp
         server/modules/IModule.hpp
         server/modules/AModule.cpp
-        server/modules/AModule.hpp)
+        server/modules/AModule.hpp
+        server/ConfigurationHandler.cpp
+        server/ConfigurationHandler.hpp
+        modules/HTTP/network/tcp/TcpProtocol.hpp
+        modules/HTTP/network/tcp/TcpProtocol.cpp
+        modules/HTTP/network/tcp/TcpSocket.hpp
+        modules/HTTP/network/tcp/TcpSocket.cpp
+        modules/HTTP/network/tcp/ReceiveData.hpp)
 
 set(SOURCES_PHP_MODULE
         modules/PHP/PHP_CGI.cpp
@@ -139,8 +145,9 @@ target_include_directories(server PRIVATE
         server/core/Request
         server/core/RequestParser
         server/core/ExceptionCore
-        server/routing
+        server/routing/Router
         server/loader
+        server/core/Response
         )
 
 add_library(httpModule SHARED
@@ -150,7 +157,11 @@ add_library(phpModule SHARED
         ${SOURCES_PHP_MODULE})
 
 target_include_directories(httpModule PRIVATE
-        server/modules)
+        server/modules
+        server
+        server/include/rapidjson
+        server/tools
+        modules/HTTP/network/tcp)
 
 target_include_directories(phpModule PRIVATE
         server/modules)

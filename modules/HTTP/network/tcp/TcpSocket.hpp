@@ -5,9 +5,13 @@
 #ifndef SERVER_TCPSOCKET_HPP
 #define SERVER_TCPSOCKET_HPP
 
+#ifdef _WIN32
+    #define _WIN32_WINNT  0x0601
+#endif
+
+#include <boost/asio.hpp>
 #include <string>
 #include <deque>
-#include <boost/asio.hpp>
 #include "ReceiveData.hpp"
 
 #define MAX_SIZE 1024
@@ -21,8 +25,6 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
         bool getDisconnected() const;
         std::string getIp();
         int getId() const;
-        void setUsername(std::string username);
-        std::string getUsername();
 
     private:
         boost::asio::ip::tcp::socket _socket;
@@ -30,7 +32,6 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
         bool _disconnected = false;
         char _read[MAX_SIZE] = {0};
         int _id;
-        std::string _username;
         std::deque<ReceiveData> &_msgQueue;
 };
 
@@ -40,10 +41,6 @@ class TcpSocket {
         ~TcpSocket();
         bool userDisconnected();
         void send(int id, const std::string &msg);
-        void sendToEveryone(const std::string &msg, int id);
-        void setUsername(int id, const std::string& username);
-        std::string getUsername(int id);
-        [[nodiscard]] int getId(const std::string &ip) const;
         [[nodiscard]] std::string getNewDisconnect();
         ReceiveData getNewMessage();
 

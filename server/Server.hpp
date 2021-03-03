@@ -11,13 +11,10 @@
 #include "DynamicLibManager.hpp"
 #include "RequestHandler.hpp"
 #include "ModuleHandler.hpp"
-#include "TcpProtocol.hpp"
 #include "AModule.hpp"
 #include "Client.hpp"
-
-#ifdef _WIN32
-    #define _WIN32_WINNT  0x0601
-#endif
+#include "ConfigurationHandler.hpp"
+#include <future>
 
 /**
  * \class Server Server.hpp "Server.hpp"
@@ -31,6 +28,7 @@ public:
 
     void run();
     static std::string readAsyncFunction();
+    std::map<std::string, std::shared_ptr<ModuleHandler>> getOutputModules();
 
     enum MODULE_IN_OUT {
         MODULE_IN = 0,
@@ -38,16 +36,24 @@ public:
     };
 private:
     void _readInput();
-    void _loadModule(const std::vector<std::string>& cmdLine);
-    void _startModule(const std::vector<std::string>& cmdLine);
-    void _stopModule(const std::vector<std::string>& cmdLine);
-    void _stopServer(const std::vector<std::string>& cmdLine);
+    void _cmdLoadModule(const std::vector<std::string>& cmdLine);
+    void _cmdStartModule(const std::vector<std::string>& cmdLine);
+    void _cmdStopModule(const std::vector<std::string>& cmdLine);
+    void _cmdReloadModule(const std::vector<std::string>& cmdLine);
+    void _cmdReloadModules(const std::vector<std::string>& cmdLine);
+    void _cmdExitServer(const std::vector<std::string>& cmdLine);
+    void _cmdLoadConfiguration(const std::vector<std::string>& cmdLine);
+
+    void _loadModule(const std::string &moduleName);
+    void _startModule(const std::string &moduleName);
+    void _stopModule(const std::string &moduleName);
 
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
     std::map<std::string, std::shared_ptr<ModuleHandler>> _modules[2];
     ModuleLoader::DynamicLibManager dlManager;
     bool _running = true;
     std::future<std::string> _future;
+    ConfigurationHandler _configHandler;
 };
 
 

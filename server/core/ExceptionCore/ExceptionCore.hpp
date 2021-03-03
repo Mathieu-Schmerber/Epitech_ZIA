@@ -29,8 +29,8 @@ public:
 
 class ClientError : public CoreError {
 public:
-    explicit ClientError(const std::string &errorType = "Client Error 4xx", const std::string &errorMessage = "", int errorCode = 400) :
-        CoreError(errorType, errorMessage, errorCode) {};
+    explicit ClientError(const std::string &errorMessage = "", int errorCode = 400) :
+        CoreError("Client Error", errorMessage, errorCode) {};
 };
 
 /**
@@ -40,8 +40,8 @@ public:
 
 class ServerError : public CoreError {
 public:
-    explicit ServerError(const std::string &errorType = "Server Error 5xx", const std::string &errorMessage = "", int errorCode = 500) :
-        CoreError(errorType, errorMessage, errorCode) {};
+    explicit ServerError(const std::string &errorMessage = "", int errorCode = 500) :
+        CoreError("Server Error", errorMessage, errorCode) {};
 };
 
 #endif //ZIA_EXCEPTIONCORE_HPP

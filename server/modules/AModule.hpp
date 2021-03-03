@@ -20,16 +20,15 @@ public:
     explicit AModule(const std::string &name);
     void loadConfigFile(const std::string &configFilePath) override {};
 
-    void dataInput(const std::string &, int id) final;
-    std::pair<std::string, int> dataOutput() final;
+    void dataInput(const std::string &, int id) override;
+    std::pair<std::string, int> dataOutput() override;
+    [[nodiscard]] std::string getFileExtension() const override { return ""; };
 
-    bool isInputData() override {
-        return false;
-    };
+    bool isInputData() override = 0;
     void run() final;
     bool getStatus() final;
-    void startModule() final;
-    void stopModule() final;
+    void startModule() override;
+    void stopModule() override;
 
 private:
     bool _running;
@@ -40,6 +39,21 @@ protected:
     std::vector<std::pair<std::string, int>> _outQueue;
 
     virtual void handleQueue();
+};
+
+class AModuleInput : public AModule {
+public:
+    explicit AModuleInput(const std::string &name) : AModule(name) {}
+
+    bool isInputData() override { return true; }
+};
+
+class AModuleOutput : public AModule {
+public:
+    explicit AModuleOutput(const std::string &name) : AModule(name) {}
+
+    bool isInputData() override { return false; }
+    [[nodiscard]] std::string getFileExtension() const override { return ""; };
 };
 
 #endif //ZIA_AMODULE_HPP

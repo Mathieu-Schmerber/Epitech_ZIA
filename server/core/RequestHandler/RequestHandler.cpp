@@ -10,6 +10,7 @@
 #include "Response.hpp"
 #include "Router.hpp"
 #include "Server.hpp"
+#include "Log.hpp"
 #include <iostream>
 
 RequestHandler::RequestHandler(Server *server, int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY),
@@ -24,12 +25,12 @@ RequestHandler::~RequestHandler()
 
 void RequestHandler::run()
 {
-    std::cout << "Thread " << _requestHandlerId << " started." << std::endl;
+    LOG(INFO) << "Thread " << _requestHandlerId << " started.";
     while (_running) {
         if (_state == PROCESSING)
             _processRequest();
     }
-    std::cout << "Thread " << _requestHandlerId << " stopped." << std::endl;
+    LOG(INFO) << "Thread " << _requestHandlerId << " stopped.";
 }
 
 ThreadState RequestHandler::getState() const
@@ -55,7 +56,6 @@ void RequestHandler::_processRequest()
 {
     ZiaRequest::RequestParser requestParser;
     ZiaRequest::Request requestParsed;
-    Response response;
 
     try {
         requestParsed = requestParser.parseData(_request);
@@ -65,10 +65,12 @@ void RequestHandler::_processRequest()
             _getRequest(requestParsed);
         else if (requestParsed.getRequestType() == ZiaRequest::POST)
             _postRequest(requestParsed);
+        else if (requestParsed.getRequestType() == ZiaRequest::HEAD)
+            _headRequest(requestParsed);
         else
             throw ServerError("Not implemented", 501);
     } catch (const CoreError &e) {
-        _response = response.getResponse(e.what(), e.what(), e.getErrorCode());
+        _response = Response::getResponse(e.what(), e.what(), e.getErrorCode());
     }
     _state = PROCESSED;
 }
@@ -98,27 +100,35 @@ bool RequestHandler::_checkOutputModules(const ZiaRequest::Request& requestParse
 void RequestHandler::_getRequest(const ZiaRequest::Request& requestParsed)
 {
     Router router;
-    Response response;
     std::string fileContent;
 
     router.init();
     fileContent = router.get("/", requestParsed.getRequestPath());
     if (fileContent.empty())
-        _response = response.getResponse(fileContent, "No content", 204);
+        _response = Response::getResponse(fileContent, "No content", 204);
     else
-        _response = response.getResponse(fileContent, "OK", 200);
+        _response = Response::getResponse(fileContent, "OK", 200);
 }
 
 void RequestHandler::_postRequest(const ZiaRequest::Request &requestParsed)
 {
     Router router;
-    Response response;
     std::string fileContent;
 
     router.init();
     fileContent = router.get("/", requestParsed.getRequestPath());
     if (fileContent.empty())
-        _response = response.getResponse(fileContent, "No content", 204);
+        _response = Response::getResponse(fileContent, "No content", 204);
     else
-        _response = response.getResponse(fileContent, "OK", 200);
+        _response = Response::getResponse(fileContent, "OK", 200);
+}
+
+void RequestHandler::_headRequest(const ZiaRequest::Request& requestParsed)
+{
+    Router router;
+    std::string fileContent;
+
+    router.init();
+    fileContent = router.get("/", requestParsed.getRequestPath());
+    _response = Response::headResponse(fileContent, "OK", 200);
 }

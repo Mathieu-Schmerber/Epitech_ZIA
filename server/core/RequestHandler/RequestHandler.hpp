@@ -39,6 +39,7 @@ private:
     bool _checkOutputModules(const ZiaRequest::Request& requestParsed);
     void _getRequest(const ZiaRequest::Request& requestParsed);
     void _postRequest(const ZiaRequest::Request& requestParsed);
+    void _headRequest(const ZiaRequest::Request& requestParsed);
 
     //Request Handlers variables
     std::thread _thread;

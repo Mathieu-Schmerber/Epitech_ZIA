@@ -106,6 +106,8 @@ void ZiaRequest::RequestParser::_parseRequestMethod(const std::string& out, ZiaR
 
     while (std::getline(lineToParse, each, ' '))
         tokens.push_back(each);
+    if (tokens.size() < 3)
+        throw ClientError("Bad request", 400);
     request.setRequestType(tokens.at(0));
     request.setRequestPath(tokens.at(1));
     request.setRequestVersion(tokens.at(2));

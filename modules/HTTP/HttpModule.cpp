@@ -23,6 +23,10 @@ extern "C" {
     }
 }
 
+/**
+ * \brief HTTP Module constructor
+ *
+**/
 HTTPModule::HTTPModule() : AModuleInput("HTTP")
 {
 }
@@ -32,16 +36,6 @@ void HTTPModule::loadConfigFile(const std::string &configFilePath)
     ConfigurationHandler config = ConfigurationHandler();
     _port = config.loadHttpModule(configFilePath);
     std::cout << _port << std::endl;
-}
-
-static void print_buf(const char *title, const unsigned char *buf, size_t buf_len)
-{
-    size_t i = 0;
-    fprintf(stdout, "%s\n", title);
-    for(i = 0; i < buf_len; ++i)
-        fprintf(stdout, "%02X%s", buf[i],
-                ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
-
 }
 
 /**

@@ -23,6 +23,10 @@ extern "C" {
     }
 }
 
+/**
+ * \brief HTTPS Module constructor
+ *
+**/
 HTTPSModule::HTTPSModule() : AModuleInput("HTTPS"), _port(443), _sTcp(nullptr)
 {
 }
@@ -60,7 +64,6 @@ void HTTPSModule::handleQueue()
         } else {
             _fullReceive[receive.id] += receive.receive;
         }
-//        print_buf("Message received :", reinterpret_cast<const unsigned char *>(receive.receive.data()), receive.receive.length());
     }
     if ((in = getInput()).second != -1) {
         _sTcp->send(in.second, in.first);

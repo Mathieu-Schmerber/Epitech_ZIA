@@ -10,8 +10,9 @@
 /**
  * \brief main, start the server
  **/
-int main() {
-    Server _server;
+int main(int ac, char **av)
+{
+    Server _server(ac, av);
 
     _server.run();
     return (0);

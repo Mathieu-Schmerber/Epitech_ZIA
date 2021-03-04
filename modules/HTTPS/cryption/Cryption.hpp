@@ -1,6 +1,8 @@
-//
-// Created by Cyprien on 2/26/2021.
-//
+/**
+ * \file Cryption.hpp
+ * \brief Class to crypt and uncrypt messages
+ * \author Cyprien.R
+**/
 
 #ifndef ZIA_CRYPTION_HPP
 #define ZIA_CRYPTION_HPP
@@ -15,6 +17,10 @@
 #include <openssl/bio.h>
 #include <openssl/opensslv.h>
 
+/**
+ * \class Cryption Cryption.hpp "Cryption.hpp"
+ * \brief Cryption is a class to crypt and uncrypt messages
+**/
 class Cryption {
 public:
     Cryption();

@@ -1,13 +1,16 @@
-//
-// Created by Cyprien on 2/26/2021.
-//
+/**
+ * \file Cyrption.cpp
+ * \brief functions of Cyrption's class
+ * \authors Cyprien.R
+**/
 
 #include <iostream>
 #include <vector>
 #include "Cryption.hpp"
 
-// TODO, la documentation
-
+/**
+ * \brief Cryption constructor
+**/
 Cryption::Cryption()
 {
     RAND_bytes(Key, sizeof(Key));
@@ -20,6 +23,11 @@ Cryption::Cryption()
     AES_set_decrypt_key(Key, 256, AesDecryptKey); // à garder
 }
 
+/**
+ * \brief encrypt string
+ *
+ * \param txt : string to encrypt
+**/
 std::string Cryption::encrypt(std::string &txt)
 {
     int RequiredPadding = (AES_BLOCK_SIZE - (static_cast<int>(txt.length()) % AES_BLOCK_SIZE));
@@ -39,6 +47,11 @@ std::string Cryption::encrypt(std::string &txt)
     return std::string();
 }
 
+/**
+ * \brief decrypt string
+ *
+ * \param txt : string to decrypt
+**/
 std::string Cryption::decrypt(std::string &txt)
 {
     std::vector<unsigned char> PaddedTxt(txt.begin(), txt.end());   // Easier to Pad as a vector

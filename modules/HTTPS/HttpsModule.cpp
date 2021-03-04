@@ -83,8 +83,8 @@ void HTTPSModule::startModule()
     try {
         _sTcp = new TcpProtocol("0.0.0.0", _port);
     } catch (boost::system::system_error &error) {
-        std::cout << error.what() << std::endl;
-        exit(84);
+        std::cerr << error.what() << std::endl;
+        stopModule();
     }
 }
 

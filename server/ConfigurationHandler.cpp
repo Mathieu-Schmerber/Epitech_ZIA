@@ -46,7 +46,7 @@ void ConfigurationHandler::loadModules()
 {
     _numberOfLoadedModules = 0;
     _modules.clear();
-    if (_doc.HasMember("modules") == 0) {
+    if (!_doc.HasMember("modules")) {
         LOG(WARN) << "No modules found.";
         return;
     }

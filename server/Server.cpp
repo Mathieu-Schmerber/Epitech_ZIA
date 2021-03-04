@@ -8,19 +8,48 @@
 #include "RequestHandler.hpp"
 #include <sstream>
 
-Server::Server()
+Server::Server(int ac, char **av)
 {
     std::vector<t_module> loadedModules;
+    std::string configFilePath;
+
+    if (ac == 2)
+    {
+        _configFilePath = av[1];
+    } else if (ac < 2)
+    {
+        LOG(WARN) << "No config file specified try to find one";
+        _checkFolder("./");
+    }
 
     for (int i = 0; i < 2; ++i)
         _requestsHandlers.push_back(std::make_unique<RequestHandler>(this, i));
     _future = std::async(std::launch::async, Server::readAsyncFunction);
-    _configHandler.loadConfiguration("config.json"); ///FIXME : Change path
+    _configHandler.loadConfiguration(_configFilePath);
     loadedModules = _configHandler.getLoadedModules();
     for (auto & _loadedModule : loadedModules) {
         if (!dlManager.libStocked(DYNLIB(_loadedModule.name)))
             _loadModule(_loadedModule.name);
         _startModule(_loadedModule.name);
+    }
+}
+
+void Server::_checkFolder(const std::filesystem::path& dirPath)
+{
+    std::string result;
+
+    for (const auto & entry : std::filesystem::directory_iterator(dirPath)) {
+        if (entry.path().string().find("config.json") != std::string::npos)
+        {
+            _configFilePath = entry.path().string();
+            std::replace(_configFilePath.begin(), _configFilePath.end(), '\\', '/');
+            LOG(INFO) << "Find a configuration file in: " << _configFilePath;
+            return;
+        }
+        else if (std::filesystem::is_directory(entry.path()))
+        {
+            _checkFolder(entry.path());
+        }
     }
 }
 
@@ -182,7 +211,11 @@ void Server::_cmdLoadConfiguration(const std::vector<std::string> &cmdLine)
         }
     }
 
-    _configHandler.loadConfiguration("config.json"); ///FIXME : Change path
+    if (!std::filesystem::exists(_configFilePath)) { ///FIXME : Change path
+        LOG(WARN) << "The configuration file has been moved or deleted trying to find him...";
+        _checkFolder("./");
+    }
+    _configHandler.loadConfiguration(_configFilePath);
     _loadedModules = _configHandler.getLoadedModules();
     for (auto & _loadedModule : _loadedModules) {
         if (!dlManager.libStocked(DYNLIB(_loadedModule.name)))

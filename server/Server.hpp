@@ -15,6 +15,7 @@
 #include "Client.hpp"
 #include "ConfigurationHandler.hpp"
 #include <future>
+#include <filesystem>
 
 /**
  * \class Server Server.hpp "Server.hpp"
@@ -23,7 +24,7 @@
 
 class Server {
 public:
-    explicit Server();
+    explicit Server(int ac, char **av);
     ~Server() = default;
 
     void run();
@@ -48,12 +49,15 @@ private:
     void _startModule(const std::string &moduleName);
     void _stopModule(const std::string &moduleName);
 
+    void _checkFolder(const std::filesystem::path& dirPath);
+
     std::vector<std::unique_ptr<RequestHandler>> _requestsHandlers;
     std::map<std::string, std::shared_ptr<ModuleHandler>> _modules[2];
     ModuleLoader::DynamicLibManager dlManager;
     bool _running = true;
     std::future<std::string> _future;
     ConfigurationHandler _configHandler;
+    std::string _configFilePath;
 };
 
 

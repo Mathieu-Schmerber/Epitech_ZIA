@@ -11,7 +11,7 @@
 
 //using namespace rapidjson;
 
-void fct_server()
+void fct_server(int ac, char **av)
 {
     //ConfigurationHandler configurationHandler;
 
@@ -25,7 +25,7 @@ void fct_server()
     std::cout << pouet << std::endl;
     pouet->startModule();
     pouet->stopModule();**/
-    Server _server;
+    Server _server(ac, av);
 
     _server.run();
 }
@@ -41,8 +41,8 @@ void fct_request()
         std::cout << "[" << a.first << "] -> [" << a.second << "]" << std::endl;
 }
 
-int main() {
-    fct_server();
+int main(int ac, char **av) {
+    fct_server(ac, av);
     //fct_request();
 
     return (0);

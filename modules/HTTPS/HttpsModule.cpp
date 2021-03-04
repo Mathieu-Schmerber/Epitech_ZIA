@@ -40,8 +40,10 @@ HTTPSModule::HTTPSModule() : AModuleInput("HTTPS"), _port(443), _sTcp(nullptr)
 void HTTPSModule::loadConfigFile(const std::string &configFilePath)
 {
     ConfigurationHandler config = ConfigurationHandler();
-    _port = config.loadHttpsModule(configFilePath);
-    std::cout << _port << std::endl;
+    _port = config.getInt(configFilePath, "port");
+    if (_port == 0)
+        _port = 443;
+    LOG(INFO) << "HTTPS module use port: " << _port;
 }
 
 /**
@@ -86,8 +88,8 @@ void HTTPSModule::startModule()
     try {
         _sTcp = new TcpProtocol("0.0.0.0", _port);
     } catch (boost::system::system_error &error) {
-        std::cout << error.what() << std::endl;
-        exit(84);
+        std::cerr << error.what() << std::endl;
+        stopModule();
     }
 }
 

@@ -34,8 +34,10 @@ HTTPModule::HTTPModule() : AModuleInput("HTTP")
 void HTTPModule::loadConfigFile(const std::string &configFilePath)
 {
     ConfigurationHandler config = ConfigurationHandler();
-    _port = config.loadHttpModule(configFilePath);
-    std::cout << _port << std::endl;
+    _port = config.getInt(configFilePath, "port");
+    if (_port == 0)
+        _port = 80;
+    LOG(INFO) << "HTTP module use port: " << _port;
 }
 
 /**
@@ -85,8 +87,8 @@ void HTTPModule::startModule()
     try {
         _sTcp = new TcpProtocol("0.0.0.0", _port);
     } catch (boost::system::system_error &error) {
-        std::cout << error.what() << std::endl;
-        exit(84);
+        std::cerr << error.what() << std::endl;
+        stopModule();
     }
 }
 

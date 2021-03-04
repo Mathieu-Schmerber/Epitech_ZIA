@@ -41,8 +41,6 @@ class ConfigurationHandler
     public:
         ConfigurationHandler();
         ~ConfigurationHandler();
-
-
 /**
  * \fn std::string readFile(const std::string &filepath)
  * \brief Function that return the content of the file
@@ -87,8 +85,6 @@ class ConfigurationHandler
         int _numberOfLoadedModules;
         rapidjson::Document _doc;
         rapidjson::Document _docModule;
-        rapidjson::Document _docHttp;
-
 };
 
 

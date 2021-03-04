@@ -62,7 +62,9 @@ void HTTPSModule::handleQueue()
     if (_sTcp->userDisconnected() && !(ipDisconnect = _sTcp->getNewDisconnect()).empty()) {
     }
     if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
-        if (receive.receive == "\r\n") {
+        if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {
+            if (receive.receive != "\r\n")
+                _fullReceive[receive.id] += receive.receive;
             _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
             _fullReceive[receive.id].clear();
         } else {

@@ -1,6 +1,9 @@
-//
-// Created by Emilien on 18/02/2021.
-//
+/**
+ * \file AModule.cpp
+ * \brief functions for the module abstract class
+ * \author Emilien.D
+**/
+
 
 #include "AModule.hpp"
 #include <iostream>

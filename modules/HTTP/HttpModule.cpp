@@ -34,6 +34,16 @@ void HTTPModule::loadConfigFile(const std::string &configFilePath)
     std::cout << _port << std::endl;
 }
 
+static void print_buf(const char *title, const unsigned char *buf, size_t buf_len)
+{
+    size_t i = 0;
+    fprintf(stdout, "%s\n", title);
+    for(i = 0; i < buf_len; ++i)
+        fprintf(stdout, "%02X%s", buf[i],
+                ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+
+}
+
 /**
  * \brief Looping on AModule::run() while AModule::_running
  *
@@ -46,7 +56,9 @@ void HTTPModule::handleQueue()
     if (_sTcp->userDisconnected() && !(ipDisconnect = _sTcp->getNewDisconnect()).empty()) {
     }
     if ((receive = _sTcp->getNewMessage()).id != 0) {
-        if (receive.receive == "\r\n") {
+        if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {
+            if (receive.receive != "\r\n")
+                _fullReceive[receive.id] += receive.receive;
             _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
             _fullReceive[receive.id].clear();
         } else {

@@ -8,6 +8,7 @@
 #ifndef ZIA_IMODULE_HPP
 #define ZIA_IMODULE_HPP
 
+#include "Log.hpp"
 #include <string>
 
 /**

@@ -200,7 +200,7 @@ void Server::_loadModule(const std::string &moduleName)
             _modules[MODULE_IN].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerInput>>(moduleName, std::make_shared<ModuleHandlerInput>(ModuleHandlerInput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
         else
             _modules[MODULE_OUT].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerOutput>>(moduleName, std::make_shared<ModuleHandlerOutput>(ModuleHandlerOutput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
-        std::cout << "Module " << DYNLIB(moduleName) << " loaded." << std::endl;
+        LOG(INFO) << "Module " << DYNLIB(moduleName) << " loaded.";
     } catch (const ModuleLoader::ModuleLoaderException &e) {
         std::cerr << e.getComponent() << ": " << e.what() << std::endl;
     }

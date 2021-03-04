@@ -115,7 +115,9 @@ set(SOURCES_HTTP_MODULE
         modules/HTTP/network/tcp/TcpProtocol.cpp
         modules/HTTP/network/tcp/TcpSocket.hpp
         modules/HTTP/network/tcp/TcpSocket.cpp
-        modules/HTTP/network/tcp/ReceiveData.hpp)
+        modules/HTTP/network/tcp/ReceiveData.hpp
+        server/tools/log_test.hpp
+        )
 
 set(SOURCES_HTTPS_MODULE
         modules/HTTPS/HttpsModule.cpp
@@ -191,7 +193,8 @@ target_include_directories(httpsModule PRIVATE
         modules/HTTPS/network/tcp)
 
 target_include_directories(phpModule PRIVATE
-        server/modules)
+        server/modules
+        server/tools)
 
 message("===========================================")
 message(${CONAN_LIBS})

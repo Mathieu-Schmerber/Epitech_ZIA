@@ -40,9 +40,9 @@ std::string Cryption::encrypt(std::string &txt)
     unsigned char *EncryptedData = &PaddedTxt_cpy[0];
     size_t UserDataSizePadded = PaddedTxt.size();
 
-    std::cout << "[encrypt] DecryptedData: " << UserData << std::endl;
+    LOG(DEBUG) << "[encrypt] DecryptedData: " << UserData;
     AES_cbc_encrypt(UserData, EncryptedData, UserDataSizePadded, static_cast<const AES_KEY *>(AesEncryptKey), IV, AES_ENCRYPT);
-    std::cout << "[encrypt] EncryptedData: " << EncryptedData << std::endl;
+    LOG(DEBUG) << "[encrypt] EncryptedData: " << EncryptedData;
 
     return std::string();
 }
@@ -67,8 +67,8 @@ std::string Cryption::decrypt(std::string &txt)
 
     /** Decrypt the data. Note that we use the same function call. Only change is the last parameter **/
     AES_cbc_encrypt(EncryptedData, DecryptedData, UserDataSizePadded, (const AES_KEY *) AesDecryptKey, IVd, AES_DECRYPT);
-    std::cout << "DecryptedData: " << DecryptedData << std::endl;
-    std::cout << "EncryptedData: " << EncryptedData << std::endl;
+    LOG(DEBUG) << "DecryptedData: " << DecryptedData;
+    LOG(DEBUG) << "EncryptedData: " << EncryptedData;
 
     return std::string();
 }

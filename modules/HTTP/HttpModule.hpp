@@ -1,6 +1,9 @@
-//
-// Created by Emilien on 17/02/2021.
-//
+/**
+ * \file HttpsModule.hpp
+ * \brief Http Module
+ * \author Emilien.D
+**/
+
 
 #ifndef ZIA_HTTPMODULE_HPP
 #define ZIA_HTTPMODULE_HPP
@@ -9,6 +12,11 @@
 #include "TcpProtocol.hpp"
 #include <string>
 #include <thread>
+
+/**
+ * \class HTTPModule HTTPModule.hpp "HTTPModule.hpp"
+ * \brief Class HTTPModule to receive and send http messages
+**/
 
 class HTTPModule : public AModuleInput {
 public:

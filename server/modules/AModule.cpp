@@ -20,11 +20,11 @@ AModule::AModule(const std::string &name) : _running(false), _name(name) {}
  **/
 void AModule::run()
 {
-    std::cout << "Start " << this->_name << " Module" << std::endl;
+    LOG(INFO) << "Start " << this->_name << " Module";
     while (getStatus()) {
         this->handleQueue();
     }
-    std::cout << "End " << this->_name << " Module" << std::endl;
+    LOG(INFO) << "End " << this->_name << " Module";
 }
 
 //region Queue handling

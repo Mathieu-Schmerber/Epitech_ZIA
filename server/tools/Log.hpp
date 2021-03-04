@@ -10,6 +10,9 @@
 
 #include <string>
 #include <iostream>
+#include <mutex>
+#include <thread>
+#include "log_test.hpp"
 
 #define BLUE 9
 #define GREEN 10
@@ -80,7 +83,8 @@ enum logType
     DEBUG,
     INFO,
     WARN,
-    ERR // ERROR already used as macro in .h windows files
+    ERR, // ERROR already used as macro in .h windows files
+    TRACE
 };
 
 typedef struct structLog_s
@@ -99,55 +103,34 @@ class LOG
     explicit LOG(logType type)
     {
         msgLevel = type;
-        if (LOG_CFG.headers) {
-            operator<<("[" + getLabel(type) + "]");
-        }
+        //if (LOG_CFG.headers) {
+        //    operator<<("[" + getLabel(type) + "]");
+        //}
     }
 
-    ~LOG()
-    {
-        if (opened) {
-            std::cout << std::endl;
-        }
-        opened = false;
+    ~LOG() {
+        if (msgLevel == ERR)
+            logging::ERR(buf.str());
+        else if (msgLevel == WARN)
+            logging::WARN(buf.str());
+        else if (msgLevel == INFO)
+            logging::INFO(buf.str());
+        else if (msgLevel == DEBUG)
+            logging::DEBUG(buf.str());
+        else
+            logging::TRACE(buf.str());
     }
 
     template<class T>
     LOG &operator<<(const T &msg)
     {
-        if (msgLevel >= LOG_CFG.level) {
-            if (msgLevel == WARN) LOG_YELLOW(msg)
-            else if (msgLevel == INFO) LOG_BLUE(msg)
-            else if (msgLevel == ERR) LOG_RED(msg)
-            else std::cout << msg;
-            opened = true;
-        }
+        buf << msg;
         return *this;
     }
 
     private:
-    bool opened = false;
     logType msgLevel = DEBUG;
-
-    static inline std::string getLabel(logType type)
-    {
-        std::string label;
-        switch (type) {
-            case DEBUG:
-                label = "DEBUG";
-                break;
-            case INFO:
-                label = "INFO ";
-                break;
-            case WARN:
-                label = "WARN ";
-                break;
-            case ERR:
-                label = "ERROR";
-                break;
-        }
-        return label;
-    }
+    std::ostringstream buf;
 
     structLog LOG_CFG;
 };

@@ -7,6 +7,8 @@
 #ifndef ZIA_CRYPTION_HPP
 #define ZIA_CRYPTION_HPP
 
+#include "Log.hpp"
+
 #include <string>
 #include <algorithm>
 #include <openssl/aes.h>

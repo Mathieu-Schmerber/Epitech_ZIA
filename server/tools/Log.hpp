@@ -12,7 +12,7 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
-#include "log_test.hpp"
+#include "Logger.hpp"
 
 #define BLUE 9
 #define GREEN 10

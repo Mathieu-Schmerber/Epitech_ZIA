@@ -116,7 +116,7 @@ set(SOURCES_HTTP_MODULE
         modules/HTTP/network/tcp/TcpSocket.hpp
         modules/HTTP/network/tcp/TcpSocket.cpp
         modules/HTTP/network/tcp/ReceiveData.hpp
-        server/tools/log_test.hpp
+        server/tools/Logger.hpp
         )
 
 set(SOURCES_HTTPS_MODULE

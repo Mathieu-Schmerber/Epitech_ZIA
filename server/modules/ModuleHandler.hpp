@@ -8,6 +8,7 @@
 #define ZIA_MODULEHANDLER_HPP
 
 #include "AModule.hpp"
+#include "ModuleException.hpp"
 #include <iostream>
 #include <thread>
 
@@ -18,12 +19,69 @@
 
 class ModuleHandler {
 public:
-    explicit ModuleHandler() : _module(nullptr) {};
-    explicit ModuleHandler(AModule *module);
-    void startModule();
-    void stopModule();
-    AModule *get();
-    AModule *operator->();
+    virtual void startModule() = 0;
+    virtual void stopModule() = 0;
+    virtual AModule *get() = 0;
+    virtual AModule *operator->() = 0;
+};
+
+class ModuleHandlerInput : public ModuleHandler {
+public:
+    explicit ModuleHandlerInput() : _module(nullptr) {};
+    explicit ModuleHandlerInput(AModule *module) : _module(module) {}
+    void startModule() override {
+        if (!_module)
+            throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+        _module->startModule();
+        _thread = std::thread(&AModule::run, _module);
+    }
+    void stopModule() override {
+        if (!_module)
+            throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+        _module->stopModule();
+        _thread.join();
+    }
+    AModule *get() override {
+        if (!_module)
+            throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+        return _module;
+    }
+    AModule *operator->() override {
+        if (!_module)
+            throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+        return this->get();
+    }
+private:
+    AModule *_module;
+    std::thread _thread;
+};
+
+class ModuleHandlerOutput : public ModuleHandler {
+public:
+    explicit ModuleHandlerOutput() : _module(nullptr) {};
+    explicit ModuleHandlerOutput(AModule *module) : _module(module) {}
+    void startModule() override {
+        if (!_module)
+            throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+        _module->startModule();
+        _thread = std::thread(&AModule::run, _module);
+    }
+    void stopModule() override {
+        if (!_module)
+            throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+        _module->stopModule();
+        _thread.join();
+    }
+    AModule *get() override {
+        if (!_module)
+            throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+        return _module;
+    }
+    AModule *operator->() override {
+        if (!_module)
+            throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
+        return this->get();
+    }
 private:
     AModule *_module;
     std::thread _thread;

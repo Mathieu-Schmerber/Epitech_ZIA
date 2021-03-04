@@ -89,7 +89,6 @@ set(SOURCES
         server/core/Request/DeleteRequest.hpp
         server/core/Request/TraceRequest.hpp
         server/core/Request/ConnectRequest.hpp
-        server/core/Response/IResponse.hpp
         server/core/RequestParser/RequestParser.hpp
         server/core/ExceptionCore/ExceptionCore.hpp
         server/exception/ZiaError.hpp
@@ -102,7 +101,7 @@ set(SOURCES
         server/ServerException.hpp
         server/core/ExceptionCore/ZiaHTTPError.hpp
         server/routing/Router/Router.cpp
-        server/routing/Router/Router.hpp)
+        server/routing/Router/Router.hpp server/core/Response/Response.cpp server/core/Response/Response.hpp)
 
 set(SOURCES_HTTP_MODULE
         modules/HTTP/HttpModule.cpp
@@ -163,8 +162,9 @@ target_include_directories(server PRIVATE
         server/core/Request
         server/core/RequestParser
         server/core/ExceptionCore
-        server/routing
+        server/routing/Router
         server/loader
+        server/core/Response
         )
 
 add_library(httpModule SHARED

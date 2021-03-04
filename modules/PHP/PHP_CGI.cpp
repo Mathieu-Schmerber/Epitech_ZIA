@@ -26,7 +26,7 @@ extern "C" {
 /**
  * \brief Gets php-cgi program depending on current OS
  * **/
-PHP_CGI::PHP_CGI() : AModule("PHP CGI")
+PHP_CGI::PHP_CGI() : AModuleOutput("PHP CGI")
 {
     #ifdef __unix__
         this->_cgiPath = "php_rsc/unix/php-cgi";

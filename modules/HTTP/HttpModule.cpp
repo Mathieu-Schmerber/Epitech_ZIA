@@ -23,7 +23,7 @@ extern "C" {
     }
 }
 
-HTTPModule::HTTPModule() : AModule("HTTP")
+HTTPModule::HTTPModule() : AModuleInput("HTTP")
 {
 }
 

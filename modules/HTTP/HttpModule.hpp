@@ -10,11 +10,14 @@
 #include <string>
 #include <thread>
 
-class HTTPModule : public AModule {
+class HTTPModule : public AModuleInput {
 public:
     explicit HTTPModule();
     void loadConfigFile(const std::string &configFilePath) override;
     std::pair<std::string, int> getInput();
+    bool isInputData() override {
+        return true;
+    }
     void startModule() override;
     void stopModule() override;
 

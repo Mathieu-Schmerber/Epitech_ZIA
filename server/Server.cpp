@@ -5,13 +5,23 @@
 #include "Server.hpp"
 #include "ModuleException.hpp"
 #include "ServerException.hpp"
+#include "RequestHandler.hpp"
 #include <sstream>
 
 Server::Server()
 {
-    for (int i = 0; i < 0; ++i)
-        _requestsHandlers.push_back(std::make_unique<RequestHandler>(i));
+    std::vector<t_module> loadedModules;
+
+    for (int i = 0; i < 2; ++i)
+        _requestsHandlers.push_back(std::make_unique<RequestHandler>(this, i));
     _future = std::async(std::launch::async, Server::readAsyncFunction);
+    _configHandler.loadConfiguration("config.json"); ///FIXME : Change path
+    loadedModules = _configHandler.getLoadedModules();
+    for (auto & _loadedModule : loadedModules) {
+        if (!dlManager.libStocked(DYNLIB(_loadedModule.name)))
+            _loadModule(_loadedModule.name);
+        _startModule(_loadedModule.name);
+    }
 }
 
 void Server::run()
@@ -20,9 +30,23 @@ void Server::run()
 
     while (_running) {
         _readInput();
-        for (auto &a : _requestsHandlers) {
-            if (a->getState() == READY) {
-
+        for (auto &inputModule : _modules[MODULE_IN]) {
+            for (auto &a : _requestsHandlers) {
+                std::pair<std::string, std::pair<std::string, int>> pRequest;
+                if (a->getState() == PROCESSED) {
+                    pRequest = a->getProcessedRequest();
+                    _modules[MODULE_IN][pRequest.second.first]->get()->dataInput(pRequest.first, pRequest.second.second);
+                }
+            }
+            if (inputModule.second->get()->getStatus()) {
+                for (auto &a : _requestsHandlers) {
+                    if (a->getState() == READY) {
+                        std::pair<std::string, int> requestIn = inputModule.second->get()->dataOutput();
+                        std::pair<std::string, std::pair<std::string, int>> requestToProcess(requestIn.first, {inputModule.first, requestIn.second});
+                        if (!requestToProcess.first.empty())
+                            a->setRequestToProcess(requestToProcess);
+                    }
+                }
             }
         }
     }
@@ -35,6 +59,11 @@ std::string Server::readAsyncFunction()
 
     std::getline(std::cin, line);
     return line;
+}
+
+std::map<std::string, std::shared_ptr<ModuleHandler>> Server::getOutputModules()
+{
+    return _modules[MODULE_OUT];
 }
 
 void Server::_readInput()
@@ -51,8 +80,10 @@ void Server::_readInput()
             cmdLine.push_back(block);
         restart = true;
         try {
-            if (cmdLine.empty())
+            if (cmdLine.empty()) {
+                _future = std::async(std::launch::async, Server::readAsyncFunction);
                 return;
+            }
             if (cmdLine[0] == "loadmodule")
                 _cmdLoadModule(cmdLine);
             else if (cmdLine[0] == "startmodule")
@@ -164,12 +195,11 @@ void Server::_loadModule(const std::string &moduleName)
 {
     try {
         dlManager.loadNewLib<AModule>(DYNLIB(moduleName));
-        std::shared_ptr<ModuleHandler> toAdd = std::make_shared<ModuleHandler>(
-                ModuleHandler(dlManager.getInstance<AModule>(DYNLIB(moduleName))));
-        if (toAdd->get()->isInputData())
-            _modules[MODULE_IN].insert(std::pair<std::string, std::shared_ptr<ModuleHandler>>(moduleName, toAdd));
+        auto *newModule = dlManager.getInstance<AModule>(DYNLIB(moduleName));
+        if (newModule->isInputData())
+            _modules[MODULE_IN].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerInput>>(moduleName, std::make_shared<ModuleHandlerInput>(ModuleHandlerInput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
         else
-            _modules[MODULE_OUT].insert(std::pair<std::string, std::shared_ptr<ModuleHandler>>(moduleName, toAdd));
+            _modules[MODULE_OUT].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerOutput>>(moduleName, std::make_shared<ModuleHandlerOutput>(ModuleHandlerOutput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
         std::cout << "Module " << DYNLIB(moduleName) << " loaded." << std::endl;
     } catch (const ModuleLoader::ModuleLoaderException &e) {
         std::cerr << e.getComponent() << ": " << e.what() << std::endl;
@@ -205,4 +235,3 @@ void Server::_stopModule(const std::string &moduleName)
         std::cerr << e.getErrorMessage() << std::endl;
     }
 }
-

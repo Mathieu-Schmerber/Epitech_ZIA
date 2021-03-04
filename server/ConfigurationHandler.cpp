@@ -106,3 +106,33 @@ std::vector<t_module> ConfigurationHandler::getLoadedModules()
     return _modules;
 }
 
+int ConfigurationHandler::getInt(const std::string &filepath, const std::string& varName)
+{
+    std::string file = readFile(filepath);
+    if (file.empty())
+        return 0;
+
+    _docModule.Parse(file.c_str());
+
+    if (_docModule.HasMember(varName.c_str()) == 0 && _docModule[varName.c_str()].IsInt64())
+    {
+        return _docModule[varName.c_str()].GetInt();
+    }
+    return 0;
+}
+
+std::string ConfigurationHandler::getString(const std::string &filepath, const std::string& varName)
+{
+    std::string file = readFile(filepath);
+    if (file.empty())
+        return "";
+
+    _docModule.Parse(file.c_str());
+
+    if (_docModule.HasMember(varName.c_str()) == 0 && _docModule[varName.c_str()].IsString())
+    {
+        return _docModule[varName.c_str()].GetString();
+    }
+    return "";
+}
+

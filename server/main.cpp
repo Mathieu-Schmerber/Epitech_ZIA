@@ -32,13 +32,12 @@ void fct_server()
 
 void fct_request()
 {
-    ZiaRequest::RequestParser newElem(std::string("GET /hello HTTP/1.1\r\nHost: www.emiliendelevoye.fr\r\nAccept-Language: fr\r\npouet: coucou"));
+    ZiaRequest::RequestParser newElem;
 
-    newElem.parseData();
-    std::unique_ptr<ZiaRequest::Request> &request = newElem.getRequest();
-    std::cout << "Type -> " << ZiaRequest::requestTypesNames[request->getRequestType()] << std::endl;
-    std::cout << "Path -> " << request->getRequestPath() << std::endl;
-    for (const auto& a : request->getRequestHeaders())
+    ZiaRequest::Request request = newElem.parseData(std::string("GET /hello HTTP/1.1\r\nHost: www.emiliendelevoye.fr\r\nAccept-Language: fr\r\npouet: coucou"));
+    std::cout << "Type -> " << ZiaRequest::requestTypesNames[request.getRequestType()] << std::endl;
+    std::cout << "Path -> " << request.getRequestPath() << std::endl;
+    for (const auto& a : request.getRequestHeaders())
         std::cout << "[" << a.first << "] -> [" << a.second << "]" << std::endl;
 }
 

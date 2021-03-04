@@ -23,6 +23,10 @@ extern "C" {
     }
 }
 
+/**
+ * \brief HTTP Module constructor
+ *
+**/
 HTTPModule::HTTPModule() : AModuleInput("HTTP")
 {
 }
@@ -34,16 +38,6 @@ void HTTPModule::loadConfigFile(const std::string &configFilePath)
     if (_port == 0)
         _port = 80;
     LOG(INFO) << "HTTP module use port: " << _port;
-}
-
-static void print_buf(const char *title, const unsigned char *buf, size_t buf_len)
-{
-    size_t i = 0;
-    fprintf(stdout, "%s\n", title);
-    for(i = 0; i < buf_len; ++i)
-        fprintf(stdout, "%02X%s", buf[i],
-                ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
-
 }
 
 /**
@@ -88,8 +82,8 @@ void HTTPModule::startModule()
     try {
         _sTcp = new TcpProtocol("0.0.0.0", _port);
     } catch (boost::system::system_error &error) {
-        std::cout << error.what() << std::endl;
-        exit(84);
+        std::cerr << error.what() << std::endl;
+        stopModule();
     }
 }
 

@@ -23,6 +23,10 @@ extern "C" {
     }
 }
 
+/**
+ * \brief HTTPS Module constructor
+ *
+**/
 HTTPSModule::HTTPSModule() : AModuleInput("HTTPS"), _port(443), _sTcp(nullptr)
 {
 }
@@ -62,7 +66,6 @@ void HTTPSModule::handleQueue()
         } else {
             _fullReceive[receive.id] += receive.receive;
         }
-//        print_buf("Message received :", reinterpret_cast<const unsigned char *>(receive.receive.data()), receive.receive.length());
     }
     if ((in = getInput()).second != -1) {
         _sTcp->send(in.second, in.first);
@@ -85,8 +88,8 @@ void HTTPSModule::startModule()
     try {
         _sTcp = new TcpProtocol("0.0.0.0", _port);
     } catch (boost::system::system_error &error) {
-        std::cout << error.what() << std::endl;
-        exit(84);
+        std::cerr << error.what() << std::endl;
+        stopModule();
     }
 }
 

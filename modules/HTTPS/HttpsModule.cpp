@@ -62,9 +62,13 @@ void HTTPSModule::handleQueue()
     if (_sTcp->userDisconnected() && !(ipDisconnect = _sTcp->getNewDisconnect()).empty()) {
     }
     if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
-        std::cout << receive.receive << std::endl;
+        if (receive.receive == "\r\n") {
+            _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
+            _fullReceive[receive.id].clear();
+        } else {
+            _fullReceive[receive.id] += receive.receive;
+        }
 //        print_buf("Message received :", reinterpret_cast<const unsigned char *>(receive.receive.data()), receive.receive.length());
-        _outQueue.emplace_back(receive.receive, receive.id);
     }
     if ((in = getInput()).second != -1) {
         _sTcp->send(in.second, in.first);

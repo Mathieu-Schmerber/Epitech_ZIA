@@ -1,10 +1,19 @@
-//
-// Created by Cyprien on 12/6/2020.
-//
+/**
+ * \file TcpSocket.cpp
+ * \brief functions of TcpSocket's and InstanceClientTCP's class (https version)
+ * \authors Cyprien.R, William.P
+**/
+
 
 #include "TcpSocket.hpp"
 #include "Log.hpp"
 
+/**
+ * \brief TcpSocket constructor
+ *
+ * \param host : ip to start the server
+ * \param port : port to start the server
+**/
 TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_io_service, boost::asio::ip::tcp::endpoint(
         boost::asio::ip::address::from_string(host), port)), _socket(_io_service), _context(boost::asio::ssl::context::sslv23)
 {
@@ -14,6 +23,7 @@ TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_
             | boost::asio::ssl::context::single_dh_use);
     _context.use_certificate_chain_file("./certs/certificate.pem");
     _context.use_private_key_file("./certs/key.pem", boost::asio::ssl::context::pem);
+
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
     _acceptor.close();
     _acceptor.open(endpoint.protocol());
@@ -24,6 +34,9 @@ TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_
     _tRunAccept = new std::thread([&] { _io_service.run(); });
 }
 
+/**
+ * \brief startAccept accepts incoming connections and store new clients into the new clients _clients vector
+**/
 void TcpSocket::startAccept()
 {
     auto handleAccept =
@@ -39,6 +52,9 @@ void TcpSocket::startAccept()
     _acceptor.async_accept(_socket, handleAccept);
 }
 
+/**
+ * \brief userDisconnected : keep track of disconnected users and remove them from the client list
+**/
 bool TcpSocket::userDisconnected()
 {
     bool toReturn = std::any_of(_clients.begin(), _clients.end(),
@@ -54,6 +70,9 @@ bool TcpSocket::userDisconnected()
     return toReturn;
 }
 
+/**
+ * \brief TcpSocket destructor : end threads
+**/
 TcpSocket::~TcpSocket()
 {
     if (_tRunAccept->joinable()) {
@@ -62,6 +81,9 @@ TcpSocket::~TcpSocket()
     }
 }
 
+/**
+ * \brief getNewMessage return receive message, remove it from the received messages queue
+**/
 ReceiveData TcpSocket::getNewMessage()
 {
     if (!_msgQueue.empty()) {
@@ -72,6 +94,12 @@ ReceiveData TcpSocket::getNewMessage()
     return ReceiveData();
 }
 
+/**
+ * \brief send message to a client
+ *
+ * \param id : client id
+ * \param msg : message to send
+**/
 void TcpSocket::send(int id, const std::string &msg)
 {
     for (const auto &client : _clients) {
@@ -80,6 +108,9 @@ void TcpSocket::send(int id, const std::string &msg)
     }
 }
 
+/**
+ * \brief return the ip of recently disconnected client, and remove them from the diconnected clients queue
+**/
 std::string TcpSocket::getNewDisconnect()
 {
     if (!_ipDisconnect.empty()) {
@@ -90,12 +121,21 @@ std::string TcpSocket::getNewDisconnect()
     return ("");
 }
 
+/**
+ * \brief InstanceClientTCP constructor
+ *
+ * \param socket : client's socket
+ * \param msgQueue : client's messages received
+**/
 InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context) : _socket(std::move(socket), context), _msgQueue(msgQueue)
 {
     _id = id;
     LOG_GREEN( "User with ip : " + _ip + " has just connected")
 }
 
+/**
+ * \brief startHandshake, handle https handshake
+**/
 void InstanceClientTCP::startHandshake()
 {
     auto self(shared_from_this());
@@ -105,6 +145,9 @@ void InstanceClientTCP::startHandshake()
     });
 }
 
+/**
+ * \brief startRead read message coming from clients and store them
+**/
 void InstanceClientTCP::startRead()
 {
     auto self(shared_from_this());
@@ -121,30 +164,52 @@ void InstanceClientTCP::startRead()
     _socket.async_read_some(boost::asio::buffer(_read, MAX_SIZE), handleRead);
 }
 
+/**
+ * \brief getDisconnected
+ *
+ * \return return true or false depending on whether the client is diconnected or not
+**/
 bool InstanceClientTCP::getDisconnected() const
 {
     return _disconnected;
 }
 
+/**
+ * \brief getIp
+ *
+ * \return return the client's ip address
+**/
 std::string InstanceClientTCP::getIp()
 {
     return _ip;
 }
 
+/**
+ * \brief InstanceClientTCP destructor
+**/
 InstanceClientTCP::~InstanceClientTCP()
 {
     LOG_RED("User with ip : " + _ip + " has just disconnected")
 }
 
+/**
+ * \brief handleSend : asynchronous send (NOT IMPLEMENTED)
+**/
 void handleSend(const boost::system::error_code &error, size_t bytes_transferred)
 {
 }
 
+/**
+ * \brief send : send messae to client
+**/
 void InstanceClientTCP::send(const std::string &msg)
 {
     boost::asio::async_write(_socket, boost::asio::buffer(msg), &handleSend);
 }
 
+/**
+ * \brief getId : get client id
+**/
 int InstanceClientTCP::getId() const
 {
     return _id;

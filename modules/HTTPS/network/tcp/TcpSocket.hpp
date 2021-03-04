@@ -1,6 +1,9 @@
-//
-// Created by Cyprien on 12/6/2020.
-//
+/**
+ * \file TcpSocket.hpp
+ * \brief Class to handle TCP message / connections / multi clients
+ * \author Cyprien.R
+**/
+
 
 #ifndef SERVER_TCPSOCKET_HPP
 #define SERVER_TCPSOCKET_HPP
@@ -17,6 +20,10 @@
 
 #define MAX_SIZE 1024
 
+/**
+ * \class InstanceClientTCP InstanceClientTCP.hpp "InstanceClientTCP.hpp"
+ * \brief InstanceClientTCP is a class representing one client
+**/
 class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP> {
     public:
         InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context);
@@ -34,10 +41,14 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
         bool _disconnected = false;
         char _read[MAX_SIZE] = {0};
         int _id;
-        int _fd;
+        int _fd = -1;
         std::deque<ReceiveData> &_msgQueue;
 };
 
+/**
+ * \class TcpSocket TcpSocket.hpp "TcpSocket.hpp"
+ * \brief TcpSocket is a class used to manage new connections and setup new InstanceClientTCP
+**/
 class TcpSocket {
     public:
         TcpSocket(const std::string &host, unsigned short port);

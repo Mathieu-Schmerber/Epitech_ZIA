@@ -62,7 +62,6 @@ class ConfigurationHandler
  * \return The modules to load
 **/
         std::vector<t_module> getLoadedModules();
-        int loadHttpModule(const std::string &filepath);
 /**
  * \fn int getInt(const std::string &filepath, const std::string& varName)
  * \brief Function that return an int from a config file(JSON)

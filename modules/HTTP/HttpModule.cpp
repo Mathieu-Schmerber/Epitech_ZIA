@@ -30,8 +30,10 @@ HTTPModule::HTTPModule() : AModuleInput("HTTP")
 void HTTPModule::loadConfigFile(const std::string &configFilePath)
 {
     ConfigurationHandler config = ConfigurationHandler();
-    _port = config.loadHttpModule(configFilePath);
-    std::cout << _port << std::endl;
+    _port = config.getInt(configFilePath, "port");
+    if (_port == 0)
+        _port = 80;
+    LOG(INFO) << "HTTP module use port: " << _port;
 }
 
 /**

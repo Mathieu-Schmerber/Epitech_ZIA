@@ -42,23 +42,6 @@ void ConfigurationHandler::loadConfiguration(const std::string &filepath)
     loadModules();
 }
 
-int ConfigurationHandler::loadHttpModule(const std::string &filepath)
-{
-    std::string file = readFile(filepath);
-    if (file.empty())
-        return -1;
-
-    _docHttp.Parse(file.c_str());
-
-    if (_docHttp.HasMember("port") == 0) {
-        LOG(WARN) << "No port found";
-        return 80;
-    }
-    if (_docHttp["port"].IsInt64())
-        return _docHttp["port"].GetInt();
-    return -1;
-}
-
 void ConfigurationHandler::loadModules()
 {
     _numberOfLoadedModules = 0;
@@ -97,7 +80,7 @@ int ConfigurationHandler::getInt(const std::string &filepath, const std::string&
 
     _docModule.Parse(file.c_str());
 
-    if (_docModule.HasMember(varName.c_str()) == 0 && _docModule[varName.c_str()].IsInt64())
+    if (_docModule.HasMember(varName.c_str()) && _docModule[varName.c_str()].IsInt64())
     {
         return _docModule[varName.c_str()].GetInt();
     }
@@ -112,7 +95,7 @@ std::string ConfigurationHandler::getString(const std::string &filepath, const s
 
     _docModule.Parse(file.c_str());
 
-    if (_docModule.HasMember(varName.c_str()) == 0 && _docModule[varName.c_str()].IsString())
+    if (_docModule.HasMember(varName.c_str()) && _docModule[varName.c_str()].IsString())
     {
         return _docModule[varName.c_str()].GetString();
     }

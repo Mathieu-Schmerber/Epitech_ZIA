@@ -19,8 +19,7 @@ TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_
 {
     _context.set_options(
             boost::asio::ssl::context::default_workarounds
-            | boost::asio::ssl::context::no_sslv2
-            | boost::asio::ssl::context::single_dh_use);
+            | boost::asio::ssl::context::no_sslv2);
     _context.use_certificate_chain_file("./certs/certificate.pem");
     _context.use_private_key_file("./certs/key.pem", boost::asio::ssl::context::pem);
 
@@ -62,7 +61,7 @@ bool TcpSocket::userDisconnected()
     if (toReturn) {
         for (int i = int(_clients.size()) - 1; i >= 0; --i) {
             if (_clients[i]->getDisconnected()) {
-                _ipDisconnect.push_back(_clients[i]->getIp());
+                _idDisconnect.push_back(_clients[i]->getId());
                 _clients.erase(_clients.begin() + i);
             }
         }
@@ -109,16 +108,16 @@ void TcpSocket::send(int id, const std::string &msg)
 }
 
 /**
- * \brief return the ip of recently disconnected client, and remove them from the diconnected clients queue
+ * \brief return the id of recently disconnected client, and remove them from the diconnected clients queue
 **/
-std::string TcpSocket::getNewDisconnect()
+int TcpSocket::getNewDisconnect()
 {
-    if (!_ipDisconnect.empty()) {
-        std::string toReturn = _ipDisconnect.front();
-        _ipDisconnect.pop_front();
+    if (!_idDisconnect.empty()) {
+        int toReturn = _idDisconnect.front();
+        _idDisconnect.pop_front();
         return toReturn;
     }
-    return ("");
+    return (0);
 }
 
 /**
@@ -130,7 +129,7 @@ std::string TcpSocket::getNewDisconnect()
 InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context) : _socket(std::move(socket), context), _msgQueue(msgQueue)
 {
     _id = id;
-    LOG_GREEN( "User with ip : " + _ip + " has just connected")
+    LOG_GREEN( "User has just connected")
 }
 
 /**
@@ -142,6 +141,8 @@ void InstanceClientTCP::startHandshake()
     _socket.async_handshake(boost::asio::ssl::stream_base::server,[this, self](const boost::system::error_code& error) {
         if (!error)
             startRead();
+        else
+            _disconnected = true;
     });
 }
 
@@ -153,11 +154,15 @@ void InstanceClientTCP::startRead()
     auto self(shared_from_this());
     auto handleRead =
             [this, self](const boost::system::error_code &error, size_t bytes_transferred) {
-                if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
+                if (error == boost::asio::ssl::error::stream_truncated) {
+                    _socket.lowest_layer().cancel();
+                    _socket.async_shutdown([this](...){_socket.lowest_layer().close();});
+                    _disconnected = true;
+                } else if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
                     _disconnected = true;
                 } else {
-                    _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id, _ip);
-                    // FIXME LOG_BLUE_WN("TCP : " + std::string(_read, bytes_transferred));
+                    _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id);
+                    LOG_BLUE_WN("TCP : " + std::string(_read, bytes_transferred));
                     startRead();
                 }
             };
@@ -175,21 +180,11 @@ bool InstanceClientTCP::getDisconnected() const
 }
 
 /**
- * \brief getIp
- *
- * \return return the client's ip address
-**/
-std::string InstanceClientTCP::getIp()
-{
-    return _ip;
-}
-
-/**
  * \brief InstanceClientTCP destructor
 **/
 InstanceClientTCP::~InstanceClientTCP()
 {
-    LOG_RED("User with ip : " + _ip + " has just disconnected")
+    LOG_RED("User has just disconnected")
 }
 
 /**

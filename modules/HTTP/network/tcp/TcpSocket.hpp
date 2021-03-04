@@ -30,12 +30,10 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
         void startRead();
         void send(const std::string &msg);
         bool getDisconnected() const;
-        std::string getIp();
         int getId() const;
 
     private:
         boost::asio::ip::tcp::socket _socket;
-        std::string _ip;
         bool _disconnected = false;
         char _read[MAX_SIZE] = {0};
         int _id;
@@ -52,7 +50,7 @@ class TcpSocket {
         ~TcpSocket();
         bool userDisconnected();
         void send(int id, const std::string &msg);
-        [[nodiscard]] std::string getNewDisconnect();
+        [[nodiscard]] int getNewDisconnect();
         ReceiveData getNewMessage();
 
     private:
@@ -62,7 +60,7 @@ class TcpSocket {
         boost::asio::ip::tcp::socket _socket;
         std::deque<std::shared_ptr<InstanceClientTCP>> _clients;
         std::deque<ReceiveData> _msgQueue;
-        std::deque<std::string> _ipDisconnect;
+        std::deque<int> _idDisconnect;
         std::thread *_tRunAccept = nullptr;
         int idCounter = 10000;
 };

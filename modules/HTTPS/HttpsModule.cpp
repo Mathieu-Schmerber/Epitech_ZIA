@@ -54,8 +54,8 @@ void HTTPSModule::handleQueue()
 {
     ReceiveData receive;
     std::pair<std::string, int> in;
-    std::string ipDisconnect;
-    if (_sTcp->userDisconnected() && !(ipDisconnect = _sTcp->getNewDisconnect()).empty()) {
+    int idDisconnect;
+    if (_sTcp->userDisconnected() && (idDisconnect = _sTcp->getNewDisconnect()) != 0) {
     }
     if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
         if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {
@@ -88,6 +88,9 @@ void HTTPSModule::startModule()
     try {
         _sTcp = new TcpProtocol("0.0.0.0", _port);
     } catch (boost::system::system_error &error) {
+        std::cerr << error.what() << std::endl;
+        stopModule();
+    } catch (std::exception &error) {
         std::cerr << error.what() << std::endl;
         stopModule();
     }

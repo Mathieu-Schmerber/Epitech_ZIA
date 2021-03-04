@@ -48,8 +48,8 @@ void HTTPModule::handleQueue()
 {
     ReceiveData receive;
     std::pair<std::string, int> in;
-    std::string ipDisconnect;
-    if (_sTcp->userDisconnected() && !(ipDisconnect = _sTcp->getNewDisconnect()).empty()) {
+    int idDisconnect;
+    if (_sTcp->userDisconnected() && (idDisconnect = _sTcp->getNewDisconnect()) != 0) {
     }
     if ((receive = _sTcp->getNewMessage()).id != 0) {
         if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {

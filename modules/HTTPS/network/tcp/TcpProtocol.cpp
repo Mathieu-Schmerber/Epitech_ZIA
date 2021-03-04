@@ -23,7 +23,7 @@ void TcpProtocol::send(int id, const std::string& toSend)
     _sTcp.send(id, toSend);
 }
 
-std::string TcpProtocol::getNewDisconnect()
+int TcpProtocol::getNewDisconnect()
 {
     return _sTcp.getNewDisconnect();
 }

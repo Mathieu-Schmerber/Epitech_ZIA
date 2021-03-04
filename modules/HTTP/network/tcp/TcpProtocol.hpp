@@ -13,7 +13,7 @@ class TcpProtocol {
         ~TcpProtocol();
         bool userDisconnected();
         ReceiveData getNewMessage();
-        [[nodiscard]] std::string getNewDisconnect();
+        [[nodiscard]] int getNewDisconnect();
         void send(int id, const std::string& toSend);
 
     private:

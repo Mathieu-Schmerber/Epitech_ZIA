@@ -54,7 +54,7 @@ bool TcpSocket::userDisconnected()
     if (toReturn)
         for (int i = int(_clients.size()) - 1; i >= 0; --i)
             if (_clients[i]->getDisconnected()) {
-                _ipDisconnect.push_back(_clients[i]->getIp());
+                _idDisconnect.push_back(_clients[i]->getId());
                 _clients.erase(_clients.begin() + i);
             }
     return toReturn;
@@ -99,16 +99,16 @@ void TcpSocket::send(int id, const std::string &msg)
 }
 
 /**
- * \brief return the ip of recently disconnected client, and remove them from the diconnected clients queue
+ * \brief return the id of recently disconnected client, and remove them from the diconnected clients queue
 **/
-std::string TcpSocket::getNewDisconnect()
+int TcpSocket::getNewDisconnect()
 {
-    if (!_ipDisconnect.empty()) {
-        std::string toReturn = _ipDisconnect.front();
-        _ipDisconnect.pop_front();
+    if (!_idDisconnect.empty()) {
+        int toReturn = _idDisconnect.front();
+        _idDisconnect.pop_front();
         return toReturn;
     }
-    return ("");
+    return (0);
 }
 
 /**
@@ -119,9 +119,8 @@ std::string TcpSocket::getNewDisconnect()
 **/
 InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue) : _socket(std::move(socket)), _msgQueue(msgQueue)
 {
-    _ip = _socket.remote_endpoint().address().to_string();
     _id = id;
-    LOG_GREEN( "User with ip : " + _ip + " has just connected")
+    LOG_GREEN( "User has just connected")
 }
 
 /**
@@ -135,7 +134,7 @@ void InstanceClientTCP::startRead()
                 if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
                     _disconnected = true;
                 } else {
-                    _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id, _ip);
+                    _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id);
                     LOG_BLUE_WN("TCP : " + std::string(_read, bytes_transferred))
                     startRead();
                 }
@@ -154,21 +153,11 @@ bool InstanceClientTCP::getDisconnected() const
 }
 
 /**
- * \brief getIp
- *
- * \return return the client's ip address
-**/
-std::string InstanceClientTCP::getIp()
-{
-    return _ip;
-}
-
-/**
  * \brief InstanceClientTCP destructor
 **/
 InstanceClientTCP::~InstanceClientTCP()
 {
-    LOG_RED("User with ip : " + _ip + " has just disconnected")
+    LOG_RED("User has just disconnected")
 }
 
 /**

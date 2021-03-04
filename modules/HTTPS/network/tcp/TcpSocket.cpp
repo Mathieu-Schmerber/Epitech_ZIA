@@ -14,8 +14,8 @@ TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_
             | boost::asio::ssl::context::single_dh_use);
     _context.use_certificate_chain_file("./certs/certificate.pem");
     _context.use_private_key_file("./certs/key.pem", boost::asio::ssl::context::pem);
-    _acceptor.close();
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
+    _acceptor.close();
     _acceptor.open(endpoint.protocol());
     _acceptor.set_option(boost::asio::socket_base::keep_alive(true));
     _acceptor.bind(endpoint);

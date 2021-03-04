@@ -8,8 +8,8 @@
 TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_io_service, boost::asio::ip::tcp::endpoint(
         boost::asio::ip::address::from_string(host), port)), _socket(_io_service)
 {
-    _acceptor.close();
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
+    _acceptor.close();
     _acceptor.open(endpoint.protocol());
     _acceptor.set_option(boost::asio::socket_base::keep_alive(true));
     _acceptor.bind(endpoint);

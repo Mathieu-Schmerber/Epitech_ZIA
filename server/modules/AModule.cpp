@@ -5,8 +5,16 @@
 #include "AModule.hpp"
 #include <iostream>
 
+/**
+ * \brief AModule constructor
+ *
+ * \param name : set the module name
+ **/
 AModule::AModule(const std::string &name) : _running(false), _name(name) {}
 
+/**
+ * \brief run keep calling handle queue while the module is running
+ **/
 void AModule::run()
 {
     std::cout << "Start " << this->_name << " Module" << std::endl;
@@ -37,21 +45,33 @@ std::pair<std::string, int> AModule::dataOutput()
     this->_outQueue.erase(this->_outQueue.begin());
     return out;
 }
-//endregion
+/// End Region
 
-//region Getters and setters
+/// Region Getters and setters
+
+/**
+ * \brief Get the status module
+ *
+ * \return true or false according to the running status of the module
+ **/
 bool AModule::getStatus()
 {
     return _running;
 }
 
+/**
+ * \brief Start the module
+ **/
 void AModule::startModule()
 {
     _running = true;
 }
 
+/**
+ * \brief Stop the module
+ **/
 void AModule::stopModule()
 {
     _running = false;
 }
-//endregion
+/// End Region

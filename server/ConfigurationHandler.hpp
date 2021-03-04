@@ -56,8 +56,6 @@ class ConfigurationHandler
  * \param [in] filepath The filepath of the config file(JSON) to parse
 **/
         void loadConfiguration(const std::string &filepath);
-        int loadHttpModule(const std::string &filepath);
-        int loadHttpsModule(const std::string &filepath);
 /**
  * \fn std::vector<t_module> getLoadedModules()
  * \brief Function that return the modules loaded by the configuration file

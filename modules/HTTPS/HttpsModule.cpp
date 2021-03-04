@@ -23,7 +23,7 @@ extern "C" {
     }
 }
 
-HTTPSModule::HTTPSModule() : AModule("HTTPS")
+HTTPSModule::HTTPSModule() : AModuleInput("HTTPS"), _port(443), _sTcp(nullptr)
 {
 }
 

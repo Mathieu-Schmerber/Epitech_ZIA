@@ -33,7 +33,7 @@ if (UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -ldl -W -Wall -Wextra -g") # FIXME remove flags for delivery.
 endif()
 if(WIN32)
-    set(CMAKE_CXX_FLAGS_DEBUG "/DWIN32 /Z7 /D_WINDOWS /EHsc /WX /wd4355 /wd4251 /wd4250 /wd4996 -D_WIN32_WINNT=0x0601" CACHE STRING "Debug compiler flags" FORCE)
+    set(CMAKE_CXX_FLAGS_DEBUG "/DWIN32 /MD /Z7 /D_WINDOWS /EHsc /WX /wd4355 /wd4251 /wd4250 /wd4996" CACHE STRING "Debug compiler flags" FORCE)
     add_compile_options("/std:c++latest")
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     if(CMAKE_COMPILER_IS_GNUCXX)

@@ -64,6 +64,11 @@ void HTTPModule::handleQueue()
     }
 }
 
+/**
+ * \brief GetInput remove received message from queue and return it
+ *
+ * \return pair with message and the client id
+**/
 std::pair<std::string, int> HTTPModule::getInput()
 {
     if (_inQueue.empty())

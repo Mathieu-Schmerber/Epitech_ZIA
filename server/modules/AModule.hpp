@@ -38,7 +38,7 @@ protected:
     std::vector<std::pair<std::string, int>> _inQueue;
     std::vector<std::pair<std::string, int>> _outQueue;
 
-    virtual void handleQueue();
+    virtual void handleQueue() = 0;
 };
 
 class AModuleInput : public AModule {

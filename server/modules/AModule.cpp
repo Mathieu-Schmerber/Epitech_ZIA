@@ -37,11 +37,6 @@ std::pair<std::string, int> AModule::dataOutput()
     this->_outQueue.erase(this->_outQueue.begin());
     return out;
 }
-
-/**
- * \brief Looping from AModule::run() method while AModule::_running
- **/
-void AModule::handleQueue() {std::cout << ":c" << std::endl;}
 //endregion
 
 //region Getters and setters

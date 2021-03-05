@@ -15,8 +15,8 @@
 
 #undef DELETE
 
-RequestHandler::RequestHandler(Server *server, int id) : _thread(&RequestHandler::run, this), _running(true), _requestHandlerId(id), _state(READY),
-_requestId(0), _server(server)
+RequestHandler::RequestHandler(Server *server, int id) : _thread(&RequestHandler::run, this), _running(true), _state(READY), _server(server), _requestHandlerId(id),
+_requestId(0)
 {}
 
 RequestHandler::~RequestHandler()

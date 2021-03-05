@@ -44,9 +44,9 @@ private:
 
     //Request Handlers variables
     std::thread _thread;
+    bool _running;
     ThreadState _state;
     Server *_server;
-    bool _running;
 
     //HTTP Request
     int _requestHandlerId;

@@ -14,10 +14,6 @@
 #include <thread>
 #include "Logger.hpp"
 
-#define BLUE 9
-#define GREEN 10
-#define RED 12
-#define YELLOW 14
 
 #ifdef _WIN32
 
@@ -26,7 +22,7 @@
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
     FlushConsoleInputBuffer(hConsole); \
     SetConsoleTextAttribute(hConsole, RED); \
-    std::cout << MESSAGE << std::endl; \
+    std::cout << MESSAGE; \
     SetConsoleTextAttribute(hConsole, 7);      \
     }
 
@@ -35,20 +31,11 @@
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
     FlushConsoleInputBuffer(hConsole); \
     SetConsoleTextAttribute(hConsole, GREEN); \
-    std::cout << MESSAGE << std::endl; \
-    SetConsoleTextAttribute(hConsole, 7);      \
-    }
-
-#define LOG_BLUE(MESSAGE) {\
-    HANDLE hConsole; \
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
-    FlushConsoleInputBuffer(hConsole); \
-    SetConsoleTextAttribute(hConsole, BLUE); \
     std::cout << MESSAGE; \
     SetConsoleTextAttribute(hConsole, 7);      \
     }
 
-#define LOG_BLUE_WN(MESSAGE) {\
+#define LOG_BLUE(MESSAGE) {\
     HANDLE hConsole; \
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
     FlushConsoleInputBuffer(hConsole); \
@@ -62,16 +49,15 @@
     hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
     FlushConsoleInputBuffer(hConsole); \
     SetConsoleTextAttribute(hConsole, YELLOW); \
-    std::cout << MESSAGE << std::endl; \
+    std::cout << MESSAGE; \
     SetConsoleTextAttribute(hConsole, 7);      \
     }
 
 #else
 
-#define LOG_RED(MESSAGE) {std::cout << "\033[1;31m" << MESSAGE << "\033[0m" << std::endl;}
-#define LOG_GREEN(MESSAGE) {std::cout << "\033[1;32m" << MESSAGE <<  "\033[0m" << std::endl;}
-#define LOG_BLUE(MESSAGE) {std::cout << "\033[94m" << MESSAGE << "\033[0m" << std::endl;}
-#define LOG_BLUE_WN(MESSAGE) {std::cout << "\033[94m" << MESSAGE << "\033[0m";}
+#define LOG_RED(MESSAGE) {std::cout << "\033[1;31m" << MESSAGE << "\033[0m";}
+#define LOG_GREEN(MESSAGE) {std::cout << "\033[1;32m" << MESSAGE <<  "\033[0m";}
+#define LOG_BLUE(MESSAGE) {std::cout << "\033[94m" << MESSAGE << "\033[0m";}
 #define LOG_YELLOW(MESSAGE) {std::cout << "\033[103m" << MESSAGE << "\033[0m";}
 
 

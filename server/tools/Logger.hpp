@@ -7,6 +7,30 @@
 #ifndef ZIA_LOGGER_HPP
 #define ZIA_LOGGER_HPP
 
+
+#if defined(_WIN32) || defined(WIN32)
+
+#include <winsock2.h>
+#include <Windows.h>
+#include <cstdio>
+
+//#define _WIN32_WINNT  0x0601
+
+#define WINDOWS_COLOR_ISSUE false // enable me if you re facing issues with color print on windows
+
+#define BLUE 9
+#define GREEN 10
+#define RED 12
+#define YELLOW 14
+#define WHITE 15
+
+#else
+
+#include <dlfcn.h>
+#define WINDOWS_COLOR_ISSUE false // don't TOUCH !
+
+#endif
+
 #include <string>
 #include <stdexcept>
 #include <iostream>
@@ -18,6 +42,7 @@
 #include <chrono>
 #include <ctime>
 #include <cstdlib>
+#include <thread>
 
 /**
  * \brief logging namespace
@@ -36,7 +61,7 @@ namespace logging {
 
     const std::unordered_map<log_level, std::string, enum_hasher> uncolored
             {
-                    {log_level::ERR, " [ERROR] "},
+                    {log_level::ERR,   " [ERROR] "},
                     {log_level::WARN,  " [WARN] "},
                     {log_level::INFO,  " [INFO] "},
                     {log_level::DEBUG, " [DEBUG] "},
@@ -44,12 +69,21 @@ namespace logging {
             };
     const std::unordered_map<log_level, std::string, enum_hasher> colored
             {
-                    {log_level::ERR, " \x1b[31;1m[ERROR]\x1b[0m "},
+                    {log_level::ERR,   " \x1b[31;1m[ERROR]\x1b[0m "},
                     {log_level::WARN,  " \x1b[33;1m[WARN]\x1b[0m "},
                     {log_level::INFO,  " \x1b[32;1m[INFO]\x1b[0m "},
                     {log_level::DEBUG, " \x1b[34;1m[DEBUG]\x1b[0m "},
                     {log_level::TRACE, " \x1b[37;1m[TRACE]\x1b[0m "}
             };
+    const std::unordered_map<log_level, int> colored_wd
+            {
+                    {log_level::ERR,   RED},
+                    {log_level::WARN,  YELLOW},
+                    {log_level::INFO,  GREEN},
+                    {log_level::DEBUG, BLUE},
+                    {log_level::TRACE, WHITE}
+            };
+
 
     //all, something in between, none or default to info
 #if defined(LOGGING_LEVEL_ALL) || defined(LOGGING_LEVEL_TRACE)
@@ -74,10 +108,14 @@ namespace logging {
         Logger() = delete;
 
         explicit Logger(const logging_config_t &) {};
+
         virtual ~Logger() = default;
 
         virtual void log(const std::string &, const log_level) {};
+
         virtual void log(const std::string &) {};
+
+        virtual void log(const std::string &message, int color) {};
     protected:
         std::mutex lock;
     };
@@ -88,8 +126,7 @@ namespace logging {
         std_out_logger() = delete;
 
         explicit std_out_logger(const logging_config_t &config) : Logger(config),
-                                                                  levels(config.find("color") != config.end() ? colored
-                                                                                                     : uncolored) {}
+        levels(((config.find("color") != config.end()) && !WINDOWS_COLOR_ISSUE) ? colored : uncolored) {}
 
 
         /**
@@ -106,7 +143,10 @@ namespace logging {
             output.append(levels.find(level)->second);
             output.append(message);
             output.push_back('\n');
-            log(output);
+            if (WINDOWS_COLOR_ISSUE)
+                log(output, colored_wd.find(level)->second);
+            else
+                log(output);
         }
 
         /**
@@ -118,6 +158,19 @@ namespace logging {
             std::cout << message;
             std::cout.flush();
         }
+
+#ifdef _WIN32
+
+        void log(const std::string &message, int color) override {
+            HANDLE hConsole;
+            hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+            FlushConsoleInputBuffer(hConsole); \
+            SetConsoleTextAttribute(hConsole, color);
+            std::cout << message;
+            std::cout.flush();
+            SetConsoleTextAttribute(hConsole, 7);
+        };
+#endif
 
     protected:
         const std::unordered_map<log_level, std::string, enum_hasher> levels;

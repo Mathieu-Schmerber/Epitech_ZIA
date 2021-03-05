@@ -1,6 +1,8 @@
-//
-// Created by Cyprien on 3/4/2021.
-//
+/**
+ * \file Logger.hpp
+ * \brief Logger
+ * \author Cyprien.R
+**/
 
 #ifndef ZIA_LOGGER_HPP
 #define ZIA_LOGGER_HPP
@@ -17,6 +19,9 @@
 #include <ctime>
 #include <cstdlib>
 
+/**
+ * \brief logging namespace
+ **/
 namespace logging {
 
     //the log levels we support
@@ -58,7 +63,7 @@ namespace logging {
 #elif defined(LOGGING_LEVEL_NONE)
     constexpr log_level LOG_LEVEL_CUTOFF = log_level::ERR + 1;
 #else
-    constexpr log_level LOG_LEVEL_CUTOFF = log_level::INFO;
+    constexpr log_level LOG_LEVEL_CUTOFF = log_level::TRACE;
 #endif
 
     //logger base class, not pure virtual so you can use as a null logger if you want

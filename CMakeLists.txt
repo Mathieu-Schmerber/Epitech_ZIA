@@ -221,6 +221,7 @@ endif()
 if (UNIX)
     # copy lib dir to bin dir
     message("Copying lib ${CMAKE_BINARY_DIR}/lib to ${CMAKE_BINARY_DIR}/bin")
+    file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
     file(COPY ${CMAKE_BINARY_DIR}/lib DESTINATION ${CMAKE_BINARY_DIR}/bin)
 endif()
 # copy php module sources to bin dir

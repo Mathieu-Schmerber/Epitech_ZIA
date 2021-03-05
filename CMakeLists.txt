@@ -32,7 +32,7 @@ if (UNIX)
     add_definitions("-fPIC")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -ldl -W -Wall -Wextra -g") # FIXME remove flags for delivery.
 endif()
-if(WIN32)
+if (WIN32)
     set(CMAKE_CXX_FLAGS_DEBUG "/DWIN32 /MD /Z7 /D_WINDOWS /EHsc /WX /wd4355 /wd4251 /wd4250 /wd4996" CACHE STRING "Debug compiler flags" FORCE)
     add_compile_options("/std:c++latest")
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
@@ -201,10 +201,11 @@ message(${CONAN_LIBS})
 message("===========================================")
 
 target_link_libraries(server ${CONAN_LIBS})
-set_target_properties(server PROPERTIES LINK_FLAGS "/ignore:4099")
-
 target_link_libraries(httpsModule ${CONAN_LIBS})
-set_target_properties(httpsModule PROPERTIES LINK_FLAGS "/ignore:4099")
+if (WIN32)
+    set_target_properties(httpsModule PROPERTIES LINK_FLAGS "/ignore:4099")
+    set_target_properties(server PROPERTIES LINK_FLAGS "/ignore:4099")
+endif()
 
 if(MSVC)
     set(Boost_USE_STATIC_LIBS        ON)  # only find static libs

@@ -66,33 +66,38 @@ namespace logging {
     constexpr log_level LOG_LEVEL_CUTOFF = log_level::TRACE;
 #endif
 
-    //logger base class, not pure virtual so you can use as a null logger if you want
+    //Logger base class, not pure virtual so you can use as a null Logger if you want
     using logging_config_t = std::unordered_map<std::string, std::string>;
 
-    class logger {
+    class Logger {
     public:
-        logger() = delete;
+        Logger() = delete;
 
-        explicit logger(const logging_config_t &) {};
-
-        virtual ~logger() = default;;
+        explicit Logger(const logging_config_t &) {};
+        virtual ~Logger() = default;;
 
         virtual void log(const std::string &, const log_level) {};
-
         virtual void log(const std::string &) {};
     protected:
         std::mutex lock;
     };
 
-    //logger that writes to standard out
-    class std_out_logger : public logger {
+    //Logger that writes to standard out
+    class std_out_logger : public Logger {
     public:
         std_out_logger() = delete;
 
-        explicit std_out_logger(const logging_config_t &config) : logger(config),
-                                                         levels(config.find("color") != config.end() ? colored
+        explicit std_out_logger(const logging_config_t &config) : Logger(config),
+                                                                  levels(config.find("color") != config.end() ? colored
                                                                                                      : uncolored) {}
 
+
+        /**
+         * \brief log : display log message with header
+         *
+         * \param level log level of the message (has to be higher than LOG_LEVEL_CUTOFF to be printed
+         * \param message : message to be printed
+        **/
         void log(const std::string &message, const log_level level) override {
             if (level < LOG_LEVEL_CUTOFF)
                 return;
@@ -104,6 +109,11 @@ namespace logging {
             log(output);
         }
 
+        /**
+         * \brief display and flush message
+         *
+         * \param message : message to be printed
+        **/
         void log(const std::string &message) override {
             std::cout << message;
             std::cout.flush();
@@ -114,78 +124,125 @@ namespace logging {
     };
 
 
-    using logger_creator = logger *(*)(const logging_config_t &);
+    using logger_creator = Logger *(*)(const logging_config_t &);
 
     class logger_factory {
     public:
+        /**
+         * \brief logger_factory constructor : create loggers
+        **/
         logger_factory() {
-            creators.emplace("", [](const logging_config_t &config) -> logger * { return new logger(config); });
-            creators.emplace("std_out",
-                             [](const logging_config_t &config) -> logger * { return new std_out_logger(config); });
+            creators.emplace("", [](const logging_config_t &config) -> Logger * { return new Logger(config); });
+            creators.emplace("std_out", [](const logging_config_t &config) -> Logger * { return new std_out_logger(config); });
         }
 
-        [[nodiscard]] logger *produce(const logging_config_t &config) const {
+        /**
+         * \brief produce : return a logger according to the type given in config
+         *
+         * \param config : informations about the logger to return
+         *
+         * \return the logger asked for
+        **/
+        [[nodiscard]] Logger *produce(const logging_config_t &config) const {
             //grab the type
             auto type = config.find("type");
             if (type == config.end())
-                throw std::runtime_error("Logging factory configuration requires a type of logger");
-            //grab the logger
+                throw std::runtime_error("Logging factory configuration requires a type of Logger");
+            //grab the Logger
             auto found = creators.find(type->second);
             if (found != creators.end())
                 return found->second(config);
-            //couldn't get a logger
-            throw std::runtime_error("Couldn't produce logger for type: " + type->second);
+            //couldn't get a Logger
+            throw std::runtime_error("Couldn't produce Logger for type: " + type->second);
         }
 
     protected:
         std::unordered_map<std::string, logger_creator> creators;
     };
 
-    //statically get a factory
+    /**
+     * \brief get_factory, return a factory (singleton)
+     *
+     * \return the logger factory
+    **/
     inline logger_factory &get_factory() {
         static logger_factory factory_singleton{};
         return factory_singleton;
     }
 
-    //get at the singleton
-    inline logger &get_logger(const logging_config_t &config = {{"type",  "std_out"},
+    /**
+     * \brief get_logger, return a singleton logger according to the params in config
+     *
+     * \param config, config for the logger
+     *
+     * \return the logger
+    **/
+    inline Logger &get_logger(const logging_config_t &config = {{"type",  "std_out"},
                                                                 {"color", ""}}) {
-        static std::unique_ptr<logger> singleton(get_factory().produce(config));
+        static std::unique_ptr<Logger> singleton(get_factory().produce(config));
         return *singleton;
     }
 
-    //configure the singleton (once only)
-    inline void configure(const logging_config_t &config) {
-        get_logger(config);
-    }
-
-    //statically log manually without the macros below
+    /**
+     * \brief log, call log function of the currently used logger
+     *
+     * \param message, message to print
+     * \param level, log level
+    **/
     inline void log(const std::string &message, const log_level level) {
         get_logger().log(message, level);
     }
 
-    //statically log manually without a level or maybe with a custom one
+    /**
+     * \brief log, call log function of the currently used logger (doesn't consider the level)
+     *
+     * \param message, message to print
+    **/
     inline void log(const std::string &message) {
         get_logger().log(message);
     }
 
-    //these standout when reading code
+    /**
+     * \brief TRACE, lowest log level
+     *
+     * \param message, message to print
+    **/
     inline void TRACE(const std::string &message) {
         get_logger().log(message, log_level::TRACE);
     }
 
+    /**
+     * \brief DEBUG, second log level
+     *
+     * \param message, message to print
+    **/
     inline void DEBUG(const std::string &message) {
         get_logger().log(message, log_level::DEBUG);
     }
 
+    /**
+     * \brief INFO, third log level
+     *
+     * \param message, message to print
+    **/
     inline void INFO(const std::string &message) {
         get_logger().log(message, log_level::INFO);
     }
 
+    /**
+     * \brief WARN, fourth log level
+     *
+     * \param message, message to print
+    **/
     inline void WARN(const std::string &message) {
         get_logger().log(message, log_level::WARN);
     }
 
+    /**
+     * \brief ERR, higher log level
+     *
+     * \param message, message to print
+    **/
     inline void ERR(const std::string &message) {
         get_logger().log(message, log_level::ERR);
     }

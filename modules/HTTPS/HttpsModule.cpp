@@ -78,7 +78,6 @@ std::pair<std::string, int> HTTPSModule::getInput()
 
 void HTTPSModule::startModule()
 {
-    AModule::startModule();
     HTTPSModule::loadConfigFile(_filePath);
     try {
         LOG(DEBUG) << "port " << _port;
@@ -93,6 +92,7 @@ void HTTPSModule::startModule()
         _sTcp = nullptr;
         stopModule();
     }
+    AModule::startModule();
 }
 
 void HTTPSModule::stopModule()

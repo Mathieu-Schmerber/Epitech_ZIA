@@ -77,7 +77,6 @@ std::pair<std::string, int> HTTPModule::getInput()
 
 void HTTPModule::startModule()
 {
-    AModule::startModule();
     HTTPModule::loadConfigFile(_filePath);
     try {
         _sTcp = new TcpProtocol("0.0.0.0", _port);
@@ -86,6 +85,7 @@ void HTTPModule::startModule()
         _sTcp = nullptr;
         stopModule();
     }
+    AModule::startModule();
 }
 
 void HTTPModule::stopModule()

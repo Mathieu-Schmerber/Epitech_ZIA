@@ -36,8 +36,8 @@ void HTTPSModule::loadConfigFile(const std::string &configFilePath)
 {
     ConfigurationHandler config = ConfigurationHandler();
     _port = config.getInt(configFilePath, "port");
-    if (_port == 0)
-        _port = 443;
+    if (_port == 0 || _port < 1025 || _port > 49150)
+            _port = 443;
     LOG(INFO) << "HTTPS module use port: " << _port;
 }
 
@@ -95,6 +95,6 @@ void HTTPSModule::startModule()
 
 void HTTPSModule::stopModule()
 {
-    AModule::stopModule();
     delete _sTcp;
+    AModule::stopModule();
 }

@@ -30,7 +30,7 @@ void HTTPModule::loadConfigFile(const std::string &configFilePath)
 {
     ConfigurationHandler config = ConfigurationHandler();
     _port = config.getInt(configFilePath, "port");
-    if (_port == 0)
+    if (_port == 0 || _port < 1025 || _port > 49150)
         _port = 80;
     LOG(INFO) << "HTTP module use port: " << _port;
 }
@@ -89,6 +89,6 @@ void HTTPModule::startModule()
 
 void HTTPModule::stopModule()
 {
-    AModule::stopModule();
     delete _sTcp;
+    AModule::stopModule();
 }

@@ -25,7 +25,7 @@
 
 namespace ZiaRequest {
 
-    static const char *requestTypesNames[9] = {"GET", "POST", "OPTIONS",
+    [[maybe_unused]] static const char *requestTypesNames[9] = {"GET", "POST", "OPTIONS",
         "HEAD", "PUT", "DELETE", "TRACE", "CONNECT", "UNDEFINED"};
 
     enum Type {

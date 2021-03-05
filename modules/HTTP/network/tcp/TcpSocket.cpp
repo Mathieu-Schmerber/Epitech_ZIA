@@ -163,7 +163,7 @@ InstanceClientTCP::~InstanceClientTCP()
 /**
  * \brief handleSend : asynchronous send (NOT IMPLEMENTED)
 **/
-void handleSend(const boost::system::error_code &error, size_t bytes_transferred)
+void handleSend([[maybe_unused]]const boost::system::error_code &error, [[maybe_unused]]size_t bytes_transferred)
 {
 }
 

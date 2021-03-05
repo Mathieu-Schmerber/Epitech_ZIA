@@ -75,6 +75,8 @@ namespace logging {
                     {log_level::DEBUG, " \x1b[34;1m[DEBUG]\x1b[0m "},
                     {log_level::TRACE, " \x1b[37;1m[TRACE]\x1b[0m "}
             };
+
+#if defined(_WIN32) || defined(WIN32)
     const std::unordered_map<log_level, int> colored_wd
             {
                     {log_level::ERR,   RED},
@@ -83,7 +85,7 @@ namespace logging {
                     {log_level::DEBUG, BLUE},
                     {log_level::TRACE, WHITE}
             };
-
+#endif
 
     //all, something in between, none or default to info
 #if defined(LOGGING_LEVEL_ALL) || defined(LOGGING_LEVEL_TRACE)
@@ -111,11 +113,11 @@ namespace logging {
 
         virtual ~Logger() = default;
 
-        virtual void log(const std::string &, const log_level) {};
+        virtual void log([[maybe_unused]]const std::string &, [[maybe_unused]]const log_level) {};
 
-        virtual void log(const std::string &) {};
+        virtual void log([[maybe_unused]]const std::string &) {};
 
-        virtual void log(const std::string &message, int color) {};
+        virtual void log([[maybe_unused]]const std::string &message, [[maybe_unused]]int color) {};
     protected:
         std::mutex lock;
     };
@@ -143,9 +145,13 @@ namespace logging {
             output.append(levels.find(level)->second);
             output.append(message);
             output.push_back('\n');
-            if (WINDOWS_COLOR_ISSUE)
+
+            if (WINDOWS_COLOR_ISSUE) {
+#if defined(_WIN32) || defined(WIN32)
                 log(output, colored_wd.find(level)->second);
-            else
+#endif
+                log(output);
+            } else
                 log(output);
         }
 
@@ -185,7 +191,6 @@ namespace logging {
          * \brief logger_factory constructor : create loggers
         **/
         logger_factory() {
-            creators.emplace("", [](const logging_config_t &config) -> Logger * { return new Logger(config); });
             creators.emplace("std_out", [](const logging_config_t &config) -> Logger * { return new std_out_logger(config); });
         }
 

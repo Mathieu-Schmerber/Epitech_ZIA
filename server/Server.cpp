@@ -13,11 +13,9 @@ Server::Server(int ac, char **av)
     std::vector<t_module> loadedModules;
     std::string configFilePath;
 
-    if (ac == 2)
-    {
+    if (ac == 2) {
         _configFilePath = av[1];
-    } else if (ac < 2)
-    {
+    } else if (ac < 2) {
         LOG(WARN) << "No config file specified try to find one";
         _checkFolder("./");
     }
@@ -27,27 +25,24 @@ Server::Server(int ac, char **av)
     _future = std::async(std::launch::async, Server::readAsyncFunction);
     _configHandler.loadConfiguration(_configFilePath);
     loadedModules = _configHandler.getLoadedModules();
-    for (auto & _loadedModule : loadedModules) {
+    for (auto &_loadedModule : loadedModules) {
         if (!dlManager.libStocked(DYNLIB(_loadedModule.name)))
             _loadModule(_loadedModule.name);
         _startModule(_loadedModule.name);
     }
 }
 
-void Server::_checkFolder(const std::filesystem::path& dirPath)
+void Server::_checkFolder(const std::filesystem::path &dirPath)
 {
     std::string result;
 
-    for (const auto & entry : std::filesystem::directory_iterator(dirPath)) {
-        if (entry.path().string().find("config.json") != std::string::npos)
-        {
+    for (const auto &entry : std::filesystem::directory_iterator(dirPath)) {
+        if (entry.path().string().find("config.json") != std::string::npos) {
             _configFilePath = entry.path().string();
             std::replace(_configFilePath.begin(), _configFilePath.end(), '\\', '/');
             LOG(INFO) << "Find a configuration file in: " << _configFilePath;
             return;
-        }
-        else if (std::filesystem::is_directory(entry.path()))
-        {
+        } else if (std::filesystem::is_directory(entry.path())) {
             _checkFolder(entry.path());
         }
     }
@@ -64,14 +59,17 @@ void Server::run()
                 std::pair<std::string, std::pair<std::string, int>> pRequest;
                 if (a->getState() == PROCESSED) {
                     pRequest = a->getProcessedRequest();
-                    _modules[MODULE_IN][pRequest.second.first]->get()->dataInput(pRequest.first, pRequest.second.second);
+                    _modules[MODULE_IN][pRequest.second.first]->get()->dataInput(pRequest.first,
+                                                                                 pRequest.second.second);
                 }
             }
             if (inputModule.second->get()->getStatus()) {
                 for (auto &a : _requestsHandlers) {
                     if (a->getState() == READY) {
                         std::pair<std::string, int> requestIn = inputModule.second->get()->dataOutput();
-                        std::pair<std::string, std::pair<std::string, int>> requestToProcess(requestIn.first, {inputModule.first, requestIn.second});
+                        std::pair<std::string, std::pair<std::string, int>> requestToProcess(requestIn.first,
+                                                                                             {inputModule.first,
+                                                                                              requestIn.second});
                         if (!requestToProcess.first.empty())
                             a->setRequestToProcess(requestToProcess);
                     }
@@ -186,7 +184,7 @@ void Server::_cmdReloadModules(const std::vector<std::string> &cmdLine)
     }
 }
 
-void Server::_cmdExitServer(const std::vector<std::string>& cmdLine)
+void Server::_cmdExitServer(const std::vector<std::string> &cmdLine)
 {
     if (cmdLine.size() != 1)
         throw ZiaCmdLineError("ZiaCmdLineError", "stopserver requires no argument.");
@@ -199,13 +197,11 @@ void Server::_cmdExitServer(const std::vector<std::string>& cmdLine)
     _running = false;
 }
 
-void Server::_cmdLoadConfiguration(const std::vector<std::string> &cmdLine)
+void Server::_cmdLoadConfiguration([[maybe_unused]] const std::vector<std::string> &cmdLine)
 {
     std::vector<t_module> _loadedModules;
-    for (auto & module : _modules)
-    {
-        for (auto & a : module)
-        {
+    for (auto &module : _modules) {
+        for (auto &a : module) {
             if (a.second->get()->getStatus())
                 a.second->stopModule();
         }
@@ -217,7 +213,7 @@ void Server::_cmdLoadConfiguration(const std::vector<std::string> &cmdLine)
     }
     _configHandler.loadConfiguration(_configFilePath);
     _loadedModules = _configHandler.getLoadedModules();
-    for (auto & _loadedModule : _loadedModules) {
+    for (auto &_loadedModule : _loadedModules) {
         if (!dlManager.libStocked(DYNLIB(_loadedModule.name)))
             _loadModule(_loadedModule.name);
         _startModule(_loadedModule.name);
@@ -230,9 +226,17 @@ void Server::_loadModule(const std::string &moduleName)
         dlManager.loadNewLib<AModule>(DYNLIB(moduleName));
         auto *newModule = dlManager.getInstance<AModule>(DYNLIB(moduleName));
         if (newModule->isInputData())
-            _modules[MODULE_IN].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerInput>>(moduleName, std::make_shared<ModuleHandlerInput>(ModuleHandlerInput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
+            _modules[MODULE_IN].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerInput>>(moduleName,
+                                                                                                   std::make_shared<ModuleHandlerInput>(
+                                                                                                           ModuleHandlerInput(
+                                                                                                                   dlManager.getInstance<AModule>(
+                                                                                                                           DYNLIB(moduleName))))));
         else
-            _modules[MODULE_OUT].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerOutput>>(moduleName, std::make_shared<ModuleHandlerOutput>(ModuleHandlerOutput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
+            _modules[MODULE_OUT].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerOutput>>(moduleName,
+                                                                                                     std::make_shared<ModuleHandlerOutput>(
+                                                                                                             ModuleHandlerOutput(
+                                                                                                                     dlManager.getInstance<AModule>(
+                                                                                                                             DYNLIB(moduleName))))));
         LOG(INFO) << "Module " << DYNLIB(moduleName) << " loaded.";
     } catch (const ModuleLoader::ModuleLoaderException &e) {
         LOG(ERR) << e.getComponent() << ": " << e.what();

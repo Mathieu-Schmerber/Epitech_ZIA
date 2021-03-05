@@ -91,6 +91,7 @@ void HTTPSModule::startModule()
         LOG(ERR) << error.what();
         _sTcp = nullptr;
         stopModule();
+        return;
     }
     AModule::startModule();
 }

@@ -10,6 +10,7 @@
 #include <thread>
 #include <string>
 #include <map>
+#include <unordered_map>
 #include "RequestParser.hpp"
 
 class Server;
@@ -34,6 +35,8 @@ public:
     std::pair<std::string, std::pair<std::string, int>> getProcessedRequest();
     void setRequestToProcess(const std::pair<std::string, std::pair<std::string, int>>& request);
 private:
+    typedef void (RequestHandler::*rq_ptr)(const ZiaRequest::Request& requestParsed);
+
     //Private methods
     void _processRequest();
     bool _checkOutputModules(const ZiaRequest::Request& requestParsed);
@@ -54,6 +57,15 @@ private:
     std::string _response;
     int _requestId;
     std::string _moduleName;
+
+    const std::map<ZiaRequest::Type, rq_ptr> hdl_rq
+            {
+                    {ZiaRequest::GET, &RequestHandler::_getRequest},
+                    {ZiaRequest::POST, &RequestHandler::_postRequest},
+                    {ZiaRequest::HEAD, &RequestHandler::_headRequest},
+                    {ZiaRequest::DELETE, &RequestHandler::_deleteRequest}
+            };
+
 };
 
 #endif //ZIA_REQUESTHANDLER_HPP

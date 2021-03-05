@@ -61,18 +61,11 @@ void RequestHandler::_processRequest()
 
     try {
         requestParsed = requestParser.parseData(_request);
-        if (_checkOutputModules(requestParsed))
+
+        if (_checkOutputModules(requestParsed) || !Utils::isInMap(hdl_rq, requestParsed.getRequestType()))
             throw ServerError("Not implemented", 501);
-        if (requestParsed.getRequestType() == ZiaRequest::GET)
-            _getRequest(requestParsed);
-        else if (requestParsed.getRequestType() == ZiaRequest::POST)
-            _postRequest(requestParsed);
-        else if (requestParsed.getRequestType() == ZiaRequest::DELETE)
-            _deleteRequest(requestParsed);
-        else if (requestParsed.getRequestType() == ZiaRequest::HEAD)
-            _headRequest(requestParsed);
-        else
-            throw ServerError("Not implemented", 501);
+
+        std::invoke(hdl_rq.at(requestParsed.getRequestType()), this, requestParsed);
     } catch (const CoreError &e) {
         _response = Response::getResponse(e.what(), e.what(), e.getErrorCode());
     }
@@ -107,7 +100,9 @@ void RequestHandler::_getRequest(const ZiaRequest::Request& requestParsed)
     std::string fileContent;
 
     router.init();
+    LOG(DEBUG) << "requestParsed.getRequestPath() " << requestParsed.getRequestPath();
     fileContent = router.get("/", requestParsed.getRequestPath());
+    LOG(DEBUG) << "fileContent " << fileContent;
     if (fileContent.empty())
         _response = Response::getResponse(fileContent, "No content", 204);
     else

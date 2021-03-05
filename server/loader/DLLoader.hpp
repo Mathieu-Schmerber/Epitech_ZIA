@@ -30,7 +30,7 @@ namespace ModuleLoader {
         explicit DLLoader(const std::string &libName);
 
         ~DLLoader() override
-        {}
+        = default;
 
         typedef T *(*fct)();
 
@@ -45,12 +45,12 @@ namespace ModuleLoader {
     };
 
     template<typename T>
-    DLLoader<T>::DLLoader(const std::string &libName) : _lib(nullptr), ADLLoader(libName)
+    DLLoader<T>::DLLoader(const std::string &libName) : ADLLoader(libName), _lib(nullptr)
     {
         try {
             open();
         } catch (ModuleLoader::ModuleLoaderException &e) {
-            std::cerr << e.getComponent() << ": " << e.what() << std::endl;
+            LOG(ERR) << e.getComponent() << ": " << e.what();
         }
     }
 

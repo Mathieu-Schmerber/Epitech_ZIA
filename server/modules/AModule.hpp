@@ -24,7 +24,7 @@ public:
     std::pair<std::string, int> dataOutput() override;
     [[nodiscard]] std::string getFileExtension() const override { return ""; };
 
-    bool isInputData() override = 0;
+    bool isInputData() override { LOG(ERR) << "[AModule::isInputData] This function must be override"; return false; }; // Has to be defaulted to be able to move on with an instance of this class
     void run() final;
     bool getStatus() final;
     void startModule() override;
@@ -38,7 +38,7 @@ protected:
     std::vector<std::pair<std::string, int>> _inQueue;
     std::vector<std::pair<std::string, int>> _outQueue;
 
-    virtual void handleQueue() = 0;
+    virtual void handleQueue() { LOG(ERR) << "[AModule::handleQueue] This function must be override";}; // Has to be defaulted to be able to move on with an instance of this class
 };
 
 class AModuleInput : public AModule {

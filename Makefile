@@ -31,6 +31,9 @@ run:	all execute
 execute:
 		$(call FixPath,build/bin/)$(NAME)
 
+execute_debug:
+		valgrind $(call FixPath,build/bin/)$(NAME)
+
 windows:
 		.\install_windows.bat
 
@@ -45,3 +48,7 @@ conan-clean:
 		conan remove "*" -f
 
 re:		clean all
+
+rerun:	re execute
+
+debug:	re execute_debug

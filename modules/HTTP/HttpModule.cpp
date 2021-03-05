@@ -83,6 +83,7 @@ void HTTPModule::startModule()
         _sTcp = new TcpProtocol("0.0.0.0", _port);
     } catch (boost::system::system_error &error) {
         LOG(ERR) << error.what();
+        _sTcp = nullptr;
         stopModule();
     }
 }

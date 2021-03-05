@@ -14,9 +14,12 @@
  * \param host : ip to start the server
  * \param port : port to start the server
 **/
-TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_io_service, boost::asio::ip::tcp::endpoint(
-        boost::asio::ip::address::from_string(host), port)), _socket(_io_service), _context(boost::asio::ssl::context::sslv23)
+TcpSocket::TcpSocket(const std::string &host, unsigned short port) :
+_acceptor(_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(host), port)),
+_socket(_io_service),
+_context(boost::asio::ssl::context::sslv23)
 {
+    LOG(DEBUG) << "Start TCP Socket constructor";
     _context.set_options(
             boost::asio::ssl::context::default_workarounds
             | boost::asio::ssl::context::no_sslv2);

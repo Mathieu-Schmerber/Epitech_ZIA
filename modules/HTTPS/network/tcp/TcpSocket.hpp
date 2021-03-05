@@ -53,10 +53,10 @@ class TcpSocket {
 
     private:
         void startAccept();
+        boost::asio::io_service _io_service;
         boost::asio::ip::tcp::acceptor _acceptor;
         boost::asio::ip::tcp::socket _socket;
         boost::asio::ssl::context _context;
-        boost::asio::io_service _io_service;
         std::deque<std::shared_ptr<InstanceClientTCP>> _clients;
         std::deque<ReceiveData> _msgQueue;
         std::deque<int> _idDisconnect;

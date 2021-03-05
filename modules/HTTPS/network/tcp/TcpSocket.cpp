@@ -129,7 +129,8 @@ int TcpSocket::getNewDisconnect()
  * \param socket : client's socket
  * \param msgQueue : client's messages received
 **/
-InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context) : _socket(std::move(socket), context), _msgQueue(msgQueue)
+InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context) :
+_socket(std::move(socket), context), _msgQueue(msgQueue)
 {
     _id = id;
     LOG_GREEN( "User has just connected")

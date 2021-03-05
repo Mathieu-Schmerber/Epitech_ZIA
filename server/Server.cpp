@@ -130,7 +130,7 @@ void Server::_readInput()
             else
                 throw ZiaCmdLineError("Zia command line error", "command \'" + cmdLine[0] + "\' not found.");
         } catch (const ZiaCmdLineError &e) {
-            std::cerr << e.getComponent() << ": " << e.what() << std::endl;
+            LOG(ERR) << e.getComponent() << ": " << e.what();
         }
     }
     if (restart && (cmdLine.empty() || cmdLine[0] != "exit"))
@@ -235,7 +235,7 @@ void Server::_loadModule(const std::string &moduleName)
             _modules[MODULE_OUT].insert(std::pair<std::string, std::shared_ptr<ModuleHandlerOutput>>(moduleName, std::make_shared<ModuleHandlerOutput>(ModuleHandlerOutput(dlManager.getInstance<AModule>(DYNLIB(moduleName))))));
         LOG(INFO) << "Module " << DYNLIB(moduleName) << " loaded.";
     } catch (const ModuleLoader::ModuleLoaderException &e) {
-        std::cerr << e.getComponent() << ": " << e.what() << std::endl;
+        LOG(ERR) << e.getComponent() << ": " << e.what();
     }
 }
 
@@ -250,7 +250,7 @@ void Server::_startModule(const std::string &moduleName)
             throw ZiaModuleError("ZiaModuleError", "module " + moduleName + " is already started.");
         _modules[(in_out[0] ? MODULE_OUT : MODULE_IN)][moduleName]->startModule();
     } catch (const ZiaModuleError &e) {
-        std::cerr << e.getErrorMessage() << std::endl;
+        LOG(ERR) << e.getErrorMessage();
     }
 }
 
@@ -265,6 +265,6 @@ void Server::_stopModule(const std::string &moduleName)
             throw ZiaModuleError("ZiaModuleError", "module " + moduleName + " is not started.");
         _modules[(in_out[0] ? MODULE_OUT : MODULE_IN)][moduleName]->stopModule();
     } catch (const ZiaModuleError &e) {
-        std::cerr << e.getErrorMessage() << std::endl;
+        LOG(ERR) << e.getErrorMessage();
     }
 }

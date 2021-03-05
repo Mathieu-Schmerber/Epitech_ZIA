@@ -8,11 +8,6 @@
 #include <filesystem>
 #include <iostream>
 
-#if defined(_WIN32) || defined(WIN32)
-    #include <Windows.h>
-    #include <cstdio>
-#endif
-
 extern "C" {
     #if defined(_WIN32) || defined(WIN32)
     __declspec(dllexport) 

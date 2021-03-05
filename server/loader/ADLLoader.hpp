@@ -10,6 +10,7 @@
 #define ZIA_ADLLOADER_HPP
 
 #include <string>
+#include "Log.hpp"
 
 namespace ModuleLoader {
 

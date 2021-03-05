@@ -18,8 +18,6 @@
     #include <dlfcn.h>
     #define DYNLIB(name) ("lib/lib" + std::string(name) + std::string(".so")).c_str()
 #elif defined(_WIN32) || defined(WIN32)
-    #include <winsock2.h>
-    #include <windows.h>
     #include <cstdio>
     #define DYNLIB(name) (std::string(name) + std::string(".dll")).c_str()
 #endif
@@ -62,7 +60,7 @@ namespace ModuleLoader {
         #ifdef __unix__
             _lib = dlopen(_libName.c_str(), RTLD_LAZY);
             if (!_lib)
-                std::cerr << dlerror() << std::endl;
+                LOG(ERR) << dlerror();
         #elif defined(_WIN32) || defined(WIN32)
             _lib = LoadLibrary(TEXT(_libName.c_str()));
         #endif

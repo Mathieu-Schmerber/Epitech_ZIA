@@ -7,6 +7,7 @@
 
 #include <string>
 #include <utility>
+#include "Log.hpp"
 
 struct ReceiveData {
     std::string receive;

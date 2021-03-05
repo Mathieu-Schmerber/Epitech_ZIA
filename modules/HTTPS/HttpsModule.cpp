@@ -7,11 +7,6 @@
 #include "ConfigurationHandler.hpp"
 #include <iostream>
 
-#if defined(_WIN32) || defined(WIN32)
-    #include <windows.h>
-    #include <cstdio>
-#endif
-
 extern "C" {
     #if defined(_WIN32) || defined(WIN32)
         __declspec(dllexport)
@@ -88,10 +83,10 @@ void HTTPSModule::startModule()
     try {
         _sTcp = new TcpProtocol("0.0.0.0", _port);
     } catch (boost::system::system_error &error) {
-        std::cerr << error.what() << std::endl;
+        LOG(ERR) << error.what();
         stopModule();
     } catch (std::exception &error) {
-        std::cerr << error.what() << std::endl;
+        LOG(ERR) << error.what();
         stopModule();
     }
 }

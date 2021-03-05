@@ -74,7 +74,7 @@ namespace logging {
         Logger() = delete;
 
         explicit Logger(const logging_config_t &) {};
-        virtual ~Logger() = default;;
+        virtual ~Logger() = default;
 
         virtual void log(const std::string &, const log_level) {};
         virtual void log(const std::string &) {};

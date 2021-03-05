@@ -69,6 +69,7 @@ set(SOURCES
 
         server/tools/Utils.hpp
         server/tools/Log.hpp
+        server/tools/Logger.hpp
 
         server/include/rapidjson/document.h
         server/include/rapidjson/filereadstream.h
@@ -116,7 +117,6 @@ set(SOURCES_HTTP_MODULE
         modules/HTTP/network/tcp/TcpSocket.hpp
         modules/HTTP/network/tcp/TcpSocket.cpp
         modules/HTTP/network/tcp/ReceiveData.hpp
-        server/tools/Logger.hpp
         )
 
 set(SOURCES_HTTPS_MODULE

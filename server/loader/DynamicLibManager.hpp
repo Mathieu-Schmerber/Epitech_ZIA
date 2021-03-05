@@ -40,7 +40,7 @@ namespace ModuleLoader {
                 try {
                     return dynamic_cast<DLLoader<T> *>(*it)->getInstance();
                 } catch (ModuleLoader::ModuleLoaderException &e) {
-                    std::cerr << e.getComponent() << ": " << e.what() << std::endl;
+                    LOG(ERR) << e.getComponent() << ": " << e.what();
                     throw ModuleLoader::ModuleLoaderException("DynamicLibManager", "Unable to get instance for lib " + libName);
                 }
             }

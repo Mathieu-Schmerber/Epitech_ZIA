@@ -7,12 +7,6 @@
 #ifndef ZIA_CONFIGURATIONHANDLER_HPP
 #define ZIA_CONFIGURATIONHANDLER_HPP
 
-#ifdef _WIN32
-
-#include <windows.h>
-
-#endif
-
 #include <iostream>
 #include <fstream>
 #include <string>

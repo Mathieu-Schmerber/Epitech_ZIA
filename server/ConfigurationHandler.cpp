@@ -25,7 +25,7 @@ std::string ConfigurationHandler::readFile(const std::string &filepath)
         }
         myfile.close();
     } else {
-        LOG(WARN) << "Unable to open file";
+        LOG(WARN) << "[ConfigurationHandler::readFile] Unable to open file " << filepath;
         return "";
     }
     return file;

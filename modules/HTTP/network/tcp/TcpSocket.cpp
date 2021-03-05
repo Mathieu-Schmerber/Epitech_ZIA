@@ -135,7 +135,7 @@ void InstanceClientTCP::startRead()
                     _disconnected = true;
                 } else {
                     _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id);
-                    LOG_BLUE_WN("TCP : " + std::string(_read, bytes_transferred))
+                    LOG(DEBUG) << ("TCP : " + std::string(_read, bytes_transferred));
                     startRead();
                 }
             };

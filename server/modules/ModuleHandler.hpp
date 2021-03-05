@@ -29,17 +29,22 @@ class ModuleHandlerInput : public ModuleHandler {
 public:
     explicit ModuleHandlerInput() : _module(nullptr) {};
     explicit ModuleHandlerInput(AModule *module) : _module(module) {}
+    ~ModuleHandlerInput() {
+        if (_thread && _thread->joinable())
+            _thread->join();
+    }
     void startModule() override {
         if (!_module)
             throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
         _module->startModule();
-        _thread = std::thread(&AModule::run, _module);
+        _thread = new std::thread(&AModule::run, _module);
     }
     void stopModule() override {
         if (!_module)
             throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
         _module->stopModule();
-        _thread.join();
+        if (_thread && _thread->joinable())
+            _thread->join();
     }
     AModule *get() override {
         if (!_module)
@@ -52,8 +57,8 @@ public:
         return this->get();
     }
 private:
-    AModule *_module;
-    std::thread _thread;
+    AModule *_module = nullptr;
+    std::thread *_thread = nullptr;
 };
 
 class ModuleHandlerOutput : public ModuleHandler {

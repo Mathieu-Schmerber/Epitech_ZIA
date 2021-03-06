@@ -1,4 +1,5 @@
 {
   "port": 443,
-  "certificate": "./certs/certificate.pem"
+  "certificate": "./certs/certificate.pem",
+  "key": "./certs/key.pem"
 }

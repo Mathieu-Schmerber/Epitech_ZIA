@@ -27,8 +27,22 @@ public:
     explicit Server(int ac, char **av);
     ~Server() = default;
 
+/**
+ * \fn void run()
+ * \brief Main loop of the server used to run it
+**/
     void run();
+/**
+ * \fn static std::string readAsyncFunction()
+ * \brief Function to read text asynchronously
+ * \return The text read by the function
+**/
     static std::string readAsyncFunction();
+/**
+ * \fn std::map<std::string, std::shared_ptr<ModuleHandler>> getOutputModules()
+ * \brief Function that return the content of the file
+ * \return Return the list of the output modules
+**/
     std::map<std::string, std::shared_ptr<ModuleHandler>> getOutputModules();
 
     enum MODULE_IN_OUT {

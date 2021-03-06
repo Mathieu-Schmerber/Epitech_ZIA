@@ -100,7 +100,7 @@ ZiaRequest::Request ZiaRequest::RequestParser::parseData(const std::string &in)
         RMCHAR(out, '\n')
         if (position == 0)
             _parseRequestMethod(out, request);
-        else if (out.empty() || is_body) {  // FIXME c'est sale
+        else if (out.empty() || is_body) {
             _parseRequestBody(out, request);
             is_body = true;
         } else

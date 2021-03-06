@@ -14,86 +14,34 @@
 #include <thread>
 #include "Logger.hpp"
 
-
-#ifdef _WIN32
-
-#define LOG_RED(MESSAGE) {\
-    HANDLE hConsole; \
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
-    FlushConsoleInputBuffer(hConsole); \
-    SetConsoleTextAttribute(hConsole, RED); \
-    std::cout << MESSAGE; \
-    SetConsoleTextAttribute(hConsole, 7);      \
-    }
-
-#define LOG_GREEN(MESSAGE) {\
-    HANDLE hConsole; \
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
-    FlushConsoleInputBuffer(hConsole); \
-    SetConsoleTextAttribute(hConsole, GREEN); \
-    std::cout << MESSAGE; \
-    SetConsoleTextAttribute(hConsole, 7);      \
-    }
-
-#define LOG_BLUE(MESSAGE) {\
-    HANDLE hConsole; \
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
-    FlushConsoleInputBuffer(hConsole); \
-    SetConsoleTextAttribute(hConsole, BLUE); \
-    std::cout << MESSAGE; \
-    SetConsoleTextAttribute(hConsole, 7);      \
-    }
-
-#define LOG_YELLOW(MESSAGE) {\
-    HANDLE hConsole; \
-    hConsole = GetStdHandle(STD_OUTPUT_HANDLE); \
-    FlushConsoleInputBuffer(hConsole); \
-    SetConsoleTextAttribute(hConsole, YELLOW); \
-    std::cout << MESSAGE; \
-    SetConsoleTextAttribute(hConsole, 7);      \
-    }
-
-#else
-
-#define LOG_RED(MESSAGE) {std::cout << "\033[1;31m" << MESSAGE << "\033[0m";}
-#define LOG_GREEN(MESSAGE) {std::cout << "\033[1;32m" << MESSAGE <<  "\033[0m";}
-#define LOG_BLUE(MESSAGE) {std::cout << "\033[94m" << MESSAGE << "\033[0m";}
-#define LOG_YELLOW(MESSAGE) {std::cout << "\033[103m" << MESSAGE << "\033[0m";}
-
-
-#endif
-
-
 enum logType
 {
     DEBUG,
     INFO,
     WARN,
-    ERR, // ERROR already used as macro in .h windows files
+    ERR,
     TRACE
 };
-
-typedef struct structLog_s
-{
-    bool headers = false; // FIXME if true
-    logType level = DEBUG; // FIXME if debug
-} structLog;
-
-// extern structLog LOG_CFG;
 
 class LOG
 {
     public:
     LOG() = default;
 
+    /**
+     * \brief LOG constructor, Save log level
+     * \param type : log level
+    **/
     explicit LOG(logType type)
     {
         msgLevel = type;
-        //if (LOG_CFG.headers) {
-        //    operator<<("[" + getLabel(type) + "]");
-        //}
     }
 
+    /**
+     * \brief LOG destructor : print
+     *
+     * call logging to print saved buffer
+    **/
     ~LOG() {
         if (msgLevel == ERR)
             logging::ERR(buf.str());
@@ -107,6 +55,9 @@ class LOG
             logging::TRACE(buf.str());
     }
 
+    /**
+     * \brief operator << add msg to current buffer
+    **/
     template<class T>
     LOG &operator<<(const T &msg)
     {
@@ -117,8 +68,6 @@ class LOG
     private:
     logType msgLevel = DEBUG;
     std::ostringstream buf;
-
-    structLog LOG_CFG;
 };
 
 #endif //ZIA_SERVER_LOG_HPP

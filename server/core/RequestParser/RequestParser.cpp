@@ -21,28 +21,9 @@ ZiaRequest::Request::Request() : _requestType(UNDEFINED), _correctVersion(false)
 
 void ZiaRequest::Request::setRequestType(const std::string &requestType)
 {
-    //_requestType = static_cast<Type>(Utils::getInTab(requestTypesNames, requestType.data()));
-    //LOG(DEBUG) << "new rq " << _requestType;
-
-    if (requestType == std::string("GET"))
-        _requestType = ZiaRequest::GET;
-    else if (requestType == std::string("POST"))
-        _requestType = ZiaRequest::POST;
-    else if (requestType == std::string("OPTIONS"))
-        _requestType = ZiaRequest::OPTIONS;
-    else if (requestType == std::string("HEAD"))
-        _requestType = ZiaRequest::HEAD;
-    else if (requestType == std::string("PUT"))
-        _requestType = ZiaRequest::PUT;
-    else if (requestType == std::string("DELETE"))
-        _requestType = ZiaRequest::DELETE;
-    else if (requestType == std::string("TRACE"))
-        _requestType = ZiaRequest::TRACE;
-    else if (requestType == std::string("CONNECT"))  // FIXME
-        _requestType = ZiaRequest::CONNECT;
-    else
+    if (!Utils::isInTab(requestTypesNames, requestType.data()))
         throw ClientError("Bad Request", 400);
-    LOG(DEBUG) << "valid rq " << _requestType;
+    _requestType = static_cast<Type>(Utils::getInTab(requestTypesNames, requestType.data()));
 }
 
 void ZiaRequest::Request::setRequestPath(const std::string &requestPath)

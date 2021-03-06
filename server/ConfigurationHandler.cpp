@@ -87,8 +87,8 @@ int ConfigurationHandler::getInt(const std::string &filepath, const std::string 
     if (_docModule.IsObject() && _docModule.HasMember(varName.c_str()) && _docModule[varName.c_str()].IsInt64()) {
         return _docModule[varName.c_str()].GetInt();
     } else {
-        LOG(WARN) << "There was an error while loading a config file can't fetch var: "
-                  << varName << " in file: " << filepath << " | Set a default value.";
+        LOG(WARN) << "There was an error while loading a config file can't fetch var: \""
+                  << varName << "\" in file: " << filepath << " | Set a default value.";
     }
     return 0;
 }
@@ -103,8 +103,8 @@ std::string ConfigurationHandler::getString(const std::string &filepath, const s
     if (_docModule.IsObject() && _docModule.HasMember(varName.c_str()) && _docModule[varName.c_str()].IsString()) {
         return _docModule[varName.c_str()].GetString();
     } else {
-        LOG(WARN) << "There was an error while loading a config file can't fetch var: "
-        << varName << " in file: " << filepath << " | Set a default value.";
+        LOG(WARN) << "There was an error while loading a config file can't fetch var: \""
+        << varName << "\" in file: " << filepath << " | Set a default value.";
     }
     return "";
 }

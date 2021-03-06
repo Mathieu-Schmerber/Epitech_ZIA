@@ -88,6 +88,9 @@ void HTTPModule::startModule()
     } catch (boost::system::system_error &error) {
         LOG(ERR) << error.what();
         return;
+    } catch (std::exception &error) {
+        LOG(ERR) << error.what();
+        return;
     }
     AModule::startModule();
 }

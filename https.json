@@ -1,3 +1,4 @@
 {
-  "port": 443
+  "port": 443,
+  "certificate": "./certs/certificate.pem"
 }

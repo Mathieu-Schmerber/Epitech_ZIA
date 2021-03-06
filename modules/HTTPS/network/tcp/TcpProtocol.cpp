@@ -4,7 +4,7 @@
 
 #include "TcpProtocol.hpp"
 
-TcpProtocol::TcpProtocol(const std::string &host, unsigned short port) : _sTcp(host, port)
+TcpProtocol::TcpProtocol(const std::string &host, unsigned short port, const std::string &certificate, const std::string &key) : _sTcp(host, port, certificate, key)
 {
 }
 

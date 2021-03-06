@@ -72,18 +72,3 @@ std::string Cryption::decrypt(std::string &txt)
 
     return std::string();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

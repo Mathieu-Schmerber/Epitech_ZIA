@@ -44,7 +44,7 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
 **/
 class TcpSocket {
     public:
-        TcpSocket(const std::string &host, unsigned short port);
+        TcpSocket(const std::string &host, unsigned short port, const std::string &certificate, const std::string &key);
         ~TcpSocket();
         bool userDisconnected();
         void send(int id, const std::string &msg);

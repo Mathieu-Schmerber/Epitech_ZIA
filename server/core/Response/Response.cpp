@@ -2,9 +2,11 @@
 // Created by Emilien on 27/02/2021.
 //
 
+#include <vector>
 #include "Response.hpp"
+#include "Utils.hpp"
 
-std::string Response::getResponse(const std::string& content, const std::string& status, int code)
+std::string Response::getResponse(const std::string& content, const std::string& status, int code, std::map<Response::RData, std::string> other_components)
 {
     std::string response;
 
@@ -12,6 +14,8 @@ std::string Response::getResponse(const std::string& content, const std::string&
     response += _createDate();
     response += _createServerName();
     response += _createContentLength(content);
+    if (Utils::isInMap(other_components, CONTENT_TYPE))
+        response += _createContentType(other_components[CONTENT_TYPE]);
     response += "\r\n";
     response += content;
     return response;
@@ -51,4 +55,16 @@ std::string Response::_createServerName()
 std::string Response::_createContentLength(const std::string &content)
 {
     return ("Content-Length: " + std::to_string(content.length()) + "\r\n");
+}
+
+std::string Response::_createContentType(const std::string &extension)
+{
+    std::string file_type = "image";  // Default
+
+    if (Utils::isInVector(imgTypes, extension))
+        file_type = "image";
+    if (Utils::isInVector(txtTypes, extension))
+        file_type = "text";
+
+    return ("Content-Type: " + file_type + '/' + extension + "\r\n");
 }

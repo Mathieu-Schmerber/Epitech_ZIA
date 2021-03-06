@@ -73,10 +73,10 @@ void HTTPModule::handleQueue()
 **/
 std::pair<std::string, int> HTTPModule::getInput()
 {
-    if (_inQueue.empty())
+    if (_inQueueInput.empty())
         return {};
-    std::pair<std::string, int> in = _inQueue.front();
-    _inQueue.erase(_inQueue.begin());
+    std::pair<std::string, int> in = _inQueueInput.front();
+    _inQueueInput.erase(_inQueueInput.begin());
     return in;
 }
 

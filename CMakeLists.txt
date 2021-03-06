@@ -119,7 +119,8 @@ set(SOURCES_HTTP_MODULE
         modules/HTTP/network/tcp/TcpSocket.hpp
         modules/HTTP/network/tcp/TcpSocket.cpp
         modules/HTTP/network/tcp/ReceiveData.hpp
-        )
+        server/core/RequestParser/RequestParser.hpp
+        server/core/RequestParser/RequestParser.cpp)
 
 set(SOURCES_HTTPS_MODULE
         modules/HTTPS/HttpsModule.cpp
@@ -136,14 +137,19 @@ set(SOURCES_HTTPS_MODULE
         modules/HTTPS/network/tcp/ReceiveData.hpp
         modules/HTTPS/cryption/Cryption.cpp
         modules/HTTPS/cryption/Cryption.hpp
-        )
+        server/core/RequestParser/RequestParser.hpp
+        server/core/RequestParser/RequestParser.cpp)
 
 set(SOURCES_PHP_MODULE
         modules/PHP/PHP_CGI.cpp
         modules/PHP/PHP_CGI.hpp
         server/modules/IModule.hpp
         server/modules/AModule.cpp
-        server/modules/AModule.hpp)
+        server/modules/AModule.hpp
+        server/core/Response/Response.hpp
+        server/core/Response/Response.cpp
+        server/core/RequestParser/RequestParser.hpp
+        server/core/RequestParser/RequestParser.cpp)
 
 set(RESOURCES_PHP_MODULE
         modules/PHP/php_rsc)
@@ -185,18 +191,28 @@ target_include_directories(httpModule PRIVATE
         server
         server/include/rapidjson
         server/tools
-        modules/HTTP/network/tcp)
+        modules/HTTP/network/tcp
+        server/core/RequestParser
+        server/exception
+        server/core/ExceptionCore)
 
 target_include_directories(httpsModule PRIVATE
         server/modules
         server
         server/include/rapidjson
         server/tools
-        modules/HTTPS/network/tcp)
+        modules/HTTPS/network/tcp
+        server/core/RequestParser
+        server/exception
+        server/core/ExceptionCore)
 
 target_include_directories(phpModule PRIVATE
         server/modules
-        server/tools)
+        server/tools
+        server/core/RequestParser
+        server/exception
+        server/core/Response
+        server/core/ExceptionCore)
 
 message("===========================================")
 message(${CONAN_LIBS})

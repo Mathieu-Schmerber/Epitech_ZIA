@@ -4,12 +4,12 @@
  * \author Emilien.D
 **/
 
-
 #include "Server.hpp"
 
 /**
  * \brief main, start the server
- **/
+**/
+
 int main(int ac, char **av)
 {
     Server _server(ac, av);

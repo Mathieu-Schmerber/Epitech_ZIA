@@ -5,11 +5,12 @@
 #ifndef ZIA_RESPONSE_HPP
 #define ZIA_RESPONSE_HPP
 
-#include <string>
-#include <utility>
-#include <ctime>
 #include <iostream>
 #include <iomanip>
+#include <utility>
+#include <string>
+#include <vector>
+#include <ctime>
 #include <map>
 
 class Response {

@@ -61,6 +61,7 @@ void RequestHandler::_processRequest()
 
     try {
         requestParsed = requestParser.parseData(_request);
+        LOG(INFO) << "Request : " << ZiaRequest::requestTypesNames[requestParsed.getRequestType()] << " " << requestParsed.getRequestPath();
         if (!Utils::isInMap(hdl_rq, requestParsed.getRequestType()))
             throw ServerError("Not implemented", 501);
         if (_checkOutputModules(requestParsed)) {

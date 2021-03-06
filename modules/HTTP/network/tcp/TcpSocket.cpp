@@ -172,7 +172,16 @@ void handleSend([[maybe_unused]]const boost::system::error_code &error, [[maybe_
 **/
 void InstanceClientTCP::send(const std::string &msg)
 {
-    boost::asio::async_write(_socket, boost::asio::buffer(msg), &handleSend);
+    size_t bufSize = 65536 - 1;
+    std::string buf;
+    std::string full_msg = std::string(msg);
+
+    LOG(DEBUG) << "HTTP InstanceClientTCP::send full msg size " << full_msg.length();
+    while (full_msg.length() > 0) {
+        buf = full_msg.substr(0, bufSize);
+        boost::asio::async_write(_socket, boost::asio::buffer(buf), &handleSend);
+        full_msg.erase(0, bufSize);
+    }
 }
 
 /**

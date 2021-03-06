@@ -16,7 +16,7 @@
 
 //#define _WIN32_WINNT  0x0601
 
-#define WINDOWS_COLOR_ISSUE true // enable me if you re facing issues with color print on windows
+#define WINDOWS_COLOR_ISSUE false // enable me if you re facing issues with color print on windows
 
 #define BLUE 9
 #define GREEN 10

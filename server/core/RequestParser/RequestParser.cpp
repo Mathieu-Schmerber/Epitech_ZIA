@@ -57,6 +57,11 @@ void ZiaRequest::Request::setRequestHeader(const std::pair<std::string, std::str
     _headerlist.push_back(header);
 }
 
+void ZiaRequest::Request::addBodyLine(const std::string &body)
+{
+    _body += body;
+}
+
 ZiaRequest::Type ZiaRequest::Request::getRequestType() const
 {
     return _requestType;
@@ -72,6 +77,11 @@ std::vector<std::pair<std::string, std::string>> ZiaRequest::Request::getRequest
     return _headerlist;
 }
 
+std::string ZiaRequest::Request::getRequestBody() const
+{
+    return _body;
+}
+
 /** ====== Request Parser ====== **/
 
 ZiaRequest::RequestParser::RequestParser() : _request() {}
@@ -83,13 +93,17 @@ ZiaRequest::Request ZiaRequest::RequestParser::parseData(const std::string &in)
     ZiaRequest::Request request;
     std::string out;
     int position = 0;
+    bool is_body = false;
 
     while (std::getline(requestToParse, out)) {
         RMCHAR(out, '\r')
         RMCHAR(out, '\n')
         if (position == 0)
             _parseRequestMethod(out, request);
-        else
+        else if (out.empty() || is_body) {  // FIXME c'est sale
+            _parseRequestBody(out, request);
+            is_body = true;
+        } else
             _parseRequestHeaders(out, request);
         ++position;
     }
@@ -131,4 +145,9 @@ void ZiaRequest::RequestParser::_parseRequestHeaders(const std::string &out, Zia
             return;
         }
     }
+}
+
+void ZiaRequest::RequestParser::_parseRequestBody(const std::string &out, ZiaRequest::Request &request)
+{
+    request.addBodyLine(out);
 }

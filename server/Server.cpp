@@ -114,22 +114,11 @@ void Server::_readInput()
                 _future = std::async(std::launch::async, Server::readAsyncFunction);
                 return;
             }
-            if (cmdLine[0] == "loadmodule")  // FIXME
-                _cmdLoadModule(cmdLine);
-            else if (cmdLine[0] == "startmodule")
-                _cmdStartModule(cmdLine);
-            else if (cmdLine[0] == "stopmodule")
-                _cmdStopModule(cmdLine);
-            else if (cmdLine[0] == "reloadmodule")
-                _cmdReloadModule(cmdLine);
-            else if (cmdLine[0] == "reloadmodules")
-                _cmdReloadModules(cmdLine);
-            else if (cmdLine[0] == "exit")
-                _cmdExitServer(cmdLine);
-            else if (cmdLine[0] == "reload" || cmdLine[0] == "r")
-                _cmdLoadConfiguration(cmdLine);
-            else
+            if (!Utils::isInMap(cmd_ptr_map, cmdLine[0]))
                 throw ZiaCmdLineError("Zia command line error", "command \'" + cmdLine[0] + "\' not found.");
+
+            std::invoke(cmd_ptr_map.at(cmdLine[0]), this, cmdLine);
+
         } catch (const ZiaCmdLineError &e) {
             LOG(ERR) << e.getComponent() << ": " << e.what();
         }

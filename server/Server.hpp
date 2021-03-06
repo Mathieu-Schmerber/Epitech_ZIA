@@ -50,6 +50,8 @@ public:
         MODULE_OUT = 1
     };
 private:
+    typedef void (Server::*cmd_ptr)(const std::vector<std::string>& cmdLine);
+
     void _readInput();
     void _cmdLoadModule(const std::vector<std::string>& cmdLine);
     void _cmdStartModule(const std::vector<std::string>& cmdLine);
@@ -72,6 +74,17 @@ private:
     std::future<std::string> _future;
     ConfigurationHandler _configHandler;
     std::string _configFilePath;
+
+    const std::map<std::string, cmd_ptr> cmd_ptr_map {
+            {"loadmodule", &Server::_cmdLoadModule},
+            {"startmodule", &Server::_cmdStartModule},
+            {"stopmodule", &Server::_cmdStopModule},
+            {"reloadmodule", &Server::_cmdReloadModule},
+            {"reloadmodules", &Server::_cmdReloadModules},
+            {"exit", &Server::_cmdExitServer},
+            {"reload", &Server::_cmdLoadConfiguration},
+            {"r", &Server::_cmdLoadConfiguration}
+    };
 };
 
 

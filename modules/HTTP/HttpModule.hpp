@@ -33,6 +33,8 @@ public:
     void handleQueue() override;
     const std::string _filePath = "./http.json";
     std::map<int, std::string> _fullReceive;
+    std::map<int, int> _contentLength;
+    std::vector<int> _readyContentLength;
     int _port;
     TcpProtocol *_sTcp;
 };

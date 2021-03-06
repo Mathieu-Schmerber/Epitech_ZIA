@@ -34,6 +34,7 @@ public:
 
 private:
     bool _running;
+    std::mutex _mutex;
 
 protected:
     const std::string _name;

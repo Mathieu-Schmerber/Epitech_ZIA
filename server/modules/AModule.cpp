@@ -14,7 +14,7 @@
  * \param name : set the module name
 **/
 
-AModule::AModule(const std::string &name) : _running(false), _name(name) {}
+AModule::AModule(const std::string &name) : _running(false), _name(name), _mutex() {}
 
 /**
  * \brief run keep calling handle queue while the module is running
@@ -24,6 +24,7 @@ void AModule::run()
 {
     LOG(INFO) << "Start " << this->_name << " Module";
     while (getStatus()) {
+        std::lock_guard<std::mutex> lock(_mutex);
         this->handleQueue();
     }
     LOG(INFO) << "End " << this->_name << " Module";
@@ -36,16 +37,8 @@ void AModule::run()
 
 void AModule::dataInput(const std::string &str, int id)
 {
+    std::lock_guard<std::mutex> lock(_mutex);
     this->_inQueueInput.emplace_back(str, id);
-}
-
-std::string AModuleOutput::processData(const ZiaRequest::Request &request)
-{
-    std::string response;
-
-    this->_requestToProcess = request;
-    this->handleQueue();
-    return _response;
 }
 
 /**
@@ -54,6 +47,7 @@ std::string AModuleOutput::processData(const ZiaRequest::Request &request)
 
 std::pair<std::string, int> AModule::dataOutput()
 {
+    std::lock_guard<std::mutex> lock(_mutex);
     if (this->_outQueue.empty())
         return std::pair<std::string, int>("", -1);
     std::pair<std::string, int> out = this->_outQueue.front();
@@ -94,3 +88,12 @@ void AModule::stopModule()
     _running = false;
 }
 /// End Region
+
+std::string AModuleOutput::processData(const ZiaRequest::Request &request)
+{
+    std::string response;
+
+    this->_requestToProcess = request;
+    this->handleQueue();
+    return _response;
+}

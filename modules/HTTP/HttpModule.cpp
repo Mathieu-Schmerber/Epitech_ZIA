@@ -44,20 +44,25 @@ void HTTPModule::handleQueue()
     ReceiveData receive;
     std::pair<std::string, int> in;
     int idDisconnect;
+
     if (_sTcp->userDisconnected() && (idDisconnect = _sTcp->getNewDisconnect()) != 0) {
     }
-    if ((receive = _sTcp->getNewMessage()).id != 0) {
-        if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {
-            if (receive.receive != "\r\n")
-                _fullReceive[receive.id] += receive.receive;
-            _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
-            _fullReceive[receive.id].clear();
-        } else {
-            _fullReceive[receive.id] += receive.receive;
-        }
-    }
-    if ((in = getInput()).second != -1) {
-        _sTcp->send(in.second, in.first);
+    //if ((receive = _sTcp->getNewMessage()).id != 0) {
+    //    if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {
+    //        if (receive.receive != "\r\n")
+    //            _fullReceive[receive.id] += receive.receive;
+    //        LOG(DEBUG) << "HTTP emplace_back _outQueue" << _fullReceive[receive.id];
+    //        _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
+    //        _fullReceive[receive.id].clear();
+    //    } else {  // FIXME
+    //        _fullReceive[receive.id] += receive.receive;
+    //    }
+    //}
+    receive = _sTcp->getNewMessage();  // FIXME
+    if (receive.id != 0)
+        _outQueue.emplace_back(receive.receive, receive.id);
+    if ((in = getInput()).second != -1) {  // FIXME
+        _sTcp->send(in.second, in.first);  // FIXME (partout)
     }
 }
 

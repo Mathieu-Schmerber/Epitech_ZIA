@@ -80,9 +80,7 @@ void HTTPSModule::startModule()
 {
     HTTPSModule::loadConfigFile(_filePath);
     try {
-        LOG(DEBUG) << "port " << _port;
         _sTcp = new TcpProtocol("0.0.0.0", _port);
-        LOG(DEBUG) << "_sTcp created";
     } catch (boost::system::system_error &error) {
         LOG(ERR) << error.what();
         return;

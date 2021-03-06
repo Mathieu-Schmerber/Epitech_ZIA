@@ -144,6 +144,13 @@ void RequestHandler::_putRequest(const ZiaRequest::Request &requestParsed)
 
     router.init();
     LOG(DEBUG) << "PUT : create " << requestParsed.getRequestPath() << " " << requestParsed.getRequestBody();
-    router.create("/", requestParsed.getRequestPath(), requestParsed.getRequestBody());
-    _response = Response::getResponse("", "Created", 201); // FIXME le code de retour doit changer selon si le fichier existe etc..;
+    auto res = router.create("/", requestParsed.getRequestPath(), requestParsed.getRequestBody(), true);
+    LOG(DEBUG) << "path " << res.first;
+    if (res.second)
+        _response = Response::getResponse("Content-Location: " + res.first, "OK", 200);
+    else
+        _response = Response::getResponse("Content-Location: " + res.first, "Created", 201);
 }
+// 201 (Created) : new file created
+// 200 (OK) : with ltl message ? File correctly modified
+// 204 (No Content) : File correctly modified

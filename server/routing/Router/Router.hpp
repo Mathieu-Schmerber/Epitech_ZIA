@@ -26,7 +26,7 @@ public:
     void deleteRoute(const std::string &routePath);
     void clearRoute(const std::string &routePath, bool clearFolders = false);
 
-    std::string create(const std::string &routePath, const std::string &filename, const std::string &content = "");
+    std::pair<std::string, bool> create(const std::string &routePath, const std::string &filename, const std::string &content = "", bool replace=false);
     std::string get(const std::string &routePath, const std::string &filename);
     void remove(const std::string &routePath, const std::string &filename);
 

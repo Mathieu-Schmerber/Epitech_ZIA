@@ -3,7 +3,9 @@
 //
 
 #include <fstream>
+#include <cstdio>
 #include <sstream>
+#include <Log.hpp>
 #include "ExceptionCore.hpp"
 #include "Router.hpp"
 
@@ -92,20 +94,24 @@ void Router::clearRoute(const std::string &routePath, bool clearFolders)
  * \param routePath     The folder path relative to /www
  * \param filename      The name of the file to create
  * \param content       [Optional] Write content into the newly created file
+ * \return pair : (string : path to file create / replaced) / (bool : true depending on whether the file has been replaced or not)
 **/
-std::string Router::create(const std::string &routePath, const std::string &filename, const std::string &content)
+std::pair<std::string, bool> Router::create(const std::string &routePath, const std::string &filename, const std::string &content, bool replace)
 {
     std::string destination = this->getPath(routePath);
+    bool overwrite = false;
 
     if (!this->initialized())
         throw ServerError("The router has not been initialized.", 500);
     else if (fs::is_directory(destination)) {
-        if (fs::exists(fs::path(destination + "\\" + filename)))
+        if (fs::exists(fs::path(destination + "\\" + filename)) && !replace)
             throw ServerError(fs::path(destination + "\\" + filename).string() + " already exists.", 500);
-        std::ofstream ofs(fs::path(destination + "\\" + filename));
+        if (fs::exists(fs::path(destination + "\\" + filename)) && replace)
+            overwrite = true;
+        std::ofstream ofs(fs::path(destination + "\\" + filename), std::ofstream::trunc);
         ofs << content;
         ofs.close();
-        return fs::path(destination + "\\" + filename).string();
+        return std::make_pair(fs::path(destination + "\\" + filename).string(), overwrite);
     } else
         throw ClientError("Route " + routePath + " not found.", 404);
 }

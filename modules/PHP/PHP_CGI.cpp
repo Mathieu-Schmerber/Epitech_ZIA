@@ -138,7 +138,7 @@ void PHP_CGI::handleQueue()
         }
     }
     if (parameters.at(0).first != "Status") {
-        _response = Response::getResponse(content, "OK", 200, parameters);
+        _response = Response::getResponse(content, "OK", 200, {}, parameters);
         return;
     } else {
         std::string code;

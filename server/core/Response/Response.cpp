@@ -6,7 +6,7 @@
 #include "Response.hpp"
 #include "Utils.hpp"
 
-std::string Response::getResponse(const std::string& content, const std::string& status, int code, std::map<Response::RData, std::string> &other_components, const std::vector<std::pair<std::string, std::string>> &params)
+std::string Response::getResponse(const std::string& content, const std::string& status, int code, std::map<Response::RData, std::string> other_components, std::vector<std::pair<std::string, std::string>> params)
 {
     std::string response;
 

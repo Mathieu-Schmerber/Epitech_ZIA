@@ -14,6 +14,7 @@
 #include <string>
 #include <iostream>
 #include <functional>
+#include <iterator>
 
 class Utils {
 public:

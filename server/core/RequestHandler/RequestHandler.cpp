@@ -61,7 +61,6 @@ void RequestHandler::_processRequest()
 
     try {
         requestParsed = requestParser.parseData(_request);
-
         if (_checkOutputModules(requestParsed) || !Utils::isInMap(hdl_rq, requestParsed.getRequestType()))
             throw ServerError("Not implemented", 501);
 
@@ -100,9 +99,7 @@ void RequestHandler::_getRequest(const ZiaRequest::Request& requestParsed)
     std::string fileContent;
 
     router.init();
-    LOG(DEBUG) << "requestParsed.getRequestPath() " << requestParsed.getRequestPath();
     fileContent = router.get("/", requestParsed.getRequestPath());
-    LOG(DEBUG) << "fileContent " << fileContent;
     if (fileContent.empty())
         _response = Response::getResponse(fileContent, "No content", 204);
     else
@@ -138,5 +135,15 @@ void RequestHandler::_deleteRequest(const ZiaRequest::Request &requestParsed)
 
     router.init();
     router.remove("/", requestParsed.getRequestPath());
-    _response = Response::getResponse("", "OK", 200);
+    _response = Response::getResponse("File deleted.", "OK", 200);
+}
+
+void RequestHandler::_putRequest(const ZiaRequest::Request &requestParsed)
+{
+    Router router;
+
+    router.init();
+    LOG(DEBUG) << "PUT : create " << requestParsed.getRequestPath() << " " << requestParsed.getRequestBody();
+    router.create("/", requestParsed.getRequestPath(), requestParsed.getRequestBody());
+    _response = Response::getResponse("", "Created", 201); // FIXME le code de retour doit changer selon si le fichier existe etc..;
 }

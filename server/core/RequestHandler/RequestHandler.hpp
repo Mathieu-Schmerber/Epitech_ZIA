@@ -44,6 +44,7 @@ private:
     void _postRequest(const ZiaRequest::Request& requestParsed);
     void _headRequest(const ZiaRequest::Request& requestParsed);
     void _deleteRequest(const ZiaRequest::Request& requestParsed);
+    void _putRequest(const ZiaRequest::Request& requestParsed);
 
     //Request Handlers variables
     std::thread _thread;
@@ -63,7 +64,8 @@ private:
                     {ZiaRequest::GET, &RequestHandler::_getRequest},
                     {ZiaRequest::POST, &RequestHandler::_postRequest},
                     {ZiaRequest::HEAD, &RequestHandler::_headRequest},
-                    {ZiaRequest::DELETE, &RequestHandler::_deleteRequest}
+                    {ZiaRequest::DELETE, &RequestHandler::_deleteRequest},
+                    {ZiaRequest::PUT, &RequestHandler::_putRequest}
             };
 
 };

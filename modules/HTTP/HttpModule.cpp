@@ -88,7 +88,7 @@ void HTTPModule::handleQueue()
                 _fullReceive[receive.id] += receive.receive;
         }
         if (std::find(_readyContentLength.begin(), _readyContentLength.end(), receive.id) != _readyContentLength.end()) {
-            if (receive.receive.length() <= _contentLength[receive.id]) {
+            if (static_cast<int>(receive.receive.length()) <= _contentLength[receive.id]) {
                 _fullReceive[receive.id] += receive.receive;
                 _contentLength[receive.id] -= static_cast<int>(receive.receive.length());
             } else {

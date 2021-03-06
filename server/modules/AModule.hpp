@@ -22,7 +22,7 @@ public:
     void loadConfigFile([[maybe_unused]]const std::string &configFilePath) override {};
 
     void dataInput(const std::string &, int id) override;
-    std::string processData(const ZiaRequest::Request &request) override = 0;
+    std::string processData(const ZiaRequest::Request &request) override { LOG(ERR) << "AModule::processData This function has to be overridden"; return std::string(); };
     std::pair<std::string, int> dataOutput() override;
     [[nodiscard]] std::string getFileExtension() const override { return ""; };
 
@@ -48,7 +48,7 @@ class AModuleInput : public AModule {
 public:
     explicit AModuleInput(const std::string &name) : AModule(name) {}
 
-    std::string processData(const ZiaRequest::Request &request) final {
+    std::string processData([[maybe_unused]] const ZiaRequest::Request &request) final {
         throw ZiaError("AModuleInput", "process data method must not be used in an Input Module");
     }
     bool isInputData() override { return true; }
@@ -58,7 +58,7 @@ class AModuleOutput : public AModule {
 public:
     explicit AModuleOutput(const std::string &name) : AModule(name) {}
 
-    void dataInput(const std::string &str, int id) final {
+    void dataInput([[maybe_unused]] const std::string &str, [[maybe_unused]] int id) final {
         throw ZiaError("AModuleOutput", "dataInput method must not be used in an Output Module");
     }
     std::string processData(const ZiaRequest::Request &request) final;

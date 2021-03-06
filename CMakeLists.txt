@@ -30,7 +30,7 @@ endif (DOXYGEN_FOUND)
 if (UNIX)
     set(CMAKE_CXX_STANDARD 17)
     add_definitions("-fPIC")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -ldl -W -Wall -Wextra -g") # FIXME remove flags for delivery.
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -ldl -W -Wall -Wextra -g -Wno-unused") # FIXME remove flags for delivery.
 endif()
 if (WIN32)
     set(CMAKE_CXX_FLAGS_DEBUG "/DWIN32 /MD /Z7 /D_WINDOWS /EHsc /WX /wd4355 /wd4251 /wd4250 /wd4996" CACHE STRING "Debug compiler flags" FORCE)

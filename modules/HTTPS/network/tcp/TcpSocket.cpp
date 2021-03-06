@@ -14,7 +14,7 @@
  * \param host : ip to start the server
  * \param port : port to start the server
 **/
-TcpSocket::TcpSocket(const std::string &host, unsigned short port) :
+TcpSocket::TcpSocket(const std::string &host, unsigned short port, const std::string &certificate, const std::string &key) :
 _acceptor(_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::address::from_string(host), port)),
 _socket(_io_service),
 _context(boost::asio::ssl::context::sslv23)
@@ -22,8 +22,8 @@ _context(boost::asio::ssl::context::sslv23)
     _context.set_options(
             boost::asio::ssl::context::default_workarounds
             | boost::asio::ssl::context::no_sslv2);
-    _context.use_certificate_chain_file("./certs/certificate.pem");
-    _context.use_private_key_file("./certs/key.pem", boost::asio::ssl::context::pem);
+    _context.use_certificate_chain_file(certificate);
+    _context.use_private_key_file(key, boost::asio::ssl::context::pem);
 
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
     _acceptor.close();

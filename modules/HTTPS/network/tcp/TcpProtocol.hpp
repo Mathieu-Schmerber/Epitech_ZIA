@@ -9,7 +9,7 @@
 
 class TcpProtocol {
     public:
-        TcpProtocol(const std::string &host, unsigned short port);
+        TcpProtocol(const std::string &host, unsigned short port, const std::string &certificate, const std::string &key);
         ~TcpProtocol();
         bool userDisconnected();
         ReceiveData getNewMessage();

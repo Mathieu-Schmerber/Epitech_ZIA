@@ -28,6 +28,8 @@ public:
     private:
     void handleQueue() override;
     const std::string _filePath = "./https.json";
+    std::string _certificate = "./certs/certificate.pem";
+    std::string _key = "./certs/key.pem";
     std::map<int, std::string> _fullReceive;
     int _port;
     TcpProtocol *_sTcp;

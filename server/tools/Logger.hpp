@@ -147,10 +147,11 @@ namespace logging {
             output.push_back('\n');
 
             if (WINDOWS_COLOR_ISSUE) {
-#if defined(_WIN32) || defined(WIN32)
-                log(output, colored_wd.find(level)->second);
-#endif
-                log(output);
+                #if defined(_WIN32) || defined(WIN32)
+                    log(output, colored_wd.find(level)->second);
+                #else
+                    log(output);
+                #endif
             } else
                 log(output);
         }

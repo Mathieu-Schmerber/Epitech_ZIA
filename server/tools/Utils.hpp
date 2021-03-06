@@ -31,6 +31,12 @@ public:
     }
 
     template<typename T>
+    [[nodiscard]] static bool isInVector(const std::vector<T> &vector, T item)
+    {
+        return (std::find_if(vector.begin(), vector.end(), [item](T x){return x == item;}) != vector.end());
+    }
+
+    template<typename T>
     [[nodiscard]] static T getInVector(std::vector<T> &vector, T item)
     {
         return *(std::find_if(vector.begin(), vector.end(), [item](T x){return x == item;}));

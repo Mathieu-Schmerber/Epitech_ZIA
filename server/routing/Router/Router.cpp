@@ -2,12 +2,14 @@
 // Created by mathi on 24-Feb-21.
 //
 
+#include "ExceptionCore.hpp"
+#include "Router.hpp"
+
 #include <fstream>
 #include <cstdio>
 #include <sstream>
 #include <Log.hpp>
-#include "ExceptionCore.hpp"
-#include "Router.hpp"
+#include <boost/filesystem.hpp>
 
 /**
  * \brief Initialises the /www folder
@@ -130,7 +132,7 @@ std::string Router::get(const std::string &routePath, const std::string &filenam
     else if (fs::is_directory(destination)) {
         if (!fs::exists(fs::path(destination + "\\" + filename)))
             throw ClientError("File " + fs::path(destination + "\\" + filename).string() + " not found.", 404);
-        std::ifstream file(fs::path(destination + "\\" + filename));
+        std::ifstream file(fs::path(destination + "\\" + filename), std::ios::binary);
         std::ostringstream stream;
         stream << file.rdbuf();
         return stream.str();
@@ -156,4 +158,14 @@ void Router::remove(const std::string &routePath, const std::string &filename)
             throw ServerError("Cannot delete " + destination, 500);
     } else
         throw ClientError("Route " + routePath + " not found.", 404);
+}
+
+/**
+ * \brief Return the extension of a file
+ * \param file : file or path including the final file
+ * \return extension (E.g. "png" for "example.test.png")
+**/
+std::string Router::getFileExtension(const std::string &file)
+{
+    return boost::filesystem::extension(file).erase(0, 1);
 }

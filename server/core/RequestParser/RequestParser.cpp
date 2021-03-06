@@ -34,7 +34,7 @@ void ZiaRequest::Request::setRequestType(const std::string &requestType)
         _requestType = ZiaRequest::DELETE;
     else if (requestType == std::string("TRACE"))
         _requestType = ZiaRequest::TRACE;
-    else if (requestType == std::string("CONNECT"))
+    else if (requestType == std::string("CONNECT"))  // FIXME
         _requestType = ZiaRequest::CONNECT;
     else
         throw ClientError("Bad Request", 400);

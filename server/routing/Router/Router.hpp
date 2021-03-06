@@ -32,6 +32,8 @@ public:
 
     void init();
     [[nodiscard]] bool initialized() const;
+
+    static std::string getFileExtension(const std::string &file);
 };
 
 

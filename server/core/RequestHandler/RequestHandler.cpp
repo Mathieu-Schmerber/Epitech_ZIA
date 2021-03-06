@@ -61,9 +61,12 @@ void RequestHandler::_processRequest()
 
     try {
         requestParsed = requestParser.parseData(_request);
-        if (_checkOutputModules(requestParsed) || !Utils::isInMap(hdl_rq, requestParsed.getRequestType()))
+        if (!Utils::isInMap(hdl_rq, requestParsed.getRequestType()))
             throw ServerError("Not implemented", 501);
-
+        if (_checkOutputModules(requestParsed)) {
+            _state = PROCESSED;
+            return;
+        }
         std::invoke(hdl_rq.at(requestParsed.getRequestType()), this, requestParsed);
     } catch (const CoreError &e) {
         _response = Response::getResponse(e.what(), e.what(), e.getErrorCode());
@@ -88,6 +91,8 @@ bool RequestHandler::_checkOutputModules(const ZiaRequest::Request& requestParse
         }
         if (!valid)
             continue;
+        if (a.second->get()->getStatus())
+            _response = a.second->get()->processData(requestParsed);
         return true;
     }
     return false;

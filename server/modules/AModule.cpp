@@ -12,12 +12,14 @@
  * \brief AModule constructor
  *
  * \param name : set the module name
- **/
+**/
+
 AModule::AModule(const std::string &name) : _running(false), _name(name) {}
 
 /**
  * \brief run keep calling handle queue while the module is running
- **/
+**/
+
 void AModule::run()
 {
     LOG(INFO) << "Start " << this->_name << " Module";
@@ -30,15 +32,26 @@ void AModule::run()
 //region Queue handling
 /**
  * \brief Push new request to be handled
- **/
+**/
+
 void AModule::dataInput(const std::string &str, int id)
 {
-    this->_inQueue.emplace_back(str, id);
+    this->_inQueueInput.emplace_back(str, id);
+}
+
+std::string AModuleOutput::processData(const ZiaRequest::Request &request)
+{
+    std::string response;
+
+    this->_requestToProcess = request;
+    this->handleQueue();
+    return _response;
 }
 
 /**
  * \brief Pop and returns the top of the handled requests list
- **/
+**/
+
 std::pair<std::string, int> AModule::dataOutput()
 {
     if (this->_outQueue.empty())
@@ -56,7 +69,8 @@ std::pair<std::string, int> AModule::dataOutput()
  * \brief Get the status module
  *
  * \return true or false according to the running status of the module
- **/
+**/
+
 bool AModule::getStatus()
 {
     return _running;
@@ -64,7 +78,8 @@ bool AModule::getStatus()
 
 /**
  * \brief Start the module
- **/
+**/
+
 void AModule::startModule()
 {
     _running = true;
@@ -72,7 +87,8 @@ void AModule::startModule()
 
 /**
  * \brief Stop the module
- **/
+**/
+
 void AModule::stopModule()
 {
     _running = false;

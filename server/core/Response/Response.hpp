@@ -5,15 +5,17 @@
 #ifndef ZIA_RESPONSE_HPP
 #define ZIA_RESPONSE_HPP
 
-#include <string>
-#include <utility>
-#include <ctime>
 #include <iostream>
 #include <iomanip>
+#include <utility>
+#include <string>
+#include <vector>
+#include <ctime>
 
 class Response {
 public:
     static std::string getResponse(const std::string& content, const std::string& status, int code);
+    static std::string getResponse(const std::string& content, const std::string& status, int code, const std::vector<std::pair<std::string, std::string>> &params);
     static std::string headResponse(const std::string& content, const std::string &status, int code);
 private:
     //Private methods

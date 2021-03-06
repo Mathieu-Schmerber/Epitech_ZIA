@@ -5,6 +5,7 @@
 **/
 
 #include "PHP_CGI.hpp"
+#include "Response.hpp"
 #include <filesystem>
 #include <iostream>
 
@@ -26,7 +27,7 @@ PHP_CGI::PHP_CGI() : AModuleOutput("PHP CGI")
     #ifdef __unix__
         this->_cgiPath = "php_rsc/unix/php-cgi";
     #elif defined(_WIN32) || defined(WIN32)
-        this->_cgiPath = "php_rsc/windows/php-cgi.exe";
+        this->_cgiPath = ".\\php_rsc\\windows\\php-cgi.exe";
     #endif
 }
 
@@ -97,7 +98,7 @@ std::string PHP_CGI::execute(const std::string &cmd)
  * **/
 std::string PHP_CGI::handleRequest(const std::string &request)
 {
-    std::string cmd = PHP_CGI::getOSCmd(this->_cgiPath + " " + request);
+    std::string cmd = PHP_CGI::getOSCmd(this->_cgiPath + " ." + request);
 
     try {
         return PHP_CGI::execute(cmd);
@@ -111,11 +112,42 @@ std::string PHP_CGI::handleRequest(const std::string &request)
  * **/
 void PHP_CGI::handleQueue()
 {
-    std::pair<std::string, int> current;
+    std::string fileContent = this->handleRequest(_requestToProcess.getRequestPath());
+    std::vector<std::pair<std::string, std::string>> parameters;
+    std::istringstream toParse(fileContent);
+    std::vector<std::string> lineParsed;
+    std::string lineToParse;
+    std::string content;
+    bool isContent = false;
 
-    if (!this->_inQueue.empty()) {
-        current = this->_inQueue.front();
-        this->_outQueue.emplace_back(this->handleRequest(current.first), current.second);
-        this->_inQueue.erase(this->_inQueue.begin());
+    while (std::getline(toParse, lineToParse)) {
+        if (lineToParse.empty())
+            isContent = true;
+        if (isContent) {
+            content += lineToParse;
+        } else if (lineToParse.empty()) {
+            isContent = true;
+        } else {
+            std::istringstream tmp(lineToParse);
+            std::string param[3];
+
+            std::getline(tmp, param[0], ':');
+            std::getline(tmp, param[1], ' ');
+            std::getline(tmp, param[1]);
+            parameters.emplace_back(param[0], param[1]);
+        }
+    }
+    if (parameters.at(0).first != "Status") {
+        _response = Response::getResponse(content, "OK", 200, parameters);
+        return;
+    } else {
+        std::string code;
+        std::string message;
+        std::istringstream oui(parameters.at(0).second);
+
+        parameters.erase(parameters.begin());
+        getline(oui, code, ' ');
+        getline(oui, message);
+        _response = Response::getResponse(content, message, std::strtol(code.c_str(), nullptr, 10));
     }
 }

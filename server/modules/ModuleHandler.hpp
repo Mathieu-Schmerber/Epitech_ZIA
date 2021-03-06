@@ -69,13 +69,11 @@ public:
         if (!_module)
             throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
         _module->startModule();
-        _thread = std::thread(&AModule::run, _module);
     }
     void stopModule() override {
         if (!_module)
             throw ZiaModuleError("ModuleHandler", "Module not loaded in ModuleHandler");
         _module->stopModule();
-        _thread.join();
     }
     AModule *get() override {
         if (!_module)
@@ -89,7 +87,6 @@ public:
     }
 private:
     AModule *_module;
-    std::thread _thread;
 };
 
 #endif //ZIA_MODULEHANDLER_HPP

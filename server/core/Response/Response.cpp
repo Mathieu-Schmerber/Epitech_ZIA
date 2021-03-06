@@ -6,7 +6,7 @@
 #include "Response.hpp"
 #include "Utils.hpp"
 
-std::string Response::getResponse(const std::string& content, const std::string& status, int code, std::map<Response::RData, std::string> other_components)
+std::string Response::getResponse(const std::string& content, const std::string& status, int code, std::map<Response::RData, std::string> &other_components, const std::vector<std::pair<std::string, std::string>> &params)
 {
     std::string response;
 
@@ -16,19 +16,6 @@ std::string Response::getResponse(const std::string& content, const std::string&
     response += _createContentLength(content);
     if (Utils::isInMap(other_components, CONTENT_TYPE))
         response += _createContentType(other_components[CONTENT_TYPE]);
-    response += "\r\n";
-    response += content;
-    return response;
-}
-
-std::string Response::getResponse(const std::string& content, const std::string& status, int code, const std::vector<std::pair<std::string, std::string>> &params)
-{
-    std::string response;
-
-    response += _createHeader(status, code);
-    response += _createDate();
-    response += _createServerName();
-    response += _createContentLength(content);
     for (auto &a : params)
         response += a.first + ": " + a.second + "\r\n";
     response += "\r\n";

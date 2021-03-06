@@ -24,7 +24,7 @@ public:
         CONTENT
     };
 
-    static std::string getResponse(const std::string& content, const std::string& status, int code, std::map<Response::RData, std::string> other_components = {});
+    static std::string getResponse(const std::string& content, const std::string& status, int code, std::map<Response::RData, std::string> &other_components = {}, const std::vector<std::pair<std::string, std::string>> &params = {});
     static std::string headResponse(const std::string& content, const std::string &status, int code);
 private:
     //Private methods

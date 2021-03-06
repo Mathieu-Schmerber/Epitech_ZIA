@@ -104,24 +104,24 @@ public:
         return *(std::find_if(vector.begin(), vector.end(), condition));
     }
 
-    static int getInTab_(const char **tab, const char *item, size_t size)
-    {
-        return std::distance(tab, std::find_if(tab, tab + size,
-                                               [item](const char *i) { return std::string(item) == std::string(i); })
-        );
-    }
-
-    template<std::size_t N>
-    static int getInTab(const char *(&tab)[N], const char *item)
-    {
-        return getInTab_(tab, item, N);
-    }
-
-    template<std::size_t N>
-    static bool isInTab(const char *(&tab)[N], const char *item)
-    {
-        return getInTab(tab, item) < N;
-    }
+    //static int getInTab_(const char **tab, const char *item, size_t size)
+    //{
+    //    return std::distance(tab, std::find_if(tab, tab + size,
+    //                                           [item](const char *i) { return std::string(item) == std::string(i); })
+    //    );
+    //}
+//
+    //template<std::size_t N>
+    //static int getInTab(const char *(&tab)[N], const char *item)
+    //{
+    //    return getInTab_(tab, item, N);
+    //}
+//
+    //template<std::size_t N>
+    //static bool isInTab(const char *(&tab)[N], const char *item)
+    //{
+    //    return getInTab(tab, item) < N;
+    //}
 };
 
 template<typename T>

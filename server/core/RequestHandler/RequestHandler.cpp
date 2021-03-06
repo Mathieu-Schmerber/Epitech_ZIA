@@ -97,13 +97,16 @@ void RequestHandler::_getRequest(const ZiaRequest::Request& requestParsed)
 {
     Router router;
     std::string fileContent;
+    std::string fileExt;
 
     router.init();
     fileContent = router.get("/", requestParsed.getRequestPath());
+    fileExt = Router::getFileExtension(requestParsed.getRequestPath());
+
     if (fileContent.empty())
         _response = Response::getResponse(fileContent, "No content", 204);
     else
-        _response = Response::getResponse(fileContent, "OK", 200);
+        _response = Response::getResponse(fileContent, "OK", 200, {{Response::CONTENT_TYPE, fileExt}});
 }
 
 void RequestHandler::_postRequest(const ZiaRequest::Request &requestParsed)
@@ -143,9 +146,7 @@ void RequestHandler::_putRequest(const ZiaRequest::Request &requestParsed)
     Router router;
 
     router.init();
-    LOG(DEBUG) << "PUT : create " << requestParsed.getRequestPath() << " " << requestParsed.getRequestBody();
     auto res = router.create("/", requestParsed.getRequestPath(), requestParsed.getRequestBody(), true);
-    LOG(DEBUG) << "path " << res.first;
     if (res.second)
         _response = Response::getResponse("Content-Location: " + res.first, "OK", 200);
     else

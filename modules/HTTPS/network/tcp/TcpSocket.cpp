@@ -19,7 +19,6 @@ _acceptor(_io_service, boost::asio::ip::tcp::endpoint(boost::asio::ip::address::
 _socket(_io_service),
 _context(boost::asio::ssl::context::sslv23)
 {
-    LOG(DEBUG) << "Start TCP Socket constructor";
     _context.set_options(
             boost::asio::ssl::context::default_workarounds
             | boost::asio::ssl::context::no_sslv2);

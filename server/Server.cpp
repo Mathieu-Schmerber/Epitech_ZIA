@@ -2,6 +2,8 @@
 // Created by Cyprien on 12/6/2020.
 //
 
+// TODO Doxygen
+
 #include "Server.hpp"
 #include "ModuleException.hpp"
 #include "ServerException.hpp"
@@ -70,8 +72,9 @@ void Server::run()
                         std::pair<std::string, std::pair<std::string, int>> requestToProcess(requestIn.first,
                                                                                              {inputModule.first,
                                                                                               requestIn.second});
-                        if (!requestToProcess.first.empty())
+                        if (!requestToProcess.first.empty()) {
                             a->setRequestToProcess(requestToProcess);
+                        }
                     }
                 }
             }
@@ -111,7 +114,7 @@ void Server::_readInput()
                 _future = std::async(std::launch::async, Server::readAsyncFunction);
                 return;
             }
-            if (cmdLine[0] == "loadmodule")
+            if (cmdLine[0] == "loadmodule")  // FIXME
                 _cmdLoadModule(cmdLine);
             else if (cmdLine[0] == "startmodule")
                 _cmdStartModule(cmdLine);

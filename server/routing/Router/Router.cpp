@@ -91,7 +91,7 @@ void Router::clearRoute(const std::string &routePath, bool clearFolders)
  * \brief Creates a new file and write into it
  * \param routePath     The folder path relative to /www
  * \param filename      The name of the file to create
- * \param content    [Optional] Write content into the newly created file
+ * \param content       [Optional] Write content into the newly created file
 **/
 std::string Router::create(const std::string &routePath, const std::string &filename, const std::string &content)
 {

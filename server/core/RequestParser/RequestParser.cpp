@@ -11,6 +11,7 @@
 #include <sstream>
 #include <vector>
 #include <algorithm>
+#include <Utils.hpp>
 
 /** ====== Request Parser ====== **/
 
@@ -20,6 +21,9 @@ ZiaRequest::Request::Request() : _requestType(UNDEFINED), _correctVersion(false)
 
 void ZiaRequest::Request::setRequestType(const std::string &requestType)
 {
+    //_requestType = static_cast<Type>(Utils::getInTab(requestTypesNames, requestType.data()));
+    //LOG(DEBUG) << "new rq " << _requestType;
+
     if (requestType == std::string("GET"))
         _requestType = ZiaRequest::GET;
     else if (requestType == std::string("POST"))
@@ -38,6 +42,7 @@ void ZiaRequest::Request::setRequestType(const std::string &requestType)
         _requestType = ZiaRequest::CONNECT;
     else
         throw ClientError("Bad Request", 400);
+    LOG(DEBUG) << "valid rq " << _requestType;
 }
 
 void ZiaRequest::Request::setRequestPath(const std::string &requestPath)

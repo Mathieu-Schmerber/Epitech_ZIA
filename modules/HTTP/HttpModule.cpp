@@ -35,6 +35,16 @@ void HTTPModule::loadConfigFile(const std::string &configFilePath)
     LOG(INFO) << "HTTP module use port: " << _port;
 }
 
+static void print_buf(const char *title, const unsigned char *buf, size_t buf_len)
+{
+    size_t i = 0;
+    fprintf(stdout, "%s\n", title);
+    for(i = 0; i < buf_len; ++i)
+        fprintf(stdout, "%02X%s", buf[i],
+                ( i + 1 ) % 16 == 0 ? "\r\n" : " " );
+
+}
+
 /**
  * \brief Looping on AModule::run() while AModule::_running
  *
@@ -49,21 +59,52 @@ void HTTPModule::handleQueue()
     if (_sTcp->userDisconnected() && (idDisconnect = _sTcp->getNewDisconnect()) != 0) {
     }
     if ((receive = _sTcp->getNewMessage()).id != 0) {
-        if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {
-            if (receive.receive != "\r\n")
-                _fullReceive[receive.id] += receive.receive;
-            _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
-//            _fullReceive[receive.id].clear();
-            _fullReceive.erase(receive.id);
-        } else {  // FIXME
-            _fullReceive[receive.id] += receive.receive;
+        std::istringstream requestToParse(receive.receive);
+        std::string block;
+        while (std::getline(requestToParse, block, '\n')) {
+            if (std::find(_readyContentLength.begin(), _readyContentLength.end(), receive.id) == _readyContentLength.end()) {
+                if (block.starts_with("Content-Length:"))
+                    _contentLength[receive.id] = std::atoi(block.substr(16, block.length() - 17).c_str());
+                if (block == "\r") {
+                    if (_contentLength.find(receive.id) != _contentLength.end() && _contentLength[receive.id] != 0) {
+                        _readyContentLength.emplace_back(receive.id);
+                    } else {
+                        _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
+                        _fullReceive.erase(receive.id);
+                        break;
+                    }
+                }
+                if (block.ends_with('\r'))
+                    _fullReceive[receive.id] += (block + '\n');
+                else
+                    _fullReceive[receive.id] += block;
+            } else {
+                if (block.length() <= _contentLength[receive.id]) {
+                    _fullReceive[receive.id] += block;
+                    _contentLength[receive.id] -= static_cast<int>(block.length());
+                } else {
+                    _fullReceive[receive.id] += block.substr(0, _contentLength[receive.id]);
+                    _contentLength[receive.id] = 0;
+                }
+                if (_contentLength[receive.id] <= 0) {
+                    _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
+                    _fullReceive.erase(receive.id);
+                    _contentLength[receive.id] = 0;
+                    _readyContentLength.erase(std::remove(_readyContentLength.begin(), _readyContentLength.end(), receive.id), _readyContentLength.end());
+                }
+            }
         }
+//        if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {
+//            if (receive.receive != "\r\n")
+//                _fullReceive[receive.id] += receive.receive;
+//            _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
+//            _fullReceive.erase(receive.id);
+//        } else {
+//            _fullReceive[receive.id] += receive.receive;
+//        }
     }
-//    receive = _sTcp->getNewMessage();  // FIXME
-//    if (receive.id != 0)
-//        _outQueue.emplace_back(receive.receive, receive.id);
-    if ((in = getInput()).second != -1) {  // FIXME
-        _sTcp->send(in.second, in.first);  // FIXME (partout)
+    if ((in = getInput()).second != -1) {
+        _sTcp->send(in.second, in.first);
     }
 }
 

@@ -20,6 +20,7 @@
 #include <deque>
 #include <string>
 #include "ReceiveData.hpp"
+#include <mutex>
 
 #define MAX_SIZE 1024
 
@@ -29,7 +30,7 @@
 **/
 class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP> {
     public:
-        InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context);
+        InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context, std::mutex &);
         ~InstanceClientTCP();
         void startHandshake();
         void startRead();
@@ -43,6 +44,7 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
         char _read[MAX_SIZE] = {0};
         int _id;
         std::deque<ReceiveData> &_msgQueue;
+        std::mutex &mtxQu;
 };
 
 /**
@@ -70,6 +72,7 @@ class TcpSocket {
         std::thread *_tRunAccept = nullptr;
         int idCounter = 10000;
         std::mutex mtx;
+        std::mutex mtxMq;
 };
 
 

@@ -54,7 +54,7 @@ void TcpSocket::startAccept()
                             ++idCounter;
                     }
                     mtx.unlock();
-                    std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue, _context);
+                    std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue, _context, mtxMq);
                     newConnection->startHandshake();
                     mtx.lock();
                     TcpSocket::_clients.push_back(newConnection);
@@ -109,11 +109,14 @@ TcpSocket::~TcpSocket()
 **/
 ReceiveData TcpSocket::getNewMessage()
 {
+    mtxMq.lock();
     if (!_msgQueue.empty()) {
         ReceiveData toReturn = _msgQueue.front();
         _msgQueue.pop_front();
+        mtxMq.unlock();
         return toReturn;
     }
+    mtxMq.unlock();
     return ReceiveData();
 }
 
@@ -161,8 +164,8 @@ int TcpSocket::getNewDisconnect()
  * \param socket : client's socket
  * \param msgQueue : client's messages received
 **/
-InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context) :
-_socket(std::move(socket), context), _msgQueue(msgQueue)
+InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, boost::asio::ssl::context& context, std::mutex &mtxQue) :
+_socket(std::move(socket), context), _msgQueue(msgQueue), mtxQu(mtxQue)
 {
     _id = id;
     LOG(INFO) << "User has just connected";
@@ -197,7 +200,9 @@ void InstanceClientTCP::startRead()
                 } else if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
                     _disconnected = true;
                 } else {
+                    mtxQu.lock();
                     _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id);
+                    mtxQu.unlock();
                     startRead();
                 }
             };
@@ -234,14 +239,21 @@ void handleSend(const boost::system::error_code &error, size_t bytes_transferred
 **/
 void InstanceClientTCP::send(const std::string &msg)
 {
-    size_t bufSize = 65536 - 1;
+    size_t bufSize = 2000;
     std::string buf;
     std::string full_msg = std::string(msg);
 
-    while (full_msg.length() > 0) {
-        buf = full_msg.substr(0, bufSize);
-        boost::asio::async_write(_socket, boost::asio::buffer(buf), &handleSend);
-        full_msg.erase(0, bufSize);
+    try {
+        LOG(INFO) << "HTTPS InstanceClientTCP::send Message Size: " << full_msg.length();
+        while (full_msg.length() > 0) {
+            buf = std::string(full_msg.substr(0, bufSize));
+            if (buf.empty())
+                continue;
+            boost::asio::write(_socket, boost::asio::buffer(buf));
+            full_msg.erase(0, bufSize);
+        }
+    } catch (std::exception &e) {
+        LOG(WARN) << e.what();
     }
 }
 

@@ -101,11 +101,14 @@ TcpSocket::~TcpSocket()
 **/
 ReceiveData TcpSocket::getNewMessage()
 {
+    mtxMq.lock();
     if (!_msgQueue.empty()) {
         ReceiveData toReturn = _msgQueue.front();
         _msgQueue.pop_front();
+        mtxMq.unlock();
         return toReturn;
     }
+    mtxMq.unlock();
     return ReceiveData();
 }
 
@@ -214,7 +217,7 @@ void InstanceClientTCP::send(const std::string &msg)
     LOG(INFO) << "HTTP InstanceClientTCP::send Message Size: " << full_msg.length();
     while (full_msg.length() > 0) {
         buf = full_msg.substr(0, bufSize);
-        boost::asio::async_write(_socket, boost::asio::buffer(buf), &handleSend);
+        boost::asio::write(_socket, boost::asio::buffer(buf));
         full_msg.erase(0, bufSize);
     }
 }

@@ -59,7 +59,6 @@ class TcpSocket {
         ReceiveData getNewMessage();
 
     private:
-        std::recursive_mutex _mutex;
         void startAccept();
         boost::asio::io_service _io_service;
         boost::asio::ip::tcp::acceptor _acceptor;

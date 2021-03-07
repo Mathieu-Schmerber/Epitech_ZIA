@@ -11,6 +11,12 @@
 #include <Log.hpp>
 #include <boost/filesystem.hpp>
 
+#if WIN32
+#define SLASH "\\"
+#else
+#define SLASH "/"
+#endif
+
 /**
  * \brief Initialises the /www folder
 **/
@@ -102,7 +108,8 @@ void Router::clearRoute(const std::string &routePath, bool clearFolders)
  * \param content       [Optional] Write content into the newly created file
  * \return pair : (string : path to file create / replaced) / (bool : true depending on whether the file has been replaced or not)
 **/
-std::pair<std::string, bool> Router::create(const std::string &routePath, const std::string &filename, const std::string &content, bool replace)
+std::pair<std::string, bool>
+Router::create(const std::string &routePath, const std::string &filename, const std::string &content, bool replace)
 {
     std::string destination = this->getPath(routePath);
     bool overwrite = false;
@@ -110,14 +117,14 @@ std::pair<std::string, bool> Router::create(const std::string &routePath, const 
     if (!this->initialized())
         throw ServerError("The router has not been initialized.", 500);
     else if (fs::is_directory(destination)) {
-        if (fs::exists(fs::path(destination + "\\" + filename)) && !replace)
-            throw ServerError(fs::path(destination + "\\" + filename).string() + " already exists.", 500);
-        if (fs::exists(fs::path(destination + "\\" + filename)) && replace)
+        if (fs::exists(fs::path(destination + SLASH + filename)) && !replace)
+            throw ServerError(fs::path(destination + SLASH + filename).string() + " already exists.", 500);
+        if (fs::exists(fs::path(destination + SLASH + filename)) && replace)
             overwrite = true;
-        std::ofstream ofs(fs::path(destination + "\\" + filename), std::ofstream::trunc);
+        std::ofstream ofs(fs::path(destination + SLASH + filename), std::ofstream::trunc);
         ofs << content;
         ofs.close();
-        return std::make_pair(fs::path(destination + "\\" + filename).string(), overwrite);
+        return std::make_pair(fs::path(destination + SLASH + filename).string(), overwrite);
     } else
         throw ClientError("Route " + routePath + " not found.", 404);
 }
@@ -134,9 +141,9 @@ std::string Router::get(const std::string &routePath, const std::string &filenam
     if (!this->initialized())
         throw ServerError("The router has not been initialized.", 500);
     else if (fs::is_directory(destination)) {
-        if (!fs::exists(fs::path(destination + "\\" + filename)))
-            throw ClientError("File " + fs::path(destination + "\\" + filename).string() + " not found.", 404);
-        std::ifstream file(fs::path(destination + "\\" + filename), std::ios::binary);
+        if (!fs::exists(fs::path(destination + SLASH + filename)))
+            throw ClientError("File " + fs::path(destination + SLASH + filename).string() + " not found.", 404);
+        std::ifstream file(fs::path(destination + SLASH + filename), std::ios::binary);
         std::ostringstream stream;
         stream << file.rdbuf();
         return stream.str();
@@ -156,9 +163,9 @@ void Router::remove(const std::string &routePath, const std::string &filename)
     if (!this->initialized())
         throw ServerError("The router has not been initialized.", 500);
     else if (fs::is_directory(destination)) {
-        if (!fs::exists(fs::path(destination + "\\" + filename)))
-            throw ClientError("File " + fs::path(destination + "\\" + filename).string() + " not found.", 404);
-        if (!fs::remove(fs::path(destination + "\\" + filename)))
+        if (!fs::exists(fs::path(destination + SLASH + filename)))
+            throw ClientError("File " + fs::path(destination + SLASH + filename).string() + " not found.", 404);
+        if (!fs::remove(fs::path(destination + SLASH + filename)))
             throw ServerError("Cannot delete " + destination, 500);
     } else
         throw ClientError("Route " + routePath + " not found.", 404);

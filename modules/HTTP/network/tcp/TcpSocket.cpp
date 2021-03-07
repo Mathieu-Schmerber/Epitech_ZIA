@@ -66,6 +66,7 @@ bool TcpSocket::userDisconnected()
     if (toReturn)
         for (int i = int(_clients.size()) - 1; i >= 0; --i) {
             if (!_clients[i]) {
+                LOG(TRACE) << "client déconnecté car non existant";
                 _clients.erase(_clients.begin() + i);
                 continue;
             }
@@ -113,7 +114,7 @@ void TcpSocket::send(int id, const std::string &msg)
 
     for (const auto &client : _clients) {
         if (!client) {
-            std::cerr << "potential crash" << std::endl; //FIXME
+            LOG(TRACE) << "potential crash"; // FIXME
             _clients.erase(_clients.begin() + i);
             this->send(id, msg);
             return;
@@ -146,7 +147,7 @@ int TcpSocket::getNewDisconnect()
 InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue) : _socket(std::move(socket)), _msgQueue(msgQueue)
 {
     _id = id;
-    LOG(INFO) << "User has just connected";
+    LOG(INFO) << "User has just connected id: " << _id;
 }
 
 /**
@@ -159,6 +160,7 @@ void InstanceClientTCP::startRead()
             [this, self](const boost::system::error_code &error, size_t bytes_transferred) {
                 if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
                     _disconnected = true;
+                    LOG(TRACE) << "eof";
                 } else {
                     _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id);
                     //LOG(DEBUG) << ("TCP : " + std::string(_read, bytes_transferred));
@@ -183,7 +185,7 @@ bool InstanceClientTCP::getDisconnected() const
 **/
 InstanceClientTCP::~InstanceClientTCP()
 {
-    LOG(INFO) << "User has just disconnected";
+    LOG(INFO) << "User has just disconnected id: " << _id;
 }
 
 /**

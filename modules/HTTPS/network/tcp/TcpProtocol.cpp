@@ -1,6 +1,9 @@
-//
-// Created by Cyprien on 12/6/2020.
-//
+/**
+ * \file TcpProtocol.cpp
+ * \brief protocol that let you easily deal with tcp protocol
+ * \authors Cyprien.R, William.P
+**/
+
 
 #include "TcpProtocol.hpp"
 

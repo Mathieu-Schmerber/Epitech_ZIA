@@ -65,6 +65,9 @@ reload the module "httpModule"<br>
 ``reloadmodule httpModule``<br>
 reload all the modules<br>
 ``reloadmodules``
+reload configuration<br>
+``reload`` or ``r``
+
 
 
 #### Conan remotes

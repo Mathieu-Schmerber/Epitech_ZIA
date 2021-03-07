@@ -8,6 +8,7 @@
 #include "Response.hpp"
 #include <filesystem>
 #include <iostream>
+#include "ExceptionCore.hpp"
 
 extern "C" {
     #if defined(_WIN32) || defined(WIN32)
@@ -25,9 +26,9 @@ extern "C" {
 PHP_CGI::PHP_CGI() : AModuleOutput("PHP CGI")
 {
     #ifdef __unix__
-        this->_cgiPath = "php_rsc/unix/php-cgi";
+        this->_cgiPath = "php-cgi";
     #elif defined(_WIN32) || defined(WIN32)
-        this->_cgiPath = ".\\php_rsc\\windows\\php-cgi.exe";
+        this->_cgiPath = "php-cgi.exe";
     #endif
 }
 
@@ -98,11 +99,15 @@ std::string PHP_CGI::execute(const std::string &cmd)
  * **/
 std::string PHP_CGI::handleRequest(const std::string &request)
 {
+    LOG(DEBUG) << "PHP_CGI::handleRequest";
     std::string cmd = PHP_CGI::getOSCmd(this->_cgiPath + " ." + request);
 
     try {
-        return PHP_CGI::execute(cmd);
+        auto tmp = PHP_CGI::execute(cmd); // FIXME
+        LOG(DEBUG) << "PHP_CGI::handleRequest END 1 " << cmd;
+        return tmp;
     } catch (std::exception &error) {
+        LOG(DEBUG) << "PHP_CGI::handleRequest END 2";
         return error.what();
     }
 }
@@ -113,12 +118,13 @@ std::string PHP_CGI::handleRequest(const std::string &request)
 void PHP_CGI::handleQueue()
 {
     std::string fileContent = this->handleRequest(_requestToProcess.getRequestPath());
-    std::vector<std::pair<std::string, std::string>> parameters;
+    std::vector<std::pair<std::string, std::string>> parameters{};
     std::istringstream toParse(fileContent);
     std::vector<std::string> lineParsed;
     std::string lineToParse;
     std::string content;
     bool isContent = false;
+    LOG(DEBUG) << "fileContent " << fileContent;
 
     while (std::getline(toParse, lineToParse)) {
         if (lineToParse.empty())
@@ -137,6 +143,12 @@ void PHP_CGI::handleQueue()
             parameters.emplace_back(param[0], param[1]);
         }
     }
+    if (parameters.empty())
+#if defined(_WIN32) || defined(WIN32)
+        throw ServerError("Error 500. php-cgi.exe not found. Please add it in your path.");
+#else
+        throw ServerError("Error 500. php-cgi not found. Please add it in your path.");
+#endif
     if (parameters.at(0).first != "Status") {
         _response = Response::getResponse(content, "OK", 200, {}, parameters);
         return;

@@ -8,6 +8,7 @@
 #include "Response.hpp"
 #include <filesystem>
 #include <iostream>
+#include "Router.hpp"
 #include "ExceptionCore.hpp"
 
 extern "C" {
@@ -99,15 +100,14 @@ std::string PHP_CGI::execute(const std::string &cmd)
  * **/
 std::string PHP_CGI::handleRequest(const std::string &request)
 {
-    LOG(DEBUG) << "PHP_CGI::handleRequest";
-    std::string cmd = PHP_CGI::getOSCmd(this->_cgiPath + " ." + request);
+    Router rooter;
+
+    rooter.init();
+    std::string cmd = PHP_CGI::getOSCmd(this->_cgiPath + " ./" + rooter.getPath(request));
 
     try {
-        auto tmp = PHP_CGI::execute(cmd); // FIXME
-        LOG(DEBUG) << "PHP_CGI::handleRequest END 1 " << cmd;
-        return tmp;
+        return PHP_CGI::execute(cmd);
     } catch (std::exception &error) {
-        LOG(DEBUG) << "PHP_CGI::handleRequest END 2";
         return error.what();
     }
 }
@@ -124,7 +124,6 @@ void PHP_CGI::handleQueue()
     std::string lineToParse;
     std::string content;
     bool isContent = false;
-    LOG(DEBUG) << "fileContent " << fileContent;
 
     while (std::getline(toParse, lineToParse)) {
         if (lineToParse.empty())
@@ -155,11 +154,11 @@ void PHP_CGI::handleQueue()
     } else {
         std::string code;
         std::string message;
-        std::istringstream oui(parameters.at(0).second);
+        std::istringstream ssparamaters(parameters.at(0).second);
 
         parameters.erase(parameters.begin());
-        getline(oui, code, ' ');
-        getline(oui, message);
+        getline(ssparamaters, code, ' ');
+        getline(ssparamaters, message);
         _response = Response::getResponse(content, message, std::strtol(code.c_str(), nullptr, 10));
     }
 }

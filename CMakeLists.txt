@@ -149,7 +149,10 @@ set(SOURCES_PHP_MODULE
         server/core/Response/Response.hpp
         server/core/Response/Response.cpp
         server/core/RequestParser/RequestParser.hpp
-        server/core/RequestParser/RequestParser.cpp)
+        server/core/RequestParser/RequestParser.cpp
+        server/routing/Router/Router.cpp
+        server/routing/Router/Router.hpp
+        )
 
 set(RESOURCES_PHP_MODULE
         modules/PHP/php_rsc)
@@ -162,8 +165,8 @@ target_include_directories(server PRIVATE
         server
         server/tools
         server/modules
-        "modules/HTTP/network"
-        "modules/HTTP/network/tcp"
+        modules/HTTP/network
+        modules/HTTP/network/tcp
         modules/PHP
         server/client
         server/include/rapidjson
@@ -212,6 +215,7 @@ target_include_directories(phpModule PRIVATE
         server/core/RequestParser
         server/exception
         server/core/Response
+        server/routing/Router
         server/core/ExceptionCore)
 
 message("===========================================")
@@ -220,6 +224,7 @@ message("===========================================")
 
 target_link_libraries(server ${CONAN_LIBS})
 target_link_libraries(httpsModule ${CONAN_LIBS})
+target_link_libraries(phpModule ${CONAN_LIBS})
 if (WIN32)
     set_target_properties(httpsModule PROPERTIES LINK_FLAGS "/ignore:4099")
     set_target_properties(server PROPERTIES LINK_FLAGS "/ignore:4099")

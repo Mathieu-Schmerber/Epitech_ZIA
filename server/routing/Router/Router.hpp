@@ -16,8 +16,6 @@ class Router
 private:
     fs::path _wwwPath;
 
-    [[nodiscard]] std::string getPath(const std::string &route) const;
-
 public:
     explicit Router() = default;
     ~Router() = default;
@@ -34,6 +32,7 @@ public:
     [[nodiscard]] bool initialized() const;
 
     static std::string getFileExtension(const std::string &file);
+    [[nodiscard]] std::string getPath(const std::string &route) const;
 };
 
 

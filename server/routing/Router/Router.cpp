@@ -26,6 +26,10 @@ bool Router::initialized() const
     return !this->_wwwPath.empty();
 }
 
+/**
+ * \brief concat a route with /www
+ * \param route     The path relative to /www
+**/
 std::string Router::getPath(const std::string &route) const
 {
     auto res = fs::path(this->_wwwPath);
@@ -125,6 +129,7 @@ std::pair<std::string, bool> Router::create(const std::string &routePath, const 
 **/
 std::string Router::get(const std::string &routePath, const std::string &filename)
 {
+    LOG(DEBUG) << "router " << routePath << " " << filename;
     std::string destination = this->getPath(routePath);
 
     if (!this->initialized())

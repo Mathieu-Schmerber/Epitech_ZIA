@@ -193,7 +193,7 @@ InstanceClientTCP::~InstanceClientTCP()
 /**
  * \brief handleSend : asynchronous send (NOT IMPLEMENTED)
 **/
-void handleSend([[maybe_unused]]const boost::system::error_code &error, [[maybe_unused]]size_t bytes_transferred)
+void handleSend(const boost::system::error_code &error, size_t bytes_transferred)
 {
 }
 
@@ -206,7 +206,7 @@ void InstanceClientTCP::send(const std::string &msg)
     std::string buf;
     std::string full_msg = std::string(msg);
 
-    LOG(DEBUG) << "HTTP InstanceClientTCP::send full msg size " << full_msg.length();
+    LOG(DEBUG) << "HTTPS InstanceClientTCP::send full msg size " << full_msg.length();
     while (full_msg.length() > 0) {
         buf = full_msg.substr(0, bufSize);
         boost::asio::async_write(_socket, boost::asio::buffer(buf), &handleSend);
@@ -217,7 +217,6 @@ void InstanceClientTCP::send(const std::string &msg)
 /**
  * \brief getId : get client id
 **/
-int InstanceClientTCP::getId() const
-{
+int InstanceClientTCP::getId() const {
     return _id;
 }

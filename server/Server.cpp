@@ -189,7 +189,7 @@ void Server::_cmdExitServer(const std::vector<std::string> &cmdLine)
     _running = false;
 }
 
-void Server::_cmdLoadConfiguration([[maybe_unused]] const std::vector<std::string> &cmdLine)
+void Server::_cmdLoadConfiguration(const std::vector<std::string> &cmdLine)
 {
     std::vector<t_module> _loadedModules;
     for (auto &module : _modules) {
@@ -199,7 +199,7 @@ void Server::_cmdLoadConfiguration([[maybe_unused]] const std::vector<std::strin
         }
     }
 
-    if (!std::filesystem::exists(_configFilePath)) { ///FIXME : Change path
+    if (!std::filesystem::exists(_configFilePath)) { /// FIXME : Change path
         LOG(WARN) << "The configuration file has been moved or deleted trying to find him...";
         _checkFolder("./");
     }

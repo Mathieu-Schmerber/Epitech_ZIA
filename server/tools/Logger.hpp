@@ -49,17 +49,11 @@
  **/
 namespace logging {
 
-    //the log levels we support
     enum class log_level : uint8_t {
         TRACE = 0, DEBUG = 1, INFO = 2, WARN = 3, ERR = 4
     };
 
-    struct enum_hasher {
-        template<typename T>
-        std::size_t operator()(T t) const { return static_cast<std::size_t>(t); }
-    };
-
-    const std::unordered_map<log_level, std::string, enum_hasher> uncolored
+    const std::unordered_map<log_level, std::string> uncolored
             {
                     {log_level::ERR,   " [ERROR] "},
                     {log_level::WARN,  " [WARN] "},
@@ -67,7 +61,7 @@ namespace logging {
                     {log_level::DEBUG, " [DEBUG] "},
                     {log_level::TRACE, " [TRACE] "}
             };
-    const std::unordered_map<log_level, std::string, enum_hasher> colored
+    const std::unordered_map<log_level, std::string> colored
             {
                     {log_level::ERR,   " \x1b[31;1m[ERROR]\x1b[0m "},
                     {log_level::WARN,  " \x1b[33;1m[WARN]\x1b[0m "},
@@ -102,44 +96,41 @@ namespace logging {
     constexpr log_level LOG_LEVEL_CUTOFF = log_level::TRACE;
 #endif
 
-    //Logger base class, not pure virtual so you can use as a null Logger if you want
     using logging_config_t = std::unordered_map<std::string, std::string>;
 
     class Logger {
     public:
         Logger() = delete;
 
-        explicit Logger(const logging_config_t &) {};
+        explicit Logger(const logging_config_t &config) {};
 
         virtual ~Logger() = default;
 
-        virtual void log([[maybe_unused]]const std::string &, [[maybe_unused]]const log_level) {};
+        virtual void log(const std::string &, const log_level) {};
 
-        virtual void log([[maybe_unused]]const std::string &) {};
+        virtual void log(const std::string &) {};
 
-        virtual void log([[maybe_unused]]const std::string &message, [[maybe_unused]]int color) {};
+        virtual void log(const std::string &message, int color) {};
     protected:
         std::mutex lock;
     };
 
-    //Logger that writes to standard out
-    class std_out_logger : public Logger {
+    class StdOutLogger : public Logger {
     public:
-        std_out_logger() = delete;
+        StdOutLogger() = delete;
 
-        explicit std_out_logger(const logging_config_t &config) : Logger(config),
-        levels(((config.find("color") != config.end()) && !WINDOWS_COLOR_ISSUE) ? colored : uncolored) {}
-
+        explicit StdOutLogger(const logging_config_t &config) : Logger(config), levels(((config.find("color") != config.end()) && !isWindowsColorIssue()) ? colored : uncolored)
+         {}
 
         /**
          * \brief log : display log message with header
-         *
          * \param level log level of the message (has to be higher than LOG_LEVEL_CUTOFF to be printed
          * \param message : message to be printed
         **/
         void log(const std::string &message, const log_level level) override {
             if (level < LOG_LEVEL_CUTOFF)
                 return;
+
             std::string output;
             output.reserve(message.length() + 64);
             output.append(levels.find(level)->second);
@@ -158,7 +149,6 @@ namespace logging {
 
         /**
          * \brief display and flush message
-         *
          * \param message : message to be printed
         **/
         void log(const std::string &message) override {
@@ -167,7 +157,6 @@ namespace logging {
         }
 
 #ifdef _WIN32
-
         void log(const std::string &message, int color) override {
             HANDLE hConsole;
             hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -179,8 +168,57 @@ namespace logging {
         };
 #endif
 
-    protected:
-        const std::unordered_map<log_level, std::string, enum_hasher> levels;
+    private:
+        const std::unordered_map<log_level, std::string> levels;
+
+        static bool isWindowsColorIssue() {
+            return WINDOWS_COLOR_ISSUE;
+        }
+
+    };
+
+    class FileLogger : public Logger {
+    public:
+        FileLogger() = delete;
+
+        explicit FileLogger(const logging_config_t &config) : Logger(config) {
+            _file.open("log.txt");
+        }
+
+        ~FileLogger() override {
+            _file.close();
+        }
+
+        /**
+         * \brief log : display log message with header
+         * \param level log level of the message (has to be higher than LOG_LEVEL_CUTOFF to be printed
+         * \param message : message to be printed
+        **/
+        void log(const std::string &message, const log_level level) override {
+            if (level < LOG_LEVEL_CUTOFF)
+                return;
+
+            std::string output;
+            output.reserve(message.length() + 64);
+            output.append(uncolored.find(level)->second);
+            output.append(message);
+            output.push_back('\n');
+
+            log(output);
+        }
+
+        /**
+         * \brief display and flush message
+         * \param message : message to be printed
+        **/
+        void log(const std::string &message) override {
+            _file << message;
+            _file.flush();
+        }
+
+    private:
+        std::ofstream _file;
+
     };
 
 
@@ -192,26 +230,21 @@ namespace logging {
          * \brief logger_factory constructor : create loggers
         **/
         logger_factory() {
-            creators.emplace("std_out", [](const logging_config_t &config) -> Logger * { return new std_out_logger(config); });
+            creators.emplace("std_out", [](const logging_config_t &config) -> Logger * { return new StdOutLogger(config); });
         }
 
         /**
          * \brief produce : return a logger according to the type given in config
-         *
          * \param config : informations about the logger to return
-         *
          * \return the logger asked for
         **/
         [[nodiscard]] Logger *produce(const logging_config_t &config) const {
-            //grab the type
             auto type = config.find("type");
             if (type == config.end())
                 throw std::runtime_error("Logging factory configuration requires a type of Logger");
-            //grab the Logger
             auto found = creators.find(type->second);
             if (found != creators.end())
                 return found->second(config);
-            //couldn't get a Logger
             throw std::runtime_error("Couldn't produce Logger for type: " + type->second);
         }
 
@@ -221,7 +254,6 @@ namespace logging {
 
     /**
      * \brief get_factory, return a factory (singleton)
-     *
      * \return the logger factory
     **/
     inline logger_factory &get_factory() {
@@ -231,9 +263,7 @@ namespace logging {
 
     /**
      * \brief get_logger, return a singleton logger according to the params in config
-     *
      * \param config, config for the logger
-     *
      * \return the logger
     **/
     inline Logger &get_logger(const logging_config_t &config = {{"type",  "std_out"},
@@ -244,7 +274,6 @@ namespace logging {
 
     /**
      * \brief log, call log function of the currently used logger
-     *
      * \param message, message to print
      * \param level, log level
     **/
@@ -254,7 +283,6 @@ namespace logging {
 
     /**
      * \brief log, call log function of the currently used logger (doesn't consider the level)
-     *
      * \param message, message to print
     **/
     inline void log(const std::string &message) {
@@ -263,7 +291,6 @@ namespace logging {
 
     /**
      * \brief TRACE, lowest log level
-     *
      * \param message, message to print
     **/
     inline void TRACE(const std::string &message) {
@@ -272,7 +299,6 @@ namespace logging {
 
     /**
      * \brief DEBUG, second log level
-     *
      * \param message, message to print
     **/
     inline void DEBUG(const std::string &message) {
@@ -290,7 +316,6 @@ namespace logging {
 
     /**
      * \brief WARN, fourth log level
-     *
      * \param message, message to print
     **/
     inline void WARN(const std::string &message) {
@@ -299,7 +324,6 @@ namespace logging {
 
     /**
      * \brief ERR, higher log level
-     *
      * \param message, message to print
     **/
     inline void ERR(const std::string &message) {

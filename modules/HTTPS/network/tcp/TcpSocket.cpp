@@ -45,6 +45,13 @@ void TcpSocket::startAccept()
     auto handleAccept =
             [this](const boost::system::error_code &error) {
                 if (!error) {
+                    if (std::any_of(_clients.begin(), _clients.end(), [this](const std::shared_ptr<InstanceClientTCP> &i) {
+                        if (!i)
+                            return true;
+                        return (i->getId() == idCounter);
+                    }))
+                        ++idCounter;
+
                     std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue, _context);
                     idCounter++;
                     newConnection->startHandshake();
@@ -63,15 +70,24 @@ bool TcpSocket::userDisconnected()
     std::lock_guard<std::recursive_mutex> lock(_mutex);
 
     bool toReturn = std::any_of(_clients.begin(), _clients.end(),
-                                [](const std::shared_ptr<InstanceClientTCP> &i) { return i->getDisconnected(); });
-    if (toReturn) {
+                                [](const std::shared_ptr<InstanceClientTCP> &i)
+                                {
+                                    if (!i)
+                                        return true;
+                                    return i->getDisconnected();
+                                });
+    if (toReturn)
         for (int i = int(_clients.size()) - 1; i >= 0; --i) {
+            if (!_clients[i]) {
+                LOG(TRACE) << "client déconnecté car non existant";
+                _clients.erase(_clients.begin() + i);
+                continue;
+            }
             if (_clients[i]->getDisconnected()) {
                 _idDisconnect.push_back(_clients[i]->getId());
                 _clients.erase(_clients.begin() + i);
             }
         }
-    }
     return toReturn;
 }
 
@@ -109,7 +125,16 @@ void TcpSocket::send(int id, const std::string &msg)
 {
     std::lock_guard<std::recursive_mutex> lock(_mutex);
 
+    int i = 0;
+
     for (const auto &client : _clients) {
+        if (!client) {
+            LOG(TRACE) << "potential crash"; // FIXME
+            _clients.erase(_clients.begin() + i);
+            this->send(id, msg);
+            return;
+        }
+        ++i;
         if (client->getId() == id)
             client->send(msg);
     }

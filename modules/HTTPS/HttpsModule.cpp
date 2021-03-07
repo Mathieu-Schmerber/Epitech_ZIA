@@ -56,6 +56,8 @@ void HTTPSModule::handleQueue()
     ReceiveData receive;
     std::pair<std::string, int> in;
     int idDisconnect;
+
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     if (_sTcp->userDisconnected() && (idDisconnect = _sTcp->getNewDisconnect()) != 0) {
     }
     if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
@@ -75,6 +77,7 @@ void HTTPSModule::handleQueue()
 
 std::pair<std::string, int> HTTPSModule::getInput()
 {
+    std::lock_guard<std::recursive_mutex> locker(this->_mutex);
     if (_inQueueInput.empty())
         return {};
     std::pair<std::string, int> in = _inQueueInput.front();

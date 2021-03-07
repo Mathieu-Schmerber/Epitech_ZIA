@@ -50,13 +50,24 @@ void TcpSocket::startAccept()
 bool TcpSocket::userDisconnected()
 {
     bool toReturn = std::any_of(_clients.begin(), _clients.end(),
-                                [](const std::shared_ptr<InstanceClientTCP> &i) { return i->getDisconnected(); });
+                                [](const std::shared_ptr<InstanceClientTCP> &i)
+                                {
+                                    if (!i)
+                                        return true; //FIXME Mouais je suis pas sur que ce soit le meilleur truc à faire mais bon
+                                    return i->getDisconnected();
+                                });
     if (toReturn)
-        for (int i = int(_clients.size()) - 1; i >= 0; --i)
+        for (int i = int(_clients.size()) - 1; i >= 0; --i) {
+            if (!_clients[i]) {
+                std::cerr << "Le deuxième non est ici même" << std::endl;
+                _clients.erase(_clients.begin() + i);
+                continue;
+            }
             if (_clients[i]->getDisconnected()) {
                 _idDisconnect.push_back(_clients[i]->getId());
                 _clients.erase(_clients.begin() + i);
             }
+        }
     return toReturn;
 }
 
@@ -93,6 +104,10 @@ ReceiveData TcpSocket::getNewMessage()
 void TcpSocket::send(int id, const std::string &msg)
 {
     for (const auto &client : _clients) {
+        if (!client) {
+            std::cerr << "potential crash" << std::endl; //FIXME
+            continue;
+        }
         if (client->getId() == id)
             client->send(msg);
     }

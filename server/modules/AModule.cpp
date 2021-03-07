@@ -4,7 +4,6 @@
  * \author Emilien.D
 **/
 
-
 #include "AModule.hpp"
 #include <iostream>
 
@@ -24,7 +23,7 @@ void AModule::run()
 {
     LOG(INFO) << "Start " << this->_name << " Module";
     while (getStatus()) {
-        std::lock_guard<std::mutex> lock(_mutex);
+        std::lock_guard<std::recursive_mutex> lock(_mutex);
         this->handleQueue();
     }
     LOG(INFO) << "End " << this->_name << " Module";
@@ -37,7 +36,7 @@ void AModule::run()
 
 void AModule::dataInput(const std::string &str, int id)
 {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     this->_inQueueInput.emplace_back(str, id);
 }
 
@@ -47,7 +46,7 @@ void AModule::dataInput(const std::string &str, int id)
 
 std::pair<std::string, int> AModule::dataOutput()
 {
-    std::lock_guard<std::mutex> lock(_mutex);
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     if (this->_outQueue.empty())
         return std::pair<std::string, int>("", -1);
     std::pair<std::string, int> out = this->_outQueue.front();

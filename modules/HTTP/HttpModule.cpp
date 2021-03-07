@@ -57,6 +57,7 @@ void HTTPModule::handleQueue()
     size_t posBegin;
     size_t posEnd;
 
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
     if (_sTcp->userDisconnected() && (idDisconnect = _sTcp->getNewDisconnect()) != 0) {
     }
     if ((receive = _sTcp->getNewMessage()).id != 0) {
@@ -115,6 +116,7 @@ void HTTPModule::handleQueue()
 **/
 std::pair<std::string, int> HTTPModule::getInput()
 {
+    std::lock_guard<std::recursive_mutex> locker(this->_mutex);
     if (_inQueueInput.empty())
         return {};
     std::pair<std::string, int> in = _inQueueInput.front();

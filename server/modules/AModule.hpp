@@ -8,6 +8,7 @@
 #define ZIA_AMODULE_HPP
 
 #include <vector>
+#include <shared_mutex>
 #include "IModule.hpp"
 #include "ZiaError.hpp"
 
@@ -34,9 +35,9 @@ public:
 
 private:
     bool _running;
-    std::mutex _mutex;
 
 protected:
+    std::recursive_mutex _mutex;
     const std::string _name;
     std::vector<std::pair<std::string, int>> _inQueueInput;
     ZiaRequest::Request _requestToProcess;

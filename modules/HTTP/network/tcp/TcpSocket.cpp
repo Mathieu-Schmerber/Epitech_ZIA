@@ -35,12 +35,17 @@ void TcpSocket::startAccept()
     auto handleAccept =
             [this](const boost::system::error_code &error) {
                 if (!error) {
+                    mtx.lock();
                     while (std::any_of(_clients.begin(), _clients.end(), [this](const std::shared_ptr<InstanceClientTCP> &i) {
                             if (!i)
                                 return true;
                             return (i->getId() == idCounter);
-                    }))
+                    })) {
                         ++idCounter;
+                        if (idCounter == 0)
+                            ++idCounter;
+                    }
+                    mtx.unlock();
                     std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue);
                     newConnection->startRead();
                     mtx.lock();

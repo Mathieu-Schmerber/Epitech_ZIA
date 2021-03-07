@@ -43,7 +43,7 @@ void TcpSocket::startAccept()
     auto handleAccept =
             [this](const boost::system::error_code &error) {
                 if (!error) {
-                    if (std::any_of(_clients.begin(), _clients.end(), [this](const std::shared_ptr<InstanceClientTCP> &i) {
+                    while (std::any_of(_clients.begin(), _clients.end(), [this](const std::shared_ptr<InstanceClientTCP> &i) {
                         if (!i)
                             return true;
                         return (i->getId() == idCounter);

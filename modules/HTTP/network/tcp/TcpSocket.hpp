@@ -30,7 +30,7 @@
 **/
 class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP> {
     public:
-        InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue);
+        InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, std::mutex &mtxQue);
         ~InstanceClientTCP();
         void startRead();
         void send(const std::string &msg);
@@ -43,6 +43,7 @@ class InstanceClientTCP : public std::enable_shared_from_this<InstanceClientTCP>
         char _read[MAX_SIZE] = {0};
         int _id;
         std::deque<ReceiveData> &_msgQueue;
+        std::mutex &mtxQu;
 };
 
 /**

@@ -46,7 +46,7 @@ void TcpSocket::startAccept()
                             ++idCounter;
                     }
                     mtx.unlock();
-                    std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue);
+                    std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue, mtxMq);
                     newConnection->startRead();
                     mtx.lock();
                     TcpSocket::_clients.push_back(newConnection);
@@ -156,7 +156,7 @@ int TcpSocket::getNewDisconnect()
  * \param socket : client's socket
  * \param msgQueue : client's messages received
 **/
-InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue) : _socket(std::move(socket)), _msgQueue(msgQueue)
+InstanceClientTCP::InstanceClientTCP(boost::asio::ip::tcp::socket socket, int id, std::deque<ReceiveData> &msgQueue, std::mutex &mtxQue) : _socket(std::move(socket)), _msgQueue(msgQueue), mtxQu(mtxQue)
 {
     _id = id;
     LOG(INFO) << "User has just connected id: " << _id;
@@ -173,7 +173,9 @@ void InstanceClientTCP::startRead()
                 if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
                     _disconnected = true;
                 } else {
+                    mtxQu.lock();
                     _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id);
+                    mtxQu.unlock();
                     startRead();
                 }
             };

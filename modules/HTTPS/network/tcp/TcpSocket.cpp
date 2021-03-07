@@ -40,6 +40,8 @@ _context(boost::asio::ssl::context::sslv23)
 **/
 void TcpSocket::startAccept()
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
+
     auto handleAccept =
             [this](const boost::system::error_code &error) {
                 if (!error) {
@@ -58,6 +60,8 @@ void TcpSocket::startAccept()
 **/
 bool TcpSocket::userDisconnected()
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
+
     bool toReturn = std::any_of(_clients.begin(), _clients.end(),
                                 [](const std::shared_ptr<InstanceClientTCP> &i) { return i->getDisconnected(); });
     if (toReturn) {
@@ -103,6 +107,8 @@ ReceiveData TcpSocket::getNewMessage()
 **/
 void TcpSocket::send(int id, const std::string &msg)
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
+
     for (const auto &client : _clients) {
         if (client->getId() == id)
             client->send(msg);

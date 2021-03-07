@@ -11,7 +11,6 @@
 #include "Router.hpp"
 #include "Server.hpp"
 #include "Log.hpp"
-#include <iostream>
 
 #undef DELETE
 

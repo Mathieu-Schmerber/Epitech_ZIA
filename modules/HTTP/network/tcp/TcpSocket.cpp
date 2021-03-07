@@ -20,7 +20,7 @@ TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_
     _acceptor.close();
     _acceptor.open(endpoint.protocol());
     _acceptor.set_option(boost::asio::socket_base::keep_alive(true));
-    _acceptor.set_option(boost::asio::socket_base::reuse_address (true));
+    _acceptor.set_option(boost::asio::socket_base::reuse_address(true));
     _acceptor.bind(endpoint);
     _acceptor.listen();
     startAccept();
@@ -35,10 +35,16 @@ void TcpSocket::startAccept()
     auto handleAccept =
             [this](const boost::system::error_code &error) {
                 if (!error) {
+                    if (std::any_of(_clients.begin(), _clients.end(), [this](const std::shared_ptr<InstanceClientTCP> &i) {
+                            if (!i)
+                                return true;
+                            return (i->getId() == idCounter);
+                    }))
+                        ++idCounter;
                     std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue);
-                    idCounter++;
                     newConnection->startRead();
                     TcpSocket::_clients.push_back(newConnection);
+                    ++idCounter;
                 }
                 startAccept();
             };
@@ -54,13 +60,12 @@ bool TcpSocket::userDisconnected()
                                 [](const std::shared_ptr<InstanceClientTCP> &i)
                                 {
                                     if (!i)
-                                        return true; //FIXME Mouais je suis pas sur que ce soit le meilleur truc à faire mais bon
+                                        return true;
                                     return i->getDisconnected();
                                 });
     if (toReturn)
         for (int i = int(_clients.size()) - 1; i >= 0; --i) {
             if (!_clients[i]) {
-                std::cerr << "Le deuxième non est ici même" << std::endl;
                 _clients.erase(_clients.begin() + i);
                 continue;
             }

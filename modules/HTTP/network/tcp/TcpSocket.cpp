@@ -52,6 +52,8 @@ void TcpSocket::startAccept()
                     TcpSocket::_clients.push_back(newConnection);
                     mtx.unlock();
                     ++idCounter;
+                    if (idCounter == 0)
+                        ++idCounter;
                 }
                 startAccept();
             };

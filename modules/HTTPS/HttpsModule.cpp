@@ -61,13 +61,40 @@ void HTTPSModule::handleQueue()
     if (_sTcp->userDisconnected() && (idDisconnect = _sTcp->getNewDisconnect()) != 0) {
     }
     if (!(receive = _sTcp->getNewMessage()).receive.empty()) {
-        if (receive.receive == "\r\n" || (receive.receive.length() >= 4 && receive.receive.substr(receive.receive.size() - 4) == "\r\n\r\n")) {
-            if (receive.receive != "\r\n")
-                _fullReceive[receive.id] += receive.receive;
-            _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
-            _fullReceive[receive.id].clear();
-        } else {
-            _fullReceive[receive.id] += receive.receive;
+        std::istringstream requestToParse(receive.receive);
+        std::string block;
+        while (std::getline(requestToParse, block, '\n')) {
+            if (std::find(_readyContentLength.begin(), _readyContentLength.end(), receive.id) == _readyContentLength.end()) {
+                if (block.starts_with("Content-Length:"))
+                    _contentLength[receive.id] = std::atoi(block.substr(16, block.length() - 17).c_str());
+                if (block == "\r") {
+                    if (_contentLength.find(receive.id) != _contentLength.end() && _contentLength[receive.id] != 0) {
+                        _readyContentLength.emplace_back(receive.id);
+                    } else {
+                        _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
+                        _fullReceive.erase(receive.id);
+                        break;
+                    }
+                }
+                if (block.ends_with('\r'))
+                    _fullReceive[receive.id] += (block + '\n');
+                else
+                    _fullReceive[receive.id] += block;
+            } else {
+                if (block.length() <= _contentLength[receive.id]) {
+                    _fullReceive[receive.id] += block;
+                    _contentLength[receive.id] -= static_cast<int>(block.length());
+                } else {
+                    _fullReceive[receive.id] += block.substr(0, _contentLength[receive.id]);
+                    _contentLength[receive.id] = 0;
+                }
+                if (_contentLength[receive.id] <= 0) {
+                    _outQueue.emplace_back(_fullReceive[receive.id], receive.id);
+                    _fullReceive.erase(receive.id);
+                    _contentLength[receive.id] = 0;
+                    _readyContentLength.erase(std::remove(_readyContentLength.begin(), _readyContentLength.end(), receive.id), _readyContentLength.end());
+                }
+            }
         }
     }
     if ((in = getInput()).second != -1) {

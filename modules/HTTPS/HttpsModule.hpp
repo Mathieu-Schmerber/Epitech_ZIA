@@ -31,6 +31,8 @@ public:
     std::string _certificate = "./certs/certificate.pem";
     std::string _key = "./certs/key.pem";
     std::map<int, std::string> _fullReceive;
+    std::map<int, int> _contentLength;
+    std::vector<int> _readyContentLength;
     int _port;
     TcpProtocol *_sTcp;
 };

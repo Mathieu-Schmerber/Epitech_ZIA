@@ -102,6 +102,18 @@ def test6():
         print(Fore.RED, str(test_nbr) + ': ' + 'There was ' + str(counter_error) + " error(s) in the test " + test_name)
 
 
+def test7():
+    test_name = "post request in http"
+    test_nbr = 7
+    counter_error = 0
+    r = requests.post('http://127.0.0.1/index.html', {"key": 10})
+    counter_error += check_status_code(r, 200)
+    if counter_error == 0:
+        print(Fore.GREEN, str(test_nbr) + ': ' + 'You pass the test ' + test_name)
+    else:
+        print(Fore.RED, str(test_nbr) + ': ' + 'There was ' + str(counter_error) + " error(s) in the test " + test_name)
+
+
 def reset():
     copyfile("file/indexdel.html", "../www/indexdel.html")
 
@@ -118,6 +130,8 @@ def request_get_index(path):
     test5()
     print(Style.RESET_ALL, end="")
     test6()
+    print(Style.RESET_ALL, end="")
+    test7()
     print(Style.RESET_ALL, end="")
     reset()
 

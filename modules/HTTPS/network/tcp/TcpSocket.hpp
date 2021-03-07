@@ -69,6 +69,7 @@ class TcpSocket {
         std::deque<int> _idDisconnect;
         std::thread *_tRunAccept = nullptr;
         int idCounter = 10000;
+        std::mutex mtx;
 };
 
 

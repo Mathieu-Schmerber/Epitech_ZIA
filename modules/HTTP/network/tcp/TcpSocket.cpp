@@ -35,7 +35,7 @@ void TcpSocket::startAccept()
     auto handleAccept =
             [this](const boost::system::error_code &error) {
                 if (!error) {
-                    if (std::any_of(_clients.begin(), _clients.end(), [this](const std::shared_ptr<InstanceClientTCP> &i) {
+                    while (std::any_of(_clients.begin(), _clients.end(), [this](const std::shared_ptr<InstanceClientTCP> &i) {
                             if (!i)
                                 return true;
                             return (i->getId() == idCounter);
@@ -43,7 +43,9 @@ void TcpSocket::startAccept()
                         ++idCounter;
                     std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue);
                     newConnection->startRead();
+                    mtx.lock();
                     TcpSocket::_clients.push_back(newConnection);
+                    mtx.unlock();
                     ++idCounter;
                 }
                 startAccept();
@@ -67,14 +69,18 @@ bool TcpSocket::userDisconnected()
         for (int i = int(_clients.size()) - 1; i >= 0; --i) {
             if (!_clients[i]) {
                 LOG(TRACE) << "client déconnecté car non existant";
-                _clients.erase(_clients.begin() + i);
+                //_clients.erase(_clients.begin() + i);
                 continue;
             }
             if (_clients[i]->getDisconnected()) {
                 _idDisconnect.push_back(_clients[i]->getId());
-                _clients.erase(_clients.begin() + i);
+                LOG(DEBUG) << "ERASE";
+                //_clients.erase(_clients.begin() + i);
             }
         }
+    mtx.lock();
+    std::erase_if(_clients, [](std::shared_ptr<InstanceClientTCP> &c) { return c->getDisconnected(); });
+    mtx.unlock();
     return toReturn;
 }
 
@@ -115,7 +121,9 @@ void TcpSocket::send(int id, const std::string &msg)
     for (const auto &client : _clients) {
         if (!client) {
             LOG(TRACE) << "potential crash"; // FIXME
+            mtx.lock();
             _clients.erase(_clients.begin() + i);
+            mtx.unlock();
             this->send(id, msg);
             return;
         }

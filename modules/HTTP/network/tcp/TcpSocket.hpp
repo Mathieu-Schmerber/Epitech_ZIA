@@ -8,6 +8,8 @@
 #ifndef SERVER_TCPSOCKET_HPP
 #define SERVER_TCPSOCKET_HPP
 
+#include <mutex>
+
 #ifdef _WIN32
     #ifdef _WIN32_WINNT
         #undef _WIN32_WINNT
@@ -66,6 +68,7 @@ class TcpSocket {
         std::deque<int> _idDisconnect;
         std::thread *_tRunAccept = nullptr;
         int idCounter = 10000;
+        std::mutex mtx;
 };
 
 

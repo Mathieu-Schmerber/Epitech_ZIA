@@ -24,11 +24,11 @@ _context(boost::asio::ssl::context::sslv23)
             | boost::asio::ssl::context::no_sslv2);
     _context.use_certificate_chain_file(certificate);
     _context.use_private_key_file(key, boost::asio::ssl::context::pem);
-
     boost::asio::ip::tcp::endpoint endpoint(boost::asio::ip::address::from_string(host), port);
     _acceptor.close();
     _acceptor.open(endpoint.protocol());
     _acceptor.set_option(boost::asio::socket_base::keep_alive(true));
+    _acceptor.set_option(boost::asio::socket_base::reuse_address(true));
     _acceptor.bind(endpoint);
     _acceptor.listen();
     startAccept();
@@ -49,11 +49,10 @@ void TcpSocket::startAccept()
                         return (i->getId() == idCounter);
                     }))
                         ++idCounter;
-
                     std::shared_ptr<InstanceClientTCP> newConnection = std::make_shared<InstanceClientTCP>(std::move(_socket), idCounter, _msgQueue, _context);
-                    idCounter++;
                     newConnection->startHandshake();
                     TcpSocket::_clients.push_back(newConnection);
+                    idCounter++;
                 }
                 startAccept();
             };
@@ -190,7 +189,6 @@ void InstanceClientTCP::startRead()
                     _disconnected = true;
                 } else {
                     _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id);
-                    //LOG(DEBUG) << ("TCP : " + std::string(_read, bytes_transferred));
                     startRead();
                 }
             };

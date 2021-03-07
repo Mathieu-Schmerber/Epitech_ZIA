@@ -66,7 +66,7 @@ void RequestHandler::_processRequest()
     ZiaRequest::Request requestParsed;
 
     try {
-        requestParsed = requestParser.parseData(_request);
+        requestParsed = requestParser.parseData(std::string(_request));
         LOG(INFO) << "Request : " << ZiaRequest::requestTypesNames[requestParsed.getRequestType()] << " " << requestParsed.getRequestPath();
         if (!Utils::isInMap(hdl_rq, requestParsed.getRequestType()))
             throw ServerError("Not implemented", 501);

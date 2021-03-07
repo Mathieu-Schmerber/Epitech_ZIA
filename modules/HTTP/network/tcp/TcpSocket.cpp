@@ -20,6 +20,7 @@ TcpSocket::TcpSocket(const std::string &host, unsigned short port) : _acceptor(_
     _acceptor.close();
     _acceptor.open(endpoint.protocol());
     _acceptor.set_option(boost::asio::socket_base::keep_alive(true));
+    _acceptor.set_option(boost::asio::socket_base::reuse_address (true));
     _acceptor.bind(endpoint);
     _acceptor.listen();
     startAccept();

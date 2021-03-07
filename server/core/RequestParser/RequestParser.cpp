@@ -74,7 +74,7 @@ ZiaRequest::RequestParser::RequestParser() : _request() {}
 
 ZiaRequest::Request ZiaRequest::RequestParser::parseData(const std::string &in)
 {
-    _request = in;
+    _request = std::string(in);
     std::istringstream requestToParse(_request);
     ZiaRequest::Request request;
     std::string out;

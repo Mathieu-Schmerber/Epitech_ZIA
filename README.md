@@ -8,8 +8,10 @@
     - conan-center: https://bintray.com/conan/conan-center
     - epitech: https://bintray.com/epitech/public-conan
     - bincrafters: https://bintray.com/bincrafters/public-conan
+  
+- Add php-cgi in your path (currently located in PHP CGI module)
 
-## Build
+## Build and Run
 
 ### Cross Platform
 

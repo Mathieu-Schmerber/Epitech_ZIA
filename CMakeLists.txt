@@ -28,7 +28,7 @@ endif (DOXYGEN_FOUND)
 
 #Project build
 if (UNIX)
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 20)
     add_definitions("-fPIC")
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -ldl -W -Wall -Wextra -g -Wno-unused") # FIXME remove flags for delivery.
 endif()

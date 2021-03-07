@@ -15,8 +15,7 @@
 
 #undef DELETE
 
-RequestHandler::RequestHandler(Server *server, int id) : _thread(&RequestHandler::run, this), _running(true), _state(READY), _server(server), _requestHandlerId(id),
-_requestId(0)
+RequestHandler::RequestHandler(Server *server, int id) : _thread(&RequestHandler::run, this), _running(true), _state(READY), _server(server), _requestHandlerId(id), _mutex(), _requestId(0)
 {}
 
 RequestHandler::~RequestHandler()
@@ -29,28 +28,35 @@ void RequestHandler::run()
 {
     LOG(INFO) << "Thread " << _requestHandlerId << " started.";
     while (_running) {
+        std::lock_guard<std::recursive_mutex> lock(_mutex);
         if (_state == PROCESSING)
             _processRequest();
     }
     LOG(INFO) << "Thread " << _requestHandlerId << " stopped.";
 }
 
-ThreadState RequestHandler::getState() const
+ThreadState RequestHandler::getState()
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
+
     return _state;
 }
 
 std::pair<std::string, std::pair<std::string, int>> RequestHandler::getProcessedRequest()
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
+
     _state = READY;
     return std::pair<std::string, std::pair<std::string, int>>(_response, {_moduleName, _requestId});
 }
 
-void RequestHandler::setRequestToProcess(const std::pair<std::string, std::pair<std::string, int>>& request)
+void RequestHandler::setRequestToProcess(std::pair<std::string, std::pair<std::string, int>> request)
 {
+    std::lock_guard<std::recursive_mutex> lock(_mutex);
+
     _state = PROCESSING;
-    _request = request.first;
-    _moduleName = request.second.first;
+    _request = std::string(request.first);
+    _moduleName = std::string(request.second.first);
     _requestId = request.second.second;
 }
 

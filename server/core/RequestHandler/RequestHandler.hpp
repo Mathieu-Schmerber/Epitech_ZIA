@@ -31,9 +31,9 @@ public:
     explicit RequestHandler(Server *server, int id);
     ~RequestHandler();
     void run();
-    [[nodiscard]] ThreadState getState() const;
+    [[nodiscard]] ThreadState getState();
     std::pair<std::string, std::pair<std::string, int>> getProcessedRequest();
-    void setRequestToProcess(const std::pair<std::string, std::pair<std::string, int>>& request);
+    void setRequestToProcess(std::pair<std::string, std::pair<std::string, int>> request);
 private:
     typedef void (RequestHandler::*rq_ptr)(const ZiaRequest::Request& requestParsed);
 
@@ -48,6 +48,7 @@ private:
 
     //Request Handlers variables
     std::thread _thread;
+    std::recursive_mutex _mutex;
     bool _running;
     ThreadState _state;
     Server *_server;

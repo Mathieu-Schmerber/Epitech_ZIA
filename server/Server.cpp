@@ -1,8 +1,8 @@
-//
-// Created by Cyprien on 12/6/2020.
-//
-
-// TODO Doxygen
+/**
+ * \file Server.cpp
+ * \brief Classes that run the core of the server
+ * \author Cyprien.R
+**/
 
 #include "Server.hpp"
 #include "ModuleException.hpp"
@@ -199,7 +199,7 @@ void Server::_cmdLoadConfiguration(const std::vector<std::string> &cmdLine)
         }
     }
 
-    if (!std::filesystem::exists(_configFilePath)) { /// FIXME : Change path
+    if (!std::filesystem::exists(_configFilePath)) {
         LOG(WARN) << "The configuration file has been moved or deleted trying to find him...";
         _checkFolder("./");
     }

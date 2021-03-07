@@ -17,11 +17,11 @@ if (DOXYGEN_FOUND)
     message("Doxygen build started")
 
     # note the option ALL which allows to build the docs together with the application
-    #add_custom_target(doc_doxygen ALL
-    #        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-    #        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-    #        COMMENT "Generating API documentation with Doxygen"
-    #        VERBATIM)
+    add_custom_target(doc_doxygen ALL
+            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            COMMENT "Generating API documentation with Doxygen"
+            VERBATIM)
 else (DOXYGEN_FOUND)
     message("Doxygen need to be installed to generate the doxygen documentation")
 endif (DOXYGEN_FOUND)
@@ -30,7 +30,7 @@ endif (DOXYGEN_FOUND)
 if (UNIX)
     set(CMAKE_CXX_STANDARD 20)
     add_definitions("-fPIC")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -ldl -W -Wall -Wextra -g -Wno-unused") # FIXME remove flags for delivery.
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -ansi -ldl -W -Wall -Wextra -Wno-unused")
 endif()
 if (WIN32)
     set(CMAKE_CXX_FLAGS_DEBUG "/DWIN32 /MD /Z7 /D_WINDOWS /EHsc /WX /wd4355 /wd4251 /wd4250 /wd4996" CACHE STRING "Debug compiler flags" FORCE)
@@ -38,7 +38,7 @@ if (WIN32)
     add_definitions(-D_ITERATOR_DEBUG_LEVEL=0)
     if(CMAKE_COMPILER_IS_GNUCXX)
         message(STATUS "GCC detected, adding compile flags")
-        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ansi -W -Wall -Wextra -g") # FIXME -g
+        set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -ansi -W -Wall -Wextra")
     endif(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 

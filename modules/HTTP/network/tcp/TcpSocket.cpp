@@ -124,7 +124,6 @@ void TcpSocket::send(int id, const std::string &msg)
 
     for (const auto &client : _clients) {
         if (!client) {
-            LOG(TRACE) << "potential crash"; // FIXME
             mtx.lock();
             _clients.erase(_clients.begin() + i);
             mtx.unlock();

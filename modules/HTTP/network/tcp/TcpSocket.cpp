@@ -160,7 +160,6 @@ void InstanceClientTCP::startRead()
             [this, self](const boost::system::error_code &error, size_t bytes_transferred) {
                 if (error == boost::asio::error::eof || error == boost::asio::error::connection_reset) {
                     _disconnected = true;
-                    LOG(TRACE) << "eof";
                 } else {
                     _msgQueue.emplace_back(std::string(_read, bytes_transferred), _id);
                     //LOG(DEBUG) << ("TCP : " + std::string(_read, bytes_transferred));

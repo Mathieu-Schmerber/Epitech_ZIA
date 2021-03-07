@@ -1,12 +1,18 @@
-//
-// Created by Cyprien on 12/6/2020.
-//
+/**
+ * \file Log.hpp
+ * \brief Display macros
+ * \author Cyprien.R
+**/
 
 #ifndef SERVER_TCPPROTOCOL_HPP
 #define SERVER_TCPPROTOCOL_HPP
 
 #include "TcpSocket.hpp"
 
+/**
+ * \class TcpProtocol TcpProtocol.hpp "TcpProtocol.hpp"
+ * \brief protocol that let you easily deal with tcp protocol
+**/
 class TcpProtocol {
     public:
         TcpProtocol(const std::string &host, unsigned short port);

@@ -103,11 +103,16 @@ ReceiveData TcpSocket::getNewMessage()
 **/
 void TcpSocket::send(int id, const std::string &msg)
 {
+    int i = 0;
+
     for (const auto &client : _clients) {
         if (!client) {
             std::cerr << "potential crash" << std::endl; //FIXME
-            continue;
+            _clients.erase(_clients.begin() + i);
+            this->send(id, msg);
+            return;
         }
+        ++i;
         if (client->getId() == id)
             client->send(msg);
     }

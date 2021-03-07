@@ -82,16 +82,10 @@ bool TcpSocket::userDisconnected()
                                 });
     if (toReturn)
         for (int i = int(_clients.size()) - 1; i >= 0; --i) {
-            if (!_clients[i]) {
-                LOG(TRACE) << "client déconnecté car non existant";
-                //_clients.erase(_clients.begin() + i);
+            if (!_clients[i])
                 continue;
-            }
-            if (_clients[i]->getDisconnected()) {
+            if (_clients[i]->getDisconnected())
                 _idDisconnect.push_back(_clients[i]->getId());
-                LOG(DEBUG) << "ERASE";
-                //_clients.erase(_clients.begin() + i);
-            }
         }
     mtx.lock();
     std::erase_if(_clients, [](std::shared_ptr<InstanceClientTCP> &c) { return c->getDisconnected(); });
@@ -244,7 +238,6 @@ void InstanceClientTCP::send(const std::string &msg)
     std::string buf;
     std::string full_msg = std::string(msg);
 
-    LOG(DEBUG) << "HTTPS InstanceClientTCP::send full msg size " << full_msg.length();
     while (full_msg.length() > 0) {
         buf = full_msg.substr(0, bufSize);
         boost::asio::async_write(_socket, boost::asio::buffer(buf), &handleSend);

@@ -129,7 +129,6 @@ std::pair<std::string, bool> Router::create(const std::string &routePath, const 
 **/
 std::string Router::get(const std::string &routePath, const std::string &filename)
 {
-    LOG(DEBUG) << "router " << routePath << " " << filename;
     std::string destination = this->getPath(routePath);
 
     if (!this->initialized())
